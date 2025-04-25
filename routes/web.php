@@ -11,7 +11,6 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RegisterController;
 use Illuminate\Support\Facades\Route;
-use Symfony\Component\HttpKernel\Profiler\Profile;
 
 Route::get('/somepath', function () {
     return view('welcome');
@@ -55,6 +54,7 @@ Route::get('/logout', [LoginController::class, 'logout'])->name('logout');
 
 Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
 Route::post('/cart/add/{productId}', [CartController::class, 'addToCart'])->name('cart.add');
+Route::post('/cart/update/{productId}', [CartController::class, 'updateQuantity'])->name('cart.update');
 Route::post('/cart/checkout', [CartController::class, 'checkout'])->name('cart.checkout');
 Route::delete('/cart/{productId}', [CartController::class, 'removeFromCart'])->name('cart.remove');
 
@@ -65,7 +65,5 @@ Route::delete('/favorites/{productId}', [FavoriteController::class, 'removeFromF
 Route::get('/admin/orders', [OrderController::class, 'completedOrders'])->name('admin.orders.index');
 Route::post('/admin/orders/{id}/update', [OrderController::class, 'updateStatus'])->name('admin.orders.update');
 Route::get('/admin/preorders', [OrderController::class, 'index'])->name('admin.preorders.index');
-Route::get('/order/confirmation', [CartController::class, 'confirmation'])->name('order.confirmation');
-
-Route::get('/order/invoice/{preOrderId}', [CartController::class, 'downloadInvoice'])->name('order.invoice.download');
 Route::get('/order/confirmation/{preOrderId}', [CartController::class, 'confirmation'])->name('order.confirmation');
+Route::get('/order/invoice/{preOrderId}', [CartController::class, 'downloadInvoice'])->name('order.invoice.download');

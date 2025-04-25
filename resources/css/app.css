@@ -1260,3 +1260,52 @@ label {
     outline: none;
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
 }
+
+.new-quantity-controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.new-quantity-button {
+    width: 40px;
+    height: 40px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 20px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.1s;
+}
+
+.new-quantity-button:hover {
+    background-color: #45a049;
+}
+
+.new-quantity-button:active {
+    transform: scale(0.95);
+}
+
+.new-quantity-input {
+    width: 60px;
+    height: 40px;
+    text-align: center;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    font-size: 16px;
+    color: #333;
+    background-color: #f9f9f9;
+    outline: none;
+}
+
+.new-quantity-input:focus {
+    border-color: #4CAF50;
+    box-shadow: 0 0 5px rgba(76, 175, 80, 0.3);
+}
+
+.new-product-quantity {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

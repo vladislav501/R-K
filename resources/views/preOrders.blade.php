@@ -12,7 +12,7 @@
         <tr>
             <th>ID</th>
             <th>Пользователь</th>
-            <th>Товар</th>
+            <th>Товары</th>
             <th>Сумма</th>
             <th>Статус</th>
             <th>Действия</th>
@@ -23,7 +23,13 @@
             <tr>
                 <td>{{ $preOrder->id }}</td>
                 <td>{{ $preOrder->userId }}</td>
-                <td>{{ $preOrder->productId }}</td>
+                <td>
+                    @foreach($preOrder->getProducts() as $item)
+                        @if($item['product'])
+                            {{ $item['product']->shortTitle }} ({{ $item['quantity'] }} шт.)<br>
+                        @endif
+                    @endforeach
+                </td>
                 <td>{{ $preOrder->totalSum }}</td>
                 <td>{{ $preOrder->status }}</td>
                 <td>
@@ -33,7 +39,6 @@
                             <select name="status" class="status-select">
                                 <option value="Ожидание подтверждения" {{ $preOrder->status == 'Ожидание подтверждения' ? 'selected' : '' }}>Ожидание подтверждения</option>
                                 <option value="Подтвержден" {{ $preOrder->status == 'Подтвержден' ? 'selected' : '' }}>Подтвержден</option>
-                                {{-- <option value="Отменен" {{ $preOrder->status == 'Отменен' ? 'selected' : '' }}>Отменен</option> --}}
                             </select>
                             <button type="submit" class="update-button">Обновить статус</button>
                         </form>

@@ -9,11 +9,19 @@ class PreOrder extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['userId', 'totalSum', 'status', 'productId'];
+    protected $fillable = ['userId', 'products', 'totalSum', 'status'];
 
     public function getProducts()
     {
-        $productId = explode(',', $this->productId); 
-        return Product::whereIn('id', $productId)->get();
+        $products = json_decode($this->products, true);
+        $productIds = array_column($products, 'productId');
+        $result = Product::whereIn('id', $productIds)->get()->keyBy('id');
+        
+        return array_map(function ($item) use ($result) {
+            return [
+                'product' => $result[$item['productId']] ?? null,
+                'quantity' => $item['quantity'],
+            ];
+        }, $products);
     }
 }

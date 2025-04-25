@@ -32,7 +32,7 @@
             margin-bottom: 20px;
         }
 
-        .invoice p {
+        .invoice THEY WERE HERE p {
             color: #555;
             margin: 5px 0;
         }
@@ -89,16 +89,22 @@
                 <tr>
                     <th>Артикул товара</th>
                     <th>Название</th>
+                    <th>Количество</th>
                     <th>Цена</th>
+                    <th>Общая стоимость</th>
                 </tr>
             </thead>
             <tbody>
-                @foreach($preOrder->getProducts() as $product)
-                    <tr>
-                        <td>{{ $product->article }}</td>
-                        <td>{{ $product->shortTitle }}</td>
-                        <td>{{ $product->price }} byn</td>
-                    </tr>
+                @foreach($preOrder->getProducts() as $item)
+                    @if($item['product'])
+                        <tr>
+                            <td>{{ $item['product']->article }}</td>
+                            <td>{{ $item['product']->shortTitle }}</td>
+                            <td>{{ $item['quantity'] }}</td>
+                            <td>{{ $item['product']->price }} byn</td>
+                            <td>{{ $item['product']->price * $item['quantity'] }} byn</td>
+                        </tr>
+                    @endif
                 @endforeach
             </tbody>
         </table>

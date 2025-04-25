@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Cart;
 use App\Models\PreOrder;
 use App\Models\Product;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Barryvdh\DomPDF\Facade\Pdf as FacadePdf;
 
@@ -28,26 +29,51 @@ class CartController extends Controller {
         foreach ($carts as $cart) {
             $product = Product::find($cart->productId);
             if ($product) {
-                $totalSum += $product->price;
-                $images[] = $product->images;
+                $totalSum += $product->price * $cart->quantity;
+                $images[$cart->productId] = $product->images;
             }
         }
     
         return view('cart', compact('carts', 'totalSum', 'images'));
     }
 
-    public function addToCart($productId)
-    {
+    public function addToCart($productId) {
         $userId = Auth::id();
-
-        if (!Cart::where('userId', $userId)->where('productId', $productId)->exists()) {
+    
+        $cart = Cart::where('userId', $userId)->where('productId', $productId)->first();
+    
+        if ($cart) {
+            $cart->quantity += 1;
+            $cart->save();
+        } else {
             Cart::create([
                 'userId' => $userId,
                 'productId' => $productId,
+                'quantity' => 1,
             ]);
         }
-
+    
         return redirect()->back();
+    }
+
+    public function updateQuantity(Request $request, $productId) {
+        $userId = Auth::id();
+        $cart = Cart::where('userId', $userId)->where('productId', $productId)->first();
+    
+        if ($cart) {
+            $action = $request->input('action');
+            if ($action === 'increment') {
+                $cart->quantity += 1;
+                $cart->save();
+            } elseif ($action === 'decrement' && $cart->quantity > 1) {
+                $cart->quantity -= 1;
+                $cart->save();
+            } elseif ($action === 'decrement' && $cart->quantity == 1) {
+                $cart->delete();
+            }
+        }
+    
+        return redirect()->route('cart.index');
     }
 
     public function checkout() {
@@ -63,19 +89,22 @@ class CartController extends Controller {
         }
     
         $totalSum = 0;
-        $productId = []; 
+        $products = [];
     
         foreach ($carts as $cart) {
             $product = Product::find($cart->productId);
             if ($product) {
-                $totalSum += $product->price;
-                $productId[] = $product->id;
+                $totalSum += $product->price * $cart->quantity;
+                $products[] = [
+                    'productId' => $product->id,
+                    'quantity' => $cart->quantity,
+                ];
             }
         }
     
         $preOrder = PreOrder::create([
             'userId' => $userId,
-            'productId' => implode(',', $productId), 
+            'products' => json_encode($products),
             'totalSum' => $totalSum,
             'status' => 'Ожидание подтверждения',
         ]);
@@ -90,16 +119,15 @@ class CartController extends Controller {
         return view('confirmation', compact('preOrder')); 
     }
 
-    public function removeFromCart($productId)
-    {
+    public function removeFromCart($productId) {
         $userId = Auth::id();
-
+    
         $cartItem = Cart::where('userId', $userId)->where('productId', $productId)->first();
-
+    
         if ($cartItem) {
             $cartItem->delete();
         }
-
+    
         return redirect()->back();
     }
 

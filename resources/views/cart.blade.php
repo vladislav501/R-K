@@ -36,6 +36,14 @@
                                     </h2>
                                     <span class="new-product-title">{{ $product->shortTitle }}</span>
                                 </div>
+                                <div class="new-product-quantity">
+                                    <form action="{{ route('cart.update', $product->id) }}" method="POST" class="new-quantity-controls">
+                                        @csrf
+                                        <button type="submit" name="action" value="decrement" class="new-quantity-button">-</button>
+                                        <input type="number" name="quantity" value="{{ $cart->quantity }}" class="new-quantity-input" readonly>
+                                        <button type="submit" name="action" value="increment" class="new-quantity-button">+</button>
+                                    </form>
+                                </div>
                                 <div class="new-product-actions">
                                     <form action="{{ route('cart.remove', $product->id) }}" method="post" class="new-remove-cart-form">
                                         @csrf
@@ -52,7 +60,7 @@
                 <p class="new-total-amount">Общая сумма: <span>{{ $totalSum }} byn</span></p>
                 <form action="{{ route('cart.checkout') }}" method="post" class="new-checkout-form">
                     @csrf
-                    <button type="submit" class="new-checkout-button">За казать</button>
+                    <button type="submit" class="new-checkout-button">Заказать</button>
                 </form>
             </div>
         </div>

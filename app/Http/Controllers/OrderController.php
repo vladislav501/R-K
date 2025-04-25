@@ -21,6 +21,7 @@ class OrderController extends Controller {
         if ($preOrder->status === 'Подтвержден') {
             Order::create([
                 'userId' => $preOrder->userId,
+                'products' => $preOrder->products,
                 'totalSum' => $preOrder->totalSum,
                 'status' => 'Подтвержден',
             ]);

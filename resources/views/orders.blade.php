@@ -1,5 +1,5 @@
 @extends('layouts.asset')
-    @section('content')
+@section('content')
     <h2>
         <span>Вперед:</span>
         <span class="spanLink">
@@ -12,6 +12,7 @@
             <tr>
                 <th>ID</th>
                 <th>Пользователь</th>
+                <th>Товары</th>
                 <th>Сумма</th>
                 <th>Статус</th>
             </tr>
@@ -21,6 +22,13 @@
                 <tr>
                     <td>{{ $order->id }}</td>
                     <td>{{ $order->userId }}</td>
+                    <td>
+                        @foreach($order->getProducts() as $item)
+                            @if($item['product'])
+                                {{ $item['product']->shortTitle }} ({{ $item['quantity'] }} шт.)<br>
+                            @endif
+                        @endforeach
+                    </td>
                     <td>{{ $order->totalSum }}</td>
                     <td>{{ $order->status }}</td>
                 </tr>
