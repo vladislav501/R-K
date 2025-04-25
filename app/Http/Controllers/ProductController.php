@@ -7,6 +7,7 @@ use App\Models\Image;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Log;
 
 class ProductController extends Controller {
 
@@ -145,5 +146,27 @@ class ProductController extends Controller {
     public function getProductsByCategory($categoryId) {
         $products = Product::where('categoryId', $categoryId)->get();
         return response()->json($products);
+    }
+
+    public function search(Request $request) {
+        try {
+            $query = $request->query('query', '');
+            Log::info('Search query received: ' . $query);
+
+            if (empty($query)) {
+                Log::info('Empty query, returning empty response');
+                return response()->json([]);
+            }
+
+            $products = Product::where('title', 'LIKE', "%{$query}%")
+                               ->orWhere('article', 'LIKE', "%{$query}%")
+                               ->get();
+
+            Log::info('Found products: ' . $products->count());
+            return response()->json($products);
+        } catch (\Exception $e) {
+            Log::error('Search error: ' . $e->getMessage());
+            return response()->json(['error' => 'Server error occurred'], 500);
+        }
     }
 }

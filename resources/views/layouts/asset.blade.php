@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     @vite('resources/css/app.css')
     <title>P&K</title>
 </head>
@@ -37,13 +38,19 @@
                             </button>
                         </div> 
                     @endif     
-                    <div class="searchControl">
-                        <button class="controlButton">
+                    <div class="searchControl relative">
+                        <button class="controlButton search-toggle">
                             <span class="controlButtonContainer">
                                 <img src="{{ asset('images/search.svg') }}" alt="search" class="controlImage">
                                 <span>Поиск</span>
                             </span>
                         </button>
+                        <div class="search-popup hidden absolute top-full right-0 mt-2 w-80 bg-white border border-gray-300 rounded-lg shadow-lg z-50">
+                            <input type="text" class="search-input w-full p-3 border-b border-gray-300 rounded-t-lg focus:outline-none focus:border-red-600" placeholder="Название или артикул...">
+                            <div class="search-results max-h-60 overflow-y-auto">
+                                <!-- Результаты поиска будут добавлены через JS -->
+                            </div>
+                        </div>
                     </div>  
                     @auth
                         <div class="loginControl">
@@ -123,11 +130,6 @@
                             <span>Детям</span>
                         </a>
                     </div>
-                    {{-- <div class="navItem">
-                        <a href="{{ route('brands.index') }}">
-                            <span>Бренды</span>
-                        </a>
-                    </div> --}}
                 </div>
             </div>
         </div>
@@ -192,7 +194,7 @@
                             <li>
                                 <span>
                                     <a href="#">
-                                        <span>Правила обращение о нарушениях прав потребителей</span>
+                                        <span>Правила обращения о нарушениях прав потребителей</span>
                                     </a>
                                 </span>
                             </li>
@@ -279,8 +281,7 @@
                         <h3 class="subscribeH3">Получайте уведомления об акциях и скидках:</h3>
                         <div class="emailInputContainer">
                             <input class="emailInput" placeholder="Ваш email">
-<?php //TODO отправление почты в таблицу для рассылки, обновление страницы ?>
-                            <button type=>
+                            <button type="button">
                                 <img src="{{ asset('images/right.svg') }}" alt="right" class="rightArrowImage">
                             </button>
                         </div>
@@ -303,7 +304,7 @@
                                 <li>
                                     <span>
                                         <a href="#">
-                                            <img src="{{ asset('images/whatsapp.svg') }}" alt="telegram" class="mediaWhatappImage">
+                                            <img src="{{ asset('images/whatsapp.svg') }}" alt="whatsapp" class="mediaWhatappImage">
                                         </a>
                                     </span>
                                 </li>
@@ -334,7 +335,6 @@
                         Быстрая доставка в Россию.
                         *Подробнее на странице «<a href="#"><span>Доставка и оплата</span></a>»
                     </pre>
-
                 </div>
 
                 <div class="payment">
@@ -394,5 +394,79 @@
             </div>
         </div>
     </footer>
+
+    <script>
+        // Показать/скрыть всплывающее окно поиска
+        const searchToggle = document.querySelector('.search-toggle');
+        const searchPopup = document.querySelector('.search-popup');
+        const searchInput = document.querySelector('.search-input');
+        const searchResults = document.querySelector('.search-results');
+
+        searchToggle.addEventListener('click', () => {
+            searchPopup.classList.toggle('hidden');
+            if (!searchPopup.classList.contains('hidden')) {
+                searchInput.focus();
+            }
+        });
+
+        // Закрытие всплывающего окна при клике вне его
+        document.addEventListener('click', (e) => {
+            if (!searchToggle.contains(e.target) && !searchPopup.contains(e.target)) {
+                searchPopup.classList.add('hidden');
+            }
+        });
+
+        // Обработка ввода в поле поиска с debounce
+        let debounceTimeout;
+        searchInput.addEventListener('input', () => {
+            clearTimeout(debounceTimeout);
+            debounceTimeout = setTimeout(async () => {
+                const query = searchInput.value.trim();
+                if (query.length < 2) {
+                    searchResults.innerHTML = '';
+                    return;
+                }
+
+                try {
+                    const response = await fetch(`/search?query=${encodeURIComponent(query)}`, {
+                        method: 'GET',
+                        headers: {
+                            'Accept': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                        }
+                    });
+
+                    if (!response.ok) {
+                        const errorText = await response.text();
+                        console.error('Ошибка HTTP:', response.status, errorText);
+                        throw new Error(`HTTP error ${response.status}: ${errorText}`);
+                    }
+
+                    const products = await response.json();
+
+                    searchResults.innerHTML = '';
+                    if (products.length === 0) {
+                        searchResults.innerHTML = '<div class="p-3 text-gray-500">Ничего не найдено</div>';
+                        return;
+                    }
+
+                    products.forEach(product => {
+                        const resultItem = document.createElement('a');
+                        resultItem.href = `/products/${product.id}`;
+                        resultItem.className = 'block p-3 hover:bg-gray-100 border-b border-gray-200';
+                        resultItem.innerHTML = `
+                            <div class="font-semibold">${product.title}</div>
+                            <div class="text-sm text-gray-500">Артикул: ${product.article}</div>
+                        `;
+                        searchResults.appendChild(resultItem);
+                    });
+                } catch (error) {
+                    console.error('Ошибка поиска:', error.message);
+                    console.error('Полный стек ошибки:', error);
+                    searchResults.innerHTML = `<div class="p-3 text-red-500">Ошибка поиска: ${error.message}</div>`;
+                }
+            }, 300); // Debounce delay
+        });
+    </script>
 </body>
 </html>

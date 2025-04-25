@@ -67,3 +67,4 @@ Route::post('/admin/orders/{id}/update', [OrderController::class, 'updateStatus'
 Route::get('/admin/preorders', [OrderController::class, 'index'])->name('admin.preorders.index');
 Route::get('/order/confirmation/{preOrderId}', [CartController::class, 'confirmation'])->name('order.confirmation');
 Route::get('/order/invoice/{preOrderId}', [CartController::class, 'downloadInvoice'])->name('order.invoice.download');
+Route::get('/search', [ProductController::class, 'search'])->name('search');
