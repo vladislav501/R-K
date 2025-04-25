@@ -5,52 +5,122 @@ namespace App\Http\Controllers;
 use App\Models\Category;
 use App\Models\Image;
 use App\Models\Product;
+use App\Models\Brand;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Log;
 
 class ProductController extends Controller {
 
-    public function index() {
-        $products = Product::all();
-        return view('products', compact('products'));
+    public function index(Request $request) {
+        return $this->filterProducts($request, null, 'products');
     }
 
-    public function indexWomans() {
-        $products = Product::all();
-        return view('womans', compact('products'));
+    public function indexWomans(Request $request) {
+        return $this->filterProducts($request, 1, 'products');
     }
 
-    public function indexMans() {
-        $products = Product::all();
-        $categories = Category::all();
-        return view('mans', compact('products', 'categories'));
+    public function indexMans(Request $request) {
+        return $this->filterProducts($request, 2, 'products');
     }
 
-    public function indexAccessory() {
-        $products = Product::all();
-        return view('accessory', compact('products'));
+    public function indexAccessory(Request $request) {
+        return $this->filterProducts($request, 3, 'products');
     }
 
-    public function indexKids() {
-        $products = Product::all();
-        return view('kids', compact('products'));
+    public function indexKids(Request $request) {
+        return $this->filterProducts($request, 4, 'products');
     }
 
-    public function indexShoes() {
-        $products = Product::all();
-        return view('shoes', compact('products'));
+    public function indexShoes(Request $request) {
+        return $this->filterProducts($request, 5, 'products');
     }
 
-    public function indexSale() {
-        $products = Product::all();
-        return view('sale', compact('products'));
+    public function indexSale(Request $request) {
+        return $this->filterProducts($request, 6, 'products');
+    }
+
+    protected function filterProducts(Request $request, $categoryId = null, $view) {
+        try {
+            $query = Product::query();
+            Log::info('Filter request received', $request->all());
+
+            // Apply category filter if specified
+            if ($categoryId) {
+                $query->where('categoryId', $categoryId);
+                Log::info('Applied category filter: ' . $categoryId);
+            }
+
+            // Apply filters from request
+            if ($request->has('colors') && !empty($request->input('colors'))) {
+                $colors = $request->input('colors');
+                $query->where(function ($q) use ($colors) {
+                    foreach ($colors as $color) {
+                        $q->orWhereJsonContains('color', $color);
+                    }
+                });
+                Log::info('Applied color filter: ', $colors);
+            }
+
+            if ($request->has('sizes') && !empty($request->input('sizes'))) {
+                $sizes = $request->input('sizes');
+                $query->where(function ($q) use ($sizes) {
+                    foreach ($sizes as $size) {
+                        $q->orWhereJsonContains('size', $size);
+                    }
+                });
+                Log::info('Applied size filter: ', $sizes);
+            }
+
+            if ($request->has('brands') && !empty($request->input('brands'))) {
+                $brands = $request->input('brands');
+                $query->whereIn('brandId', $brands);
+                Log::info('Applied brand filter: ', $brands);
+            }
+
+            if ($request->has('sex') && !empty($request->input('sex'))) {
+                $sex = $request->input('sex');
+                $query->whereIn('sex', $sex);
+                Log::info('Applied sex filter: ', $sex);
+            }
+
+            if ($request->has('min_price') && $request->has('max_price')) {
+                $minPrice = $request->input('min_price');
+                $maxPrice = $request->input('max_price');
+                if ($minPrice !== '' && $maxPrice !== '') {
+                    $query->whereBetween('price', [(float)$minPrice, (float)$maxPrice]);
+                    Log::info('Applied price filter: ', ['min' => $minPrice, 'max' => $maxPrice]);
+                }
+            }
+
+            if ($request->has('availability') && $request->input('availability') === 'true') {
+                $query->where('availability', true);
+                Log::info('Applied availability filter: true');
+            }
+
+            $products = $query->with('images')->get();
+            $categories = Category::all();
+            $brands = Brand::all();
+
+            Log::info('Found products: ' . $products->count());
+
+            // For AJAX requests, return JSON
+            if ($request->ajax()) {
+                return response()->json($products);
+            }
+
+            // For regular requests, return view
+            return view($view, compact('products', 'categories', 'brands'));
+        } catch (\Exception $e) {
+            Log::error('Filter error: ' . $e->getMessage());
+            return response()->json(['error' => 'Server error occurred'], 500);
+        }
     }
 
     public function create() {
-        $brands = \App\Models\Brand::all();
+        $brands = Brand::all();
         $types = \App\Models\Type::all();
-        $categories = \App\Models\Category::all();
+        $categories = Category::all();
         $collections = \App\Models\Collection::all();
         return view('addProduct', compact('brands', 'types', 'categories', 'collections'));    
     }    
@@ -105,9 +175,9 @@ class ProductController extends Controller {
     }
 
     public function edit(Product $product) {
-        $brands = \App\Models\Brand::all();
+        $brands = Brand::all();
         $types = \App\Models\Type::all();
-        $categories = \App\Models\Category::all();
+        $categories = Category::all();
         $collections = \App\Models\Collection::all();
         return view('editProduct', compact('product', 'brands', 'types', 'categories', 'collections'));
     }

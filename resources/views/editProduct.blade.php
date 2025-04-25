@@ -63,8 +63,8 @@
                     <div class="flex flex-wrap gap-3">
                         @foreach(['Red' => '#FF0000', 'Orange' => '#FFA500', 'Yellow' => '#FFFF00', 'Green' => '#008000', 'Blue' => '#0000FF', 'Purple' => '#800080', 'Brown' => '#A52A2A', 'Black' => '#000000'] as $colorName => $colorCode)
                             <label class="color-option cursor-pointer">
-                                <input type="checkbox" name="color[]" value="{{ $colorName }}" class="hidden color-checkbox" {{ in_array($colorName, $product->color ?? []) ? 'checked' : '' }}>
-                                <span class="color-circle w-8 h-8 rounded-full border-2 border-gray-300 {{ in_array($colorName, $product->color ?? []) ? 'border-red-600 scale-110' : '' }}" style="background-color: {{ $colorCode }};"></span>
+                                <input type="checkbox" name="color[]" value="{{ $colorName }}" class="hidden color-checkbox">
+                                <span class="color-circle inline-block w-8 h-8 rounded-full border-2 border-gray-300" style="background-color: {{ $colorCode }};"></span>
                             </label>
                         @endforeach
                     </div>

@@ -360,55 +360,66 @@
     }
 
     .products {
-        @apply w-full sm:w-3/4 flex flex-wrap justify-center sm:justify-around gap-4;
+        @apply w-full sm:w-3/4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4;
     }
 
     .productsItem {
-        @apply w-full sm:w-5/12 md:w-1/4 h-auto rounded-lg shadow-lg transition-transform hover:scale-105 mb-4 flex flex-col;
+        @apply bg-white rounded-lg shadow-md transition-transform hover:scale-105 flex flex-col;
+        width: 300px;
+        height: 530px;
     }
 
     .itemPhoto {
-        @apply h-auto rounded-t-lg;
+        @apply rounded-t-lg;
+        height: 60%; /* 318px */
     }
 
     .productItemImage {
-        @apply rounded-t-lg w-full h-auto;
+        @apply rounded-t-lg w-full h-full object-cover;
+    }
+
+    .productsInfoContainer {
+        @apply flex flex-col px-4;
+        height: 10%; /* 53px */
+        margin-top: 5%; /* 26.5px */
     }
 
     .itemInfo {
-        @apply flex-1 min-h-0 flex flex-col justify-start p-1;
-    }
-
-    .itemInfo h3 {
-        @apply font-semibold text-sm sm:text-base mb-1;
+        @apply flex flex-col;
     }
 
     .itemInfo .price {
-        @apply text-lg sm:text-xl mb-1;
+        @apply text-base sm:text-lg font-semibold;
+    }
+
+    .itemInfo h3 {
+        @apply text-sm sm:text-base text-gray-600;
     }
 
     .productsBtnsContainer {
-        @apply flex flex-row justify-evenly items-center mt-1 py-1;
+        @apply flex flex-col sm:flex-row items-center justify-between px-4 mt-[5%]; /* 26.5px */
+        height: 17%; /* 90px */
+        padding-bottom: 3%; /* 15.9px */
     }
 
     .productsCartBtn {
-        @apply w-7/12 h-12 sm:h-14 bg-green-500 rounded-lg text-white font-montserrat-bold text-sm sm:text-base px-4 py-2 transition-all hover:bg-white hover:text-green-500 hover:border-2 hover:border-green-500;
+        @apply w-full sm:w-3/5 h-14 bg-green-500 rounded-lg text-white font-montserrat-bold text-base px-4 py-2 transition-all hover:bg-white hover:text-green-500 hover:border-2 hover:border-green-500;
     }
 
     .productsRemoveCartBtn {
-        @apply w-7/12 h-12 sm:h-14 bg-red-600 rounded-lg text-white font-montserrat-bold text-sm sm:text-base px-4 py-2 transition-all hover:bg-white hover:text-red-600 hover:border-2 hover:border-red-600;
+        @apply w-full sm:w-2/5 h-12 bg-red-600 rounded-lg text-white font-montserrat-bold text-sm px-4 py-2 transition-all hover:bg-white hover:text-red-600 hover:border-2 hover:border-red-600;
     }
 
     .productsCartBtnForm, .productsRemoveCartBtnForm {
-        @apply w-7/12;
+        @apply w-full sm:w-3/5;
     }
 
     .productsFavoriteBtnForm {
-        @apply flex w-2/12;
+        @apply flex w-full sm:w-1/5;
     }
 
     .productsFavoriteBtn {
-        @apply w-full h-12 sm:h-14 bg-white rounded-lg border-none text-green-500 font-montserrat-bold text-sm sm:text-base px-4 py-2 transition-all hover:bg-white hover:text-green-500 hover:border-2 hover:border-green-500;
+        @apply w-full h-12 bg-white rounded-lg border-none text-green-500 font-montserrat-bold text-sm px-4 py-2 transition-all hover:bg-white hover:text-green-500 hover:border-2 hover:border-green-500;
     }
 
     .favoriteItemImage {
@@ -743,3 +754,22 @@
     }
 }
 
+.filters {
+    transition: all 0.3s ease-in-out;
+}
+
+.filterGroup label {
+    cursor: pointer;
+}
+
+.filterGroup input[type="checkbox"] {
+    accent-color: #dc2626;
+}
+
+.productsItem {
+    transition: transform 0.2s;
+}
+
+.productsItem:hover {
+    transform: translateY(-5px);
+}
