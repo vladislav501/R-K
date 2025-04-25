@@ -22,8 +22,8 @@ return new class extends Migration
             $table->string('title');
             $table->string('shortTitle');
             $table->text('description');
-            $table->string('color')->default('-');
-            $table->string('size')->default('-');
+            $table->json('color')->nullable();
+            $table->json('size')->nullable();
             $table->double('price');
             $table->unsignedInteger('imageId')->nullable();
             $table->string('composition')->default('-');

@@ -9,10 +9,7 @@ class Image extends Model
     protected $fillable = [
         'productId', 
         'previewImagePath', 
-        'imagePath1', 
-        'imagePath2', 
-        'imagePath3', 
-        'imagePath4'
+        'imagePath1'
     ];
 
     public function product() {

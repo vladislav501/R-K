@@ -16,9 +16,6 @@ return new class extends Migration
             $table->unsignedInteger('productId');
             $table->string('previewImagePath'); 
             $table->string('imagePath1'); 
-            $table->string('imagePath2'); 
-            $table->string('imagePath3'); 
-            $table->string('imagePath4');
             $table->timestamps();
         });
     }
@@ -27,7 +24,7 @@ return new class extends Migration
      * Reverse the migrations.
      */
     public function down(): void
-    {
-        Schema::dropIfExists('images');
-    }
+        {
+            Schema::dropIfExists('images');
+        }
 };

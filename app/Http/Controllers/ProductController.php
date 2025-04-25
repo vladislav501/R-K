@@ -47,31 +47,35 @@ class ProductController extends Controller {
     }
 
     public function create() {
-        return view('addProduct');    
+        $brands = \App\Models\Brand::all();
+        $types = \App\Models\Type::all();
+        $categories = \App\Models\Category::all();
+        $collections = \App\Models\Collection::all();
+        return view('addProduct', compact('brands', 'types', 'categories', 'collections'));    
     }    
 
     public function store(Request $request) {
         $data = $request->validate([
-            'brandId' => 'required',
-            'sex' => 'required',
-            'typeId' => 'required',
-            'collectionId' => 'required',
-            'categoryId' => 'required',
-            'title' => 'string',
-            'shortTitle' => 'required',
-            'description' => 'required',
-            'color' => 'required',
-            'price' => 'required',
-            'composition' => 'required',
-            'designCountry' => 'required',
-            'manufacturenCountry' => 'required',
-            'importer' => 'required',
-            'availability' => 'string',
-            'previewImage' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
-            'image1' => 'image|mimes:jpeg,png,jpg|max:2048', 
-            'image2' => 'image|mimes:jpeg,png,jpg|max:2048', 
-            'image3' => 'image|mimes:jpeg,png,jpg|max:2048',
-            'image4' => 'image|mimes:jpeg,png,jpg|max:2048', 
+            'brandId' => 'required|integer',
+            'sex' => 'required|string',
+            'typeId' => 'required|integer',
+            'collectionId' => 'required|integer',
+            'categoryId' => 'required|integer',
+            'title' => 'required|string',
+            'shortTitle' => 'required|string',
+            'description' => 'required|string',
+            'color' => 'required|array',
+            'color.*' => 'string|in:Red,Orange,Yellow,Green,Blue,Purple,Brown,Black',
+            'size' => 'required|array',
+            'size.*' => 'string|in:XS,S,M,L,XL,XXL',
+            'price' => 'required|numeric',
+            'composition' => 'required|string',
+            'designCountry' => 'required|string',
+            'manufacturenCountry' => 'required|string',
+            'importer' => 'required|string',
+            'availability' => 'nullable|string',
+            'previewImage' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'image1' => 'required|image|mimes:jpeg,png,jpg|max:2048', 
         ]);
     
         if (empty($data['article'])) {
@@ -84,9 +88,6 @@ class ProductController extends Controller {
             'productId' => $product->id,
             'previewImagePath' => $request->file('previewImage')->store('productImages', 'public'),
             'imagePath1' => $request->file('image1')->store('productImages', 'public'),
-            'imagePath2' => $request->file('image2')->store('productImages', 'public'),
-            'imagePath3' => $request->file('image3')->store('productImages', 'public'),
-            'imagePath4' => $request->file('image4')->store('productImages', 'public'),
         ];
     
         $image = Image::create($imageData);
@@ -94,7 +95,7 @@ class ProductController extends Controller {
         $product->imageId = $image->id; 
         $product->save(); 
 
-        return redirect()->route('products.index');
+        return redirect()->route('products.index')->with('success', 'Product added successfully!');
     }
 
     public function show(Product $product) {
@@ -103,40 +104,46 @@ class ProductController extends Controller {
     }
 
     public function edit(Product $product) {
-        return view('editProduct', compact('product'));
+        $brands = \App\Models\Brand::all();
+        $types = \App\Models\Type::all();
+        $categories = \App\Models\Category::all();
+        $collections = \App\Models\Collection::all();
+        return view('editProduct', compact('product', 'brands', 'types', 'categories', 'collections'));
     }
 
-    public function update(Product $product) {
-        $data = request()->validate([
-            'brandId' => 'required',
-            'sex' => 'required',
-            'typeId' => 'required',
-            'collectionId' => 'required',
-            'categoryId' => 'required',
-            'title' => 'string',
-            'shortTitle' => 'required',
-            'description' => 'required',
-            'color' => 'required',
-            'price' => 'required',
-            'price' => 'required',
-            'image' => 'required',
-            'composition' => 'required',
-            'designCountry' => 'required',
-            'manufacturenCountry' => 'required',
-            'importer' => 'required',
-            'availability' => 'string',
+    public function update(Request $request, Product $product) {
+        $data = $request->validate([
+            'brandId' => 'required|integer',
+            'sex' => 'required|string',
+            'typeId' => 'required|integer',
+            'collectionId' => 'required|integer',
+            'categoryId' => 'required|integer',
+            'title' => 'required|string',
+            'shortTitle' => 'required|string',
+            'description' => 'required|string',
+            'color' => 'required|array',
+            'color.*' => 'string|in:Red,Orange,Yellow,Green,Blue,Purple,Brown,Black',
+            'size' => 'required|array',
+            'size.*' => 'string|in:XS,S,M,L,XL,XXL',
+            'price' => 'required|numeric',
+            'composition' => 'required|string',
+            'designCountry' => 'required|string',
+            'manufacturenCountry' => 'required|string',
+            'importer' => 'required|string',
+            'availability' => 'nullable|string',
         ]);
+
         $product->update($data);
-        return redirect()->route('product.show', $product->id);
+        return redirect()->route('product.show', $product->id)->with('success', 'Product updated successfully!');
     }
 
     public function delete(Product $product) {
         $product->delete();
-        return redirect()->route('products.index');
+        return redirect()->route('products.index')->with('success', 'Product deleted successfully!');
     }
 
     public function getProductsByCategory($categoryId) {
-        $products = Product::where('category_id', $categoryId)->get();
+        $products = Product::where('categoryId', $categoryId)->get();
         return response()->json($products);
     }
 }

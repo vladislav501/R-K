@@ -29,6 +29,11 @@ class Product extends Model
         'importer',
         'availability',
     ];
+
+    protected $casts = [
+        'color' => 'array',
+        'size' => 'array',
+    ];
     
     protected $table = 'products';
 
