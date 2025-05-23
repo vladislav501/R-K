@@ -1,795 +1,151 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-@font-face {
-    font-family: 'MontserratBold';
-    src: url('/resources/fonts/Montserrat-Bold.ttf');
+/* ===== Глобальные стили ===== */
+:root {
+  --primary-color: #3a4f7a;
+  --primary-light: #4d6cab;
+  --secondary-color: #f8f9fa;
+  --accent-color: #ff7e5f;
+  --text-dark: #2c3e50;
+  --text-light: #7f8c8d;
+  --border-color: #e0e0e0;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.12);
+  --shadow-md: 0 4px 6px rgba(0,0,0,0.1);
+  --transition: all 0.3s ease;
 }
 
-@font-face {
-    font-family: 'MontserratRegular';
-    src: url('/resources/fonts/Montserrat-Regular.ttf');
+body {
+  font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+  color: var(--text-dark);
+  background-color: #f5f7fa;
+  line-height: 1.6;
 }
 
-@layer base {
-    body {
-        @apply font-montserrat-regular text-base bg-gray-100;
-    }
-
-    h1 {
-        @apply font-montserrat-bold text-2xl sm:text-3xl md:text-4xl;
-    }
-
-    h2 {
-        @apply font-semibold text-xl sm:text-2xl;
-    }
-
-    h3 {
-        @apply font-semibold text-sm sm:text-base;
-    }
+/* ===== Навигационная панель ===== */
+.navbar {
+  box-shadow: var(--shadow-md);
+  padding: 0.8rem 1rem;
+  background: white !important;
 }
 
-@layer components {
-    .topHeader {
-        @apply fixed top-0 left-0 right-0 h-16 sm:h-20 z-50 flex items-center justify-between px-4 sm:px-6 bg-white shadow-md;
-    }
-
-    .topheaderLeft {
-        @apply flex items-center justify-between w-1/2 sm:w-1/4 md:w-1/5;
-    }
-
-    .burgerContainer {
-        @apply flex w-full sm:w-1/2 justify-between;
-    }
-
-    .burgerText {
-        @apply font-semibold transition-colors hover:text-red-600;
-    }
-
-    .logo {
-        @apply flex items-center text-2xl sm:text-3xl md:text-4xl font-semibold;
-    }
-
-    .topheaderControls {
-        @apply flex items-center justify-between w-full sm:w-3/4 md:w-[500px] px-2;
-    }
-
-    .controlButton {
-        @apply text-xs sm:text-sm;
-    }
-
-    .controlButtonContainer {
-        @apply flex flex-col items-center transition-transform hover:scale-110;
-    }
-
-    .controlImage {
-        @apply w-4 h-4 sm:w-5 sm:h-5;
-    }
-
-    .adminControl {
-        @apply bg-green-500 border border-green-500 rounded-lg px-2 py-1 text-white transition-transform hover:scale-110;
-    }
-
-    .downHeader {
-        @apply flex items-center justify-center h-12 sm:h-16 mt-16 sm:mt-20;
-    }
-
-    .navBar {
-        @apply flex flex-wrap justify-center sm:justify-between w-full sm:w-3/4 md:w-1/2 font-montserrat-bold text-sm sm:text-base gap-2 sm:gap-0;
-    }
-
-    .navItem, .saleNavItem {
-        @apply transition-all hover:scale-105;
-    }
-
-    .navItem:hover {
-        @apply text-red-600;
-    }
-
-    .saleNavItem {
-        @apply text-red-600;
-    }
-
-    .saleNavItem:hover {
-        @apply text-black;
-    }
-
-    .footerHr {
-        @apply w-11/12 sm:w-3/4 mx-auto border-t my-6 sm:my-8;
-    }
-
-    .footerContainer {
-        @apply flex flex-col;
-    }
-
-    footer a {
-        @apply transition-colors hover:text-red-600;
-    }
-
-    .topFooter {
-        @apply flex flex-col sm:flex-row justify-center sm:justify-evenly gap-6 sm:gap-0 mx-4 sm:mx-8 mb-4 sm:mb-6;
-    }
-
-    .downFooter {
-        @apply flex flex-col sm:flex-row justify-center sm:justify-evenly gap-6 sm:gap-0 px-4 sm:px-8;
-    }
-
-    .footerLabel {
-        @apply mb-4 sm:mb-6;
-    }
-
-    .popularCategories, .customer, .information {
-        @apply text-xs sm:text-sm;
-    }
-
-    .number {
-        @apply flex flex-row items-center;
-    }
-
-    .number img {
-        @apply w-4 h-4 sm:w-5 sm:h-5;
-    }
-
-    .numberText {
-        @apply font-montserrat-bold text-[10px] sm:text-xs text-gray-500 whitespace-pre-line;
-    }
-
-    .subscribeContainer {
-        @apply flex flex-col justify-between h-full sm:h-3/4;
-    }
-
-    .emailInputContainer {
-        @apply flex justify-between items-center border-b-2 border-gray-300;
-    }
-
-    .emailInput {
-        @apply bg-white w-full;
-    }
-
-    .categoriesList li, .infoForCustomerList li, .infoLinksList li {
-        @apply mb-2 sm:mb-3;
-    }
-
-    .rightArrowImage {
-        @apply w-5 h-5;
-    }
-
-    .mediaList {
-        @apply flex flex-row items-center justify-between;
-    }
-
-    .mediaTelegramImage, .mediaInstagramImage, .mediaWhatappImage, 
-    .mediaFacebookImage, .mediaPinterestImage {
-        @apply w-6 h-6 sm:w-8 sm:h-8;
-    }
-
-    .shopInfo, .payment {
-        @apply w-full sm:w-1/3;
-    }
-
-    .shopInfoText {
-        @apply text-sm text-gray-500 whitespace-pre-line;
-    }
-
-    .paymentList {
-        @apply flex flex-row items-center justify-between;
-    }
-
-    .contentContainer {
-        @apply mx-4 sm:mx-8 md:mx-16 lg:mx-32 mt-4 sm:mt-6;
-    }
-
-    .contentHome {
-        @apply flex flex-col items-center;
-    }
-
-    .celebritiesContainer, .saleContainer {
-        @apply flex flex-col items-center;
-    }
-
-    .homeBlockImage {
-        @apply w-full my-4 sm:my-6;
-    }
-
-    .homeBlockControls {
-        @apply flex flex-col items-center;
-    }
-
-    .homeBlockTitle {
-        @apply flex items-center justify-center;
-    }
-
-    .homeBlockText {
-        @apply mx-4 sm:mx-16 md:mx-32 text-center;
-    }
-
-    .homeBlockButton {
-        @apply my-4 sm:my-6 w-3/4 sm:w-1/3 md:w-1/5 px-4 py-2 border-2 rounded-full text-center;
-    }
-
-    .contentTitle {
-        @apply text-center;
-    }
-
-    .adminBlocksContainer {
-        @apply flex flex-col sm:flex-row justify-center sm:justify-evenly gap-6 sm:gap-0 mt-6 sm:mt-10;
-    }
-
-    .adminBlockContainer {
-        @apply flex flex-col items-center rounded-lg shadow-lg transition-transform hover:scale-105;
-    }
-
-    .adminBlockControls {
-        @apply flex flex-col items-center my-6 sm:my-8;
-    }
-
-    .adminBlockImage {
-        @apply w-3/4 sm:w-3/5 h-auto my-8 sm:my-12;
-    }
-
-    .adminBlockText {
-        @apply text-lg sm:text-xl;
-    }
-
-    .adminBlockButton {
-        @apply my-4 sm:my-6 px-6 py-2 border-2 rounded-lg bg-gray-200 transition-all hover:bg-red-600 hover:scale-110;
-    }
-
-    .addProductForm {
-        @apply flex flex-col;
-    }
-
-    .menusContainer {
-        @apply flex flex-col sm:flex-row gap-4 sm:gap-0;
-    }
-
-    .leftMenu {
-        @apply flex flex-col items-start w-full sm:w-1/4;
-    }
-
-    .leftMenuBtn {
-        @apply my-2 sm:my-3 w-full sm:w-11/12 h-12 sm:h-14 bg-gray-100 rounded-lg text-center;
-    }
-
-    .rightMenu {
-        @apply flex flex-col w-full sm:w-3/4;
-    }
-
-    .photoContainer {
-        @apply flex flex-col sm:flex-row justify-around items-center bg-gray-100 rounded-lg h-auto sm:h-64 py-4 sm:py-0;
-    }
-
-    .photoContainerSpan {
-        @apply flex items-center justify-center;
-    }
-
-    .photoContaierImage {
-        @apply w-3/4 sm:w-4/5;
-    }
-
-    .selectPhotoBtn {
-        @apply w-24 sm:w-32;
-    }
-
-    .photoInput {
-        @apply border-none w-full sm:w-1/2;
-    }
-
-    .firstPhoto, .secondPhoto, .thirdPhoto, .fourthPhoto {
-        @apply flex items-center justify-center bg-gray-50 w-full sm:w-1/5 h-32 sm:h-3/5 rounded-lg border-4 border-dashed border-gray-300;
-    }
-
-    .brandInputContainer, .sexInputContainer, .typeInputContainer, .categoryInputContainer, 
-    .collectionInputContainer, .colorInputContainer, .sizeInputContainer, .availabilityInputContainer {
-        @apply flex flex-col sm:flex-row justify-between items-center w-full mb-4;
-    }
-
-    .brandInputContainer select, .sexInputContainer select, .typeInputContainer select, .categoryInputContainer select,
-    .collectionInputContainer select, .colorInputContainer select, .sizeInputContainer select, .availabilityInputContainer select {
-        @apply w-full sm:w-11/12;
-    }
-
-    .titleInputContainer input, .shortTitleInputContainer input, .descriptionInputContainer input, 
-    .priceInputContainer input, .compositionInputContainer input, .designCountryInputContainer input, 
-    .manufacturenCountryInputContainer input, .importerInputContainer input, .availabilityInputContainer input {
-        @apply w-full;
-    }
-
-    .productCard {
-        @apply flex flex-col sm:flex-row;
-    }
-
-    .photos {
-        @apply w-full sm:w-3/5 flex flex-col sm:flex-row;
-    }
-
-    .photosColumn {
-        @apply flex flex-col w-full sm:w-1/5 h-auto mt-4 sm:mt-2;
-    }
-
-    .bigPhoto {
-        @apply w-full sm:w-4/5 h-auto mx-auto sm:mx-2 my-4 sm:my-6 transition-transform hover:scale-110;
-    }
-
-    .infos {
-        @apply w-full sm:w-2/5;
-    }
-
-    .productInfo {
-        @apply flex flex-col;
-    }
-
-    .title, .shortTitle, .article, .collectionId,
-    .color, .sex, .size, .price, .cartBtn, .favoriteBtn,
-    .categoryId, .typeId, .brandId {
-        @apply mb-4 sm:mb-6;
-    }
-
-    .title, .price, .priceSpan {
-        @apply text-2xl sm:text-3xl md:text-4xl;
-    }
-
-    .btnsContainer {
-        @apply flex flex-col sm:flex-row justify-center sm:justify-around gap-4;
-    }
-
-    .cartBtn {
-        @apply w-full sm:w-2/5 h-12 sm:h-14 bg-green-500 rounded-lg text-white py-2 mt-4 sm:mt-6 transition-all hover:bg-white hover:text-green-500 hover:border-2 hover:border-green-500;
-    }
-
-    .favoriteBtn {
-        @apply w-full sm:w-2/5 h-12 sm:h-14 bg-white rounded-lg text-green-500 border-2 border-green-500 py-2 mt-4 sm:mt-6 transition-all hover:bg-green-500 hover:text-white;
-    }
-
-    .descriptionBlock {
-        @apply flex flex-col;
-    }
-
-    .description, .composition, .designCountry,
-    .manufacturenCountry, .importer, .availability {
-        @apply mb-4 sm:mb-6;
-    }
-
-    .productsPage {
-        @apply flex flex-col sm:flex-row justify-center gap-4;
-    }
-
-    .filters {
-        @apply w-full sm:w-1/4 bg-gray-100 rounded-lg p-4 sm:p-6 h-auto sm:h-[600px] overflow-y-auto;
-    }
-
-    .products {
-        @apply w-full sm:w-3/4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4;
-    }
-
-    .productsItem {
-        @apply bg-white rounded-lg shadow-md transition-transform hover:scale-105 flex flex-col;
-        width: 300px;
-        height: 530px;
-    }
-
-    .itemPhoto {
-        @apply rounded-t-lg;
-        height: 60%;
-    }
-
-    .productItemImage {
-        @apply rounded-t-lg w-full h-full object-cover;
-    }
-
-    .productsInfoContainer {
-        @apply flex flex-col px-4;
-        height: 10%;
-        margin-top: 5%;
-    }
-
-    .itemInfo {
-        @apply flex flex-col;
-    }
-
-    .itemInfo .price {
-        @apply text-base sm:text-lg font-semibold;
-    }
-
-    .itemInfo h3 {
-        @apply text-sm sm:text-base text-gray-600;
-    }
-
-    .productsBtnsContainer {
-        @apply flex flex-col sm:flex-row items-center justify-between px-4 mt-[5%];
-        height: 17%;
-        padding-bottom: 3%;
-    }
-
-    .productsCartBtn {
-        @apply w-full sm:w-3/5 h-14 bg-green-500 rounded-lg text-white font-montserrat-bold text-base px-4 py-2 transition-all hover:bg-white hover:text-green-500 hover:border-2 hover:border-green-500;
-    }
-
-    .productsRemoveCartBtn {
-        @apply w-full sm:w-2/5 h-12 bg-red-600 rounded-lg text-white font-montserrat-bold text-sm px-4 py-2 transition-all hover:bg-white hover:text-red-600 hover:border-2 hover:border-red-600;
-    }
-
-    .productsCartBtnForm, .productsRemoveCartBtnForm {
-        @apply w-full sm:w-3/5;
-    }
-
-    .productsFavoriteBtnForm {
-        @apply flex w-full sm:w-1/5;
-    }
-
-    .productsFavoriteBtn {
-        @apply w-full h-12 bg-white rounded-lg border-none text-green-500 font-montserrat-bold text-sm px-4 py-2 transition-all hover:bg-white hover:text-green-500 hover:border-2 hover:border-green-500;
-    }
-
-    .favoriteItemImage {
-        @apply w-6 sm:w-8;
-    }
-
-    .smallImage {
-        @apply mb-4 sm:mb-6 transition-transform hover:scale-110;
-    }
-
-    .pre-orders-table {
-        @apply w-full border-collapse;
-    }
-
-    .pre-orders-table th, .pre-orders-table td {
-        @apply border border-gray-300 p-2 sm:p-3 text-center text-sm sm:text-base;
-    }
-
-    .pre-orders-table tr:nth-child(even) {
-        @apply bg-gray-100;
-    }
-
-    .pre-orders-table tr:nth-child(odd) {
-        @apply bg-white;
-    }
-
-    .pre-orders-table th {
-        @apply bg-red-600 text-white;
-    }
-
-    .action-container {
-        @apply flex items-center justify-evenly;
-    }
-
-    .status-select {
-        @apply mr-2 sm:mr-3;
-    }
-
-    .update-button {
-        @apply bg-red-600 text-white border-none py-1 px-2 sm:py-2 sm:px-4 rounded-lg cursor-pointer transition-all hover:bg-white hover:text-red-600 hover:border hover:border-red-600;
-    }
-
-    .spanLink {
-        @apply underline;
-    }
-
-    .emptyBlock {
-        @apply flex flex-col justify-between items-center h-48 sm:h-56 w-11/12 sm:w-4/5 max-w-md mx-auto my-10 sm:my-12 bg-gray-200 p-4 sm:p-6 rounded-lg shadow-md;
-    }
-
-    .emptyBlock h2 {
-        @apply m-0 text-center;
-    }
-
-    .emptyBlock p {
-        @apply flex-grow text-center;
-    }
-
-    .emptyBlock .btn {
-        @apply underline text-red-600 font-bold;
-    }
-
-    .emptyImage {
-        @apply w-10 sm:w-12;
-    }
-
-    .authBlock {
-        @apply flex flex-col justify-between items-center h-64 sm:h-80 w-11/12 sm:w-4/5 max-w-md mx-auto my-10 sm:my-12 bg-gray-200 p-4 sm:p-6 rounded-lg shadow-md;
-    }
-
-    .authBlock h1 {
-        @apply m-0 text-center;
-    }
-
-    .authBlock form {
-        @apply flex flex-col w-full;
-    }
-
-    .authBlock input {
-        @apply my-2 sm:my-3 p-2 sm:p-3 border border-gray-300 rounded-md;
-    }
-
-    .authBlock button {
-        @apply p-2 sm:p-3 bg-red-600 text-white border-none rounded-md cursor-pointer hover:bg-red-800;
-    }
-
-    .authBlock p {
-        @apply text-center;
-    }
-
-    .authBlock a {
-        @apply text-red-600 underline;
-    }
-
-    .forSheContainer, .forHeContainer, .accessoryContainer, .shoesContainer {
-        @apply mb-6 sm:mb-10 text-center;
-    }
-
-    .imageGallery {
-        @apply flex flex-wrap justify-center gap-2 sm:gap-4 mt-4 sm:mt-6;
-    }
-
-    .imageGallery a {
-        @apply inline-block w-full sm:w-1/2 md:w-1/4;
-    }
-
-    .imageGallery img {
-        @apply w-full h-auto rounded-md transition-transform hover:scale-105;
-    }
-
-    .new-cart-content {
-        @apply max-w-4xl mx-auto p-4 sm:p-6 bg-gray-50 rounded-lg shadow-md;
-    }
-
-    .new-cart-title {
-        @apply text-center text-2xl sm:text-3xl text-gray-800 mb-4 sm:mb-6;
-    }
-
-    .new-cart-container {
-        @apply flex flex-col;
-    }
-
-    .new-cart-items {
-        @apply flex flex-col gap-4;
-    }
-
-    .new-empty-cart-block {
-        @apply text-center p-4 sm:p-6 bg-white border border-dashed border-gray-300 rounded-lg;
-    }
-
-    .new-empty-cart-image {
-        @apply w-16 sm:w-24 my-2 sm:my-4;
-    }
-
-    .new-catalog-button {
-        @apply inline-block px-4 sm:px-6 py-2 sm:py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700;
-    }
-
-    .new-cart-product-item {
-        @apply flex flex-col sm:flex-row items-center p-4 bg-white border border-gray-200 rounded-md;
-    }
-
-    .new-product-image {
-        @apply w-full sm:w-24 mb-4 sm:mb-0;
-    }
-
-    .new-product-thumbnail {
-        @apply w-full rounded-md;
-    }
-
-    .new-product-details {
-        @apply flex-1 p-0 sm:p-4;
-    }
-
-    .new-product-price {
-        @apply text-lg sm:text-xl text-green-600;
-    }
-
-    .new-product-title {
-        @apply text-base sm:text-lg text-gray-800;
-    }
-
-    .new-product-quantity {
-        @apply flex items-center justify-center mb-4 sm:mb-0;
-    }
-
-    .new-quantity-controls {
-        @apply flex items-center gap-2 sm:gap-3;
-    }
-
-    .new-quantity-button {
-        @apply w-12 h-12 sm:w-14 sm:h-14 bg-green-500 text-white border-none rounded-lg text-xl font-montserrat-bold cursor-pointer transition-all hover:bg-green-600 active:scale-95;
-    }
-
-    .new-quantity-input {
-        @apply w-16 h-12 sm:w-20 sm:h-14 text-center border-2 border-gray-200 rounded-lg text-base sm:text-lg text-gray-800 bg-gray-50 outline-none focus:border-green-500 focus:shadow-md;
-    }
-
-    .new-product-actions {
-        @apply flex flex-col items-center sm:items-end;
-    }
-
-    .new-remove-cart-button {
-        @apply px-4 sm:px-6 py-2 sm:py-3 bg-red-600 text-white border-none rounded-lg font-montserrat-bold text-sm sm:text-base cursor-pointer transition-all hover:bg-red-700;
-    }
-
-    .new-favorite-button {
-        @apply px-4 sm:px-6 py-2 sm:py-3 bg-yellow-500 text-white border-none rounded-lg font-montserrat-bold text-sm sm:text-base cursor-pointer transition-all hover:bg-yellow-600;
-    }
-
-    .new-cart-summary {
-        @apply mt-4 sm:mt-6 p-4 sm:p-6 bg-gray-200 rounded-md;
-    }
-
-    .new-total-amount {
-        @apply text-lg sm:text-xl font-bold text-gray-800;
-    }
-
-    .new-checkout-button {
-        @apply px-6 sm:px-8 py-3 sm:py-4 bg-green-600 text-white border-none rounded-lg font-montserrat-bold text-base sm:text-lg cursor-pointer transition-all hover:bg-green-700;
-    }
-
-    .order-confirmation {
-        @apply max-w-md sm:max-w-lg mx-auto my-10 sm:my-12 p-4 sm:p-6 bg-white rounded-lg shadow-md text-center;
-    }
-
-    .confirmation-title {
-        @apply text-2xl sm:text-3xl text-green-600 mb-4 sm:mb-6;
-    }
-
-    .confirmation-message {
-        @apply text-base sm:text-lg text-gray-600 mb-6 sm:mb-8;
-    }
-
-    .back-to-cart, .download-invoice {
-        @apply inline-block px-4 sm:px-6 py-2 sm:py-3 m-1 sm:m-2 text-base sm:text-lg text-white bg-blue-600 border-none rounded-md hover:bg-blue-700;
-    }
-
-    .add-product-content {
-        @apply max-w-5xl mx-auto p-4 sm:p-6 bg-white rounded-lg shadow-md;
-    }
-
-    .add-product-title {
-        @apply text-center text-gray-800 mb-4 sm:mb-6;
-    }
-
-    .add-product-menus-container {
-        @apply flex flex-col sm:flex-row justify-between gap-4;
-    }
-
-    .add-product-left-menu {
-        @apply w-full sm:w-1/4 mr-0 sm:mr-4;
-    }
-
-    .add-product-left-menu-btn {
-        @apply w-full py-2 sm:py-3 mb-2 sm:mb-3 bg-blue-600 text-white border-none rounded-md cursor-pointer hover:bg-blue-700;
-    }
-
-    .add-product-left-menu-btn a {
-        @apply text-white no-underline;
-    }
-
-    .add-product-right-menu {
-        @apply w-full sm:w-3/4;
-    }
-
-    .add-product-form {
-        @apply flex flex-col;
-    }
-
-    .add-product-form-container {
-        @apply flex flex-col;
-    }
-
-    .add-product-form-group {
-        @apply mb-4;
-    }
-
-    .add-product-form-label {
-        @apply mb-1 sm:mb-2 font-bold text-gray-800;
-    }
-
-    .add-product-form-input,
-    .add-product-form-select {
-        @apply w-full p-2 sm:p-3 border border-gray-300 rounded-md text-base sm:text-lg transition-all focus:border-blue-600 focus:outline-none;
-    }
-
-    .add-product-checkbox-label {
-        @apply flex items-center;
-    }
-
-    .add-product-form-button {
-        @apply p-2 sm:p-3 bg-green-600 text-white border-none rounded-md cursor-pointer text-base sm:text-lg hover:bg-green-700;
-    }
-
-    .add-product-form-button:last-of-type {
-        @apply bg-red-600 hover:bg-red-700;
-    }
-
-    .deleteEditBtns {
-        @apply flex items-center mt-4 sm:mt-6 w-full sm:w-1/5 justify-between;
-    }
-
-    .editButtonImg, .deleteButtonImg {
-        @apply w-8 sm:w-10;
-    }
-
-    .editButtonImg {
-        @apply bg-green-600 rounded-lg;
-    }
-
-    .deleteButtonImg {
-        @apply bg-red-600 rounded-lg;
-    }
-
-    .editButtonContainer, .deleteButtonContainer {
-        @apply flex w-1/2 sm:w-1/3 items-center justify-around;
-    }
-
-    .filters {
-        @apply bg-gray-50 rounded-lg shadow-lg p-4 sm:p-6 mb-6 sm:mb-8;
-    }
-
-    .filters h2 {
-        @apply mb-4 sm:mb-6 text-2xl sm:text-3xl text-gray-800 text-center;
-    }
-
-    .filterGroup {
-        @apply mb-4 sm:mb-6;
-    }
-
-    .filterGroup h3 {
-        @apply mb-2 sm:mb-3 text-lg sm:text-xl text-gray-600 uppercase;
-    }
-
-    .filterButton {
-        @apply w-full py-3 sm:py-4 bg-red-600 text-white border-none rounded-lg cursor-pointer text-base sm:text-lg transition-all hover:bg-red-700 hover:scale-105 focus:outline-none focus:shadow-md;
-    }
-
-    .notification {
-        @apply p-4 rounded-lg shadow-lg text-white flex justify-between items-center max-w-sm transition-all duration-300;
-    }
+.navbar-brand {
+  font-weight: 700;
+  font-size: 1.5rem;
+  color: var(--primary-color) !important;
+  display: flex;
+  align-items: center;
 }
 
-@layer utilities {
-    .font-montserrat-regular {
-        font-family: 'MontserratRegular', sans-serif;
-    }
-
-    .font-montserrat-bold {
-        font-family: 'MontserratBold', sans-serif;
-    }
+.navbar-brand:hover {
+  color: var(--primary-light) !important;
 }
 
-.filters {
-    transition: all 0.3s ease-in-out;
+.navbar-light .navbar-nav .nav-link {
+  color: var(--text-dark);
+  font-weight: 500;
+  padding: 0.5rem 1rem;
+  margin: 0 0.2rem;
+  border-radius: 4px;
+  transition: var(--transition);
+  position: relative;
 }
 
-.filterGroup label {
-    cursor: pointer;
+.navbar-light .navbar-nav .nav-link:hover {
+  color: var(--primary-color);
+  background: rgba(58, 79, 122, 0.05);
 }
 
-.filterGroup input[type="checkbox"] {
-    accent-color: #dc2626;
+.navbar-light .navbar-nav .nav-link.active {
+  color: var(--primary-color);
+  font-weight: 600;
 }
 
-.productsItem {
-    transition: transform 0.2s;
+.navbar-toggler {
+  border: none;
+  padding: 0.5rem;
 }
 
-.productsItem:hover {
-    transform: translateY(-5px);
+.navbar-toggler:focus {
+  box-shadow: none;
 }
 
-.delivery-method {
-    margin-bottom: 15px;
+/* Иконки в навигации */
+.nav-link i {
+  margin-right: 6px;
+  font-size: 0.9em;
 }
 
-.delivery-method label {
-    display: block;
-    margin-bottom: 5px;
-    font-weight: bold;
+/* Кнопка выхода */
+.nav-link[href*="logout"] {
+  color: #e74c3c !important;
 }
 
-.delivery-method select, 
-#deliveryAddressField input, 
-#pickupPointField select {
-    width: 100%;
-    padding: 8px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    font-size: 16px;
+.nav-link[href*="logout"]:hover {
+  background: rgba(231, 76, 60, 0.1) !important;
+}
+
+/* ===== Основной контейнер ===== */
+.container {
+  padding-top: 2rem;
+  padding-bottom: 3rem;
+  animation: fadeIn 0.5s ease-out;
+}
+
+/* ===== Анимации ===== */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ===== Адаптивность ===== */
+@media (max-width: 992px) {
+  .navbar-collapse {
+    padding-top: 1rem;
+  }
+  
+  .nav-link {
+    margin: 0.2rem 0 !important;
+    padding: 0.8rem 1rem !important;
+  }
+}
+
+@media (max-width: 576px) {
+  .navbar-brand {
+    font-size: 1.3rem;
+  }
+  
+  .container {
+    padding-top: 1.5rem;
+  }
+}
+
+/* ===== Индикатор активной страницы ===== */
+.nav-link.active::after {
+  content: '';
+  position: absolute;
+  bottom: -3px;
+  left: 1rem;
+  right: 1rem;
+  height: 2px;
+  background: var(--accent-color);
+  border-radius: 2px;
+}
+
+/* ===== Дополнительные эффекты ===== */
+.nav-link {
+  position: relative;
+  overflow: hidden;
+}
+
+.nav-link::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  transition: var(--transition);
+}
+
+.nav-link:hover::before {
+  left: 100%;
 }

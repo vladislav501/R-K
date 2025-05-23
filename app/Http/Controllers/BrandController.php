@@ -3,46 +3,54 @@
 namespace App\Http\Controllers;
 
 use App\Models\Brand;
+use Illuminate\Http\Request;
 
-class BrandController extends Controller {
+class BrandController extends Controller
+{
+    public function __construct()
+    {
+        $this->middleware('can:is-admin');
+    }
 
-    public function index() {
+    public function index()
+    {
         $brands = Brand::all();
-        return view('brands', compact('brands'));
+        return view('adminBrandsIndex', compact('brands'));
     }
 
-    public function create() {
-        return view('addBrand');
+    public function create()
+    {
+        return view('adminBrandsCreate');
     }
 
-    public function store() {
-        $data = request()->validate([
-            'name' => 'string',
-            'productId' => 'string',
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255|unique:brands',
         ]);
-        Brand::create($data);
-        return redirect()->route('brands.index');
+
+        Brand::create($validated);
+        return redirect()->route('admin.brands.index')->with('success', 'Бренд успешно создан.');
     }
 
-    public function show(Brand $brand) {
-        return view('showBrand', compact('brand'));
+    public function edit(Brand $brand)
+    {
+        return view('adminBrandsEdit', compact('brand'));
     }
 
-    public function edit(Brand $brand) {
-        return view('editBrand', compact('brand'));
-    }
-
-    public function update(Brand $brand) {
-        $data = request()->validate([
-            'name' => 'string',
-            'productId' => 'string',
+    public function update(Request $request, Brand $brand)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255|unique:brands,name,' . $brand->id,
         ]);
-        $brand->update($data);
-        return redirect()->route('brand.show', $brand->id);
+
+        $brand->update($validated);
+        return redirect()->route('admin.brands.index')->with('success', 'Бренд успешно обновлён.');
     }
 
-    public function delete(Brand $brand) {
+    public function destroy(Brand $brand)
+    {
         $brand->delete();
-        return redirect()->route('brands.index', $brand->id);
+        return redirect()->route('admin.brands.index')->with('success', 'Бренд успешно удалён.');
     }
 }

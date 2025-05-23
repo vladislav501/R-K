@@ -7,25 +7,25 @@ use Illuminate\Database\Eloquent\Model;
 class Order extends Model
 {
     protected $fillable = [
-        'userId',
-        'products',
-        'receivingMethod',
-        'deliveryAddress',
-        'totalSum',
-        'status',
+        'user_id', 'total', 'status', 'delivery_method', 'delivery_address', 'store_id', 'order_date',
     ];
 
-    public function getProducts()
+    protected $casts = [
+        'order_date' => 'datetime',
+    ];
+
+    public function user()
     {
-        $products = json_decode($this->products, true);
-        $productIds = array_column($products, 'productId');
-        $result = Product::whereIn('id', $productIds)->get()->keyBy('id');
-        
-        return array_map(function ($item) use ($result) {
-            return [
-                'product' => $result[$item['productId']] ?? null,
-                'quantity' => $item['quantity'],
-            ];
-        }, $products);
+        return $this->belongsTo(User::class);
+    }
+
+    public function items()
+    {
+        return $this->hasMany(OrderItem::class);
+    }
+
+    public function store()
+    {
+        return $this->belongsTo(Store::class);
     }
 }

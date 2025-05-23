@@ -9,10 +9,12 @@ class Collection extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name'];
+    protected $fillable = ['name', 'description'];
 
     public function products()
     {
         return $this->hasMany(Product::class);
     }
 }
+
+?>

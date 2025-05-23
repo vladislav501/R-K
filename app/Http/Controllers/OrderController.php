@@ -3,36 +3,19 @@
 namespace App\Http\Controllers;
 
 use App\Models\Order;
-use App\Models\PreOrder;
-use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Routing\Controller;
 
-class OrderController extends Controller {
-
-    public function index() {
-        $preOrders = PreOrder::all(); 
-        return view('preOrders', compact('preOrders'));
+class OrderController extends Controller
+{
+    public function __construct()
+    {
+        $this->middleware('auth');
     }
 
-    public function updateStatus(Request $request, $id) {
-        $preOrder = PreOrder::findOrFail($id);
-        $preOrder->status = $request->input('status');
-        $preOrder->save();
-
-        if ($preOrder->status === 'Подтвержден') {
-            Order::create([
-                'userId' => $preOrder->userId,
-                'products' => $preOrder->products,
-                'totalSum' => $preOrder->totalSum,
-                'status' => 'Подтвержден',
-            ]);
-            $preOrder->delete();
-        }
-
-        return redirect()->route('admin.preorders.index');
-    }
-
-    public function completedOrders() {
-        $orders = Order::all(); 
+    public function index()
+    {
+        $orders = Order::where('user_id', Auth::id())->with('items.product')->get();
         return view('orders', compact('orders'));
     }
 }

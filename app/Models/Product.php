@@ -2,44 +2,68 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Product extends Model
 {
-    protected $fillable = [
-        'brandId', 'sex', 'typeId', 'collectionId', 'categoryId', 'article', 'title',
-        'shortTitle', 'description', 'color', 'size', 'price', 'imageId', 'composition',
-        'designCountry', 'manufacturenCountry', 'importer', 'availability',
-    ];
+    use HasFactory;
 
-    protected $casts = [
-        'color' => 'array',
-        'size' => 'array',
-        'availability' => 'boolean',
+    protected $fillable = [
+        'name',
+        'price',
+        'brand_id',
+        'category_id',
+        'collection_id',
+        'clothing_type_id',
+        'is_available',
     ];
 
     public function brand()
     {
-        return $this->belongsTo(Brand::class, 'brandId');
+        return $this->belongsTo(Brand::class);
     }
 
     public function category()
     {
-        return $this->belongsTo(Category::class, 'categoryId');
-    }
-
-    public function type()
-    {
-        return $this->belongsTo(Type::class, 'typeId');
+        return $this->belongsTo(Category::class);
     }
 
     public function collection()
     {
-        return $this->belongsTo(Collection::class, 'collectionId');
+        return $this->belongsTo(Collection::class);
     }
 
-    public function images()
+    public function clothingType()
     {
-        return $this->hasOne(Image::class, 'productId');
+        return $this->belongsTo(ClothingType::class);
+    }
+
+    public function colors()
+    {
+        return $this->belongsToMany(Color::class, 'product_color');
+    }
+
+    public function sizes()
+    {
+        return $this->belongsToMany(Size::class, 'product_size');
+    }
+
+    public function colorSizes()
+{
+    return $this->hasMany(ProductColorSize::class);
+}
+
+    public function stores()
+    {
+        return $this->belongsToMany(Store::class, 'product_store')
+                    ->withPivot('quantity');
+    }
+
+    public function supplies()
+    {
+        return $this->hasMany(Supply::class);
     }
 }
+
+?>

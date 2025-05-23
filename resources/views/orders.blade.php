@@ -1,41 +1,24 @@
-@extends('layouts.asset')
+@extends('layouts.app')
+
+@section('title', 'Мои заказы')
+
 @section('content')
-    <h2>
-        <span class="spanLink">
-            <a href="{{ route('admin.preorders.index') }}">Модерация заказов</a>
-        </span>
-    </h2>
-    <h1 class="contentTitle">Архив заказов</h1>
-    <table class="pre-orders-table">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Пользователь</th>
-                <th>Товары</th>
-                <th>Способ получения</th>
-                <th>Адрес доставки / пункта выдачи</th>
-                <th>Сумма</th>
-                <th>Статус</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach($orders as $order)
-                <tr>
-                    <td>{{ $order->id }}</td>
-                    <td>{{ $order->userId }}</td>
-                    <td>
-                        @foreach($order->getProducts() as $item)
-                            @if($item['product'])
-                                {{ $item['product']->shortTitle }} ({{ $item['quantity'] }} шт.)<br>
-                            @endif
-                        @endforeach
-                    </td>
-                    <td>{{ $preOrder->receivingMethod }}</td>
-                    <td>{{ $preOrder->deliveryAddress }}</td>
-                    <td>{{ $order->totalSum }}</td>
-                    <td>{{ $order->status }}</td>
-                </tr>
-            @endforeach
-        </tbody>
-    </table>
+    <h1>Мои заказы</h1>
+    @forelse($orders as $order)
+        <div>
+            <h2>Заказ #{{ $order->id }}</h2>
+            <p>Статус: {{ $order->status }}</p>
+            <p>Способ получения: {{ $order->delivery_method }}</p>
+            <p>Общая сумма: {{ $order->total }} ₽</p>
+            <h3>Товары:</h3>
+            <ul>
+                @foreach($order->items as $item)
+                    <li>{{ $item->product->name }} - {{ $item->quantity }} шт. ({{ $item->price }} ₽)</li>
+                @endforeach
+            </ul>
+        </div>
+    @empty
+        <p>У вас нет заказов.</p>
+    @endforelse
+    <a href="{{ route('products.index') }}">Вернуться к товарам</a>
 @endsection
