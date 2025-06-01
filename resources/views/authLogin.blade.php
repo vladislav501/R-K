@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="auth-container">
+<div class="auth-login-container">
     <div class="auth-card">
         <h1 class="auth-title">Вход</h1>
         <form action="{{ route('login') }}" method="POST" class="auth-form">
@@ -25,6 +25,9 @@
         <div class="auth-footer">
             Нет аккаунта? <a href="{{ route('register') }}" class="auth-link">Зарегистрироваться</a>
         </div>
+    </div>
+    <div class="quote-section">
+        <h2 class="quote-text">"Наш магазин – выбор тех, кто ценит стиль и качество"</h2>
     </div>
 </div>
 @endsection
