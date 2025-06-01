@@ -12,7 +12,6 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\SizeController;
 use App\Http\Controllers\SupplyController;
 use App\Http\Controllers\UserController;
-use App\Http\Controllers\TestCartController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -40,7 +39,6 @@ Route::middleware('auth')->group(function () {
     Route::post('/orders/{cart}/confirm', [UserController::class, 'confirmOrder'])->name('orders.confirm');
 
     Route::middleware(['auth'])->group(function () {
-        Route::post('/cart/place-order-test', [TestCartController::class, 'placeOrder'])->name('cart.place-order-test');
         Route::post('/cart/place-order', [CartController::class, 'placeOrder'])->name('cart.place-order');
         Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
         Route::post('/cart/{product}', [CartController::class, 'add'])->name('cart.add');
@@ -64,10 +62,11 @@ Route::middleware('auth')->group(function () {
         Route::resource('sizes', SizeController::class)->only(['index', 'create', 'store', 'destroy']);
         Route::resource('collections', CollectionController::class)->except(['show']);
         Route::resource('products', ProductController::class);
-        Route::resource('supplies', SupplyController::class)->only(['index', 'create', 'store', 'archive']);
-        Route::post('supplies/store-step1', [SupplyController::class, 'storeStep1'])->name('supplies.store.step1');
-        Route::post('supplies/store-step2', [SupplyController::class, 'storeStep2'])->name('supplies.store.step2');
-        Route::get('supplies/archive', [SupplyController::class, 'archive'])->name('supplies.archive');
+        Route::get('/supplies', [SupplyController::class, 'index'])->name('admin.supplies.index');
+        Route::get('/supplies/create', [SupplyController::class, 'create'])->name('admin.supplies.create');
+        Route::post('/supplies', [SupplyController::class, 'store'])->name('admin.supplies.store');
+        Route::get('/supplies/archive', [SupplyController::class, 'archive'])->name('admin.supplies.archive');
+        Route::get('/supplies/{supply}/download', [SupplyController::class, 'downloadSupplyList'])->name('admin.supplies.download');
     });
 
     Route::prefix('manager')->middleware('can:is-manager')->name('manager.')->group(function () {
@@ -78,9 +77,10 @@ Route::middleware('auth')->group(function () {
         Route::put('/orders/{cart}/status', [ManagerController::class, 'updateOrderStatus'])->name('orders.updateStatus');
         Route::get('/products', [ManagerController::class, 'productsIndex'])->name('products.index');
         Route::put('/products/{product}/availability', [ManagerController::class, 'updateProductAvailability'])->name('products.updateAvailability');
-        Route::get('/supplies', [ManagerController::class, 'suppliesIndex'])->name('supplies.index');
-        Route::get('/supplies/{supply}/check', [ManagerController::class, 'showSupplyCheck'])->name('supply.check');
-        Route::get('/supplies/archive', [ManagerController::class, 'suppliesArchive'])->name('supplies.archive');
-        Route::post('/supplies/{supply}/confirm', [ManagerController::class, 'confirmSupply'])->name('supplies.confirm');
+        Route::get('/supplies', [ManagerController::class, 'suppliesIndex'])->name('manager.supplies.index');
+        Route::get('/supplies/archive', [ManagerController::class, 'suppliesArchive'])->name('manager.supplies.archive');
+        Route::get('/supplies/{supply}/check', [ManagerController::class, 'showSupplyCheck'])->name('manager.supply.check');
+        Route::post('/supplies/{supply}/confirm', [ManagerController::class, 'confirmSupply'])->name('manager.supplies.confirm');
+        Route::get('/supplies/{supply}/download', [ManagerController::class, 'downloadSupplyList'])->name('manager.supplies.download');
     });
 });

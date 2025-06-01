@@ -15,6 +15,6 @@
         <h2>Быстрые действия</h2>
         <a href="{{ route('manager.orders.index') }}">Просмотреть заказы</a>
         <a href="{{ route('manager.products.index') }}">Управление товарами</a>
-        <a href="{{ route('manager.supplies.index') }}">Поставки</a>
+        <a href="/manager/supplies">Поставки</a>
     </div>
 @endsection

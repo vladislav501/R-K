@@ -14,8 +14,9 @@ return new class extends Migration
             $table->foreignId('product_id')->constrained()->onDelete('cascade');
             $table->foreignId('color_id')->nullable()->constrained()->onDelete('set null');
             $table->foreignId('size_id')->nullable()->constrained()->onDelete('set null');
-            $table->integer('quantity');
+            $table->integer('quantity')->unsigned();
             $table->boolean('is_fully_received')->default(false);
+            $table->integer('received_quantity')->unsigned()->nullable();
             $table->timestamps();
         });
     }

@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -9,12 +10,8 @@ class SupplyItem extends Model
     use HasFactory;
 
     protected $fillable = [
-        'supply_id',
-        'product_id',
-        'color_id',
-        'size_id',
-        'quantity',
-        'is_fully_received',
+        'supply_id', 'product_id', 'color_id', 'size_id', 'quantity',
+        'is_fully_received', 'received_quantity'
     ];
 
     public function supply()

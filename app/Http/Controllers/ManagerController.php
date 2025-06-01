@@ -4,10 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Models\Order;
 use App\Models\Product;
+use App\Models\ProductColorSize;
 use App\Models\Store;
 use App\Models\Supply;
+use App\Models\SupplyItem;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class ManagerController extends Controller
@@ -141,8 +145,8 @@ class ManagerController extends Controller
         }
 
         $supplies = Supply::where('store_id', $store->id)
-            ->where('status', 'pending')
-            ->with('product')
+            ->where('status', 'sent_to_store')
+            ->with(['items.product', 'items.color', 'items.size'])
             ->get();
 
         return view('managerSuppliesIndex', compact('supplies', 'store'));
@@ -157,7 +161,7 @@ class ManagerController extends Controller
 
         $supplies = Supply::where('store_id', $store->id)
             ->whereIn('status', ['received', 'partially_received'])
-            ->with('product')
+            ->with(['items.product', 'items.color', 'items.size'])
             ->get();
 
         return view('managerSuppliesArchive', compact('supplies', 'store'));
@@ -181,20 +185,54 @@ class ManagerController extends Controller
         }
 
         $validated = $request->validate([
-            'is_fully_received' => 'required|boolean',
+            'items' => 'required|array',
+            'items.*.id' => 'required|exists:supply_items,id',
+            'items.*.is_fully_received' => 'required|boolean',
+            'items.*.received_quantity' => 'required_if:items.*.is_fully_received,0|integer|min:0',
         ]);
 
-        return \DB::transaction(function () use ($supply, $validated, $store) {
-            $status = $validated['is_fully_received'] ? 'received' : 'partially_received';
-            $supply->update(['status' => $status]);
-
-            if ($validated['is_fully_received']) {
-                $store->products()->syncWithoutDetaching([
-                    $supply->product_id => ['quantity' => \DB::raw('quantity + ' . $supply->quantity)],
+        return DB::transaction(function () use ($supply, $validated, $store) {
+            foreach ($validated['items'] as $itemData) {
+                $supplyItem = SupplyItem::findOrFail($itemData['id']);
+                $supplyItem->update([
+                    'is_fully_received' => $itemData['is_fully_received'],
+                    'received_quantity' => $itemData['is_fully_received'] ? $supplyItem->quantity : ($itemData['received_quantity'] ?? 0),
                 ]);
+
+                if ($itemData['is_fully_received']) {
+                    $store->products()->syncWithoutDetaching([
+                        $supplyItem->product_id => [
+                            'quantity' => DB::raw('quantity + ' . $supplyItem->quantity),
+                        ],
+                    ]);
+
+                    ProductColorSize::where('product_id', $supplyItem->product_id)
+                        ->where('color_id', $supplyItem->color_id)
+                        ->where('size_id', $supplyItem->size_id)
+                        ->increment('quantity', $supplyItem->quantity);
+                }
             }
 
-            return redirect()->route('manager.supplies.index')->with('success', 'Поставка подтверждена.');
-        });
+            $status = $supply->isFullyReceived() ? 'received' : 'partially_received';
+            $supply->update(['status' => $status]);
+
+        return redirect('/manager/supplies')->with('success', 'Поставка подтверждена.');        });
+    }
+
+    public function downloadSupplyList(Supply $supply)
+    {
+        $store = Store::find(Auth::user()->store_id);
+        if (!$store || $supply->store_id !== $store->id) {
+            abort(403, 'Доступ запрещён.');
+        }
+
+        try {
+            $pdf = Pdf::loadView('supplyList', ['supply' => $supply->load('items.product', 'items.color', 'items.size'), 'store' => $store])
+                ->setOptions(['defaultFont' => 'DejaVu Sans']);
+            return $pdf->download('supply_' . $supply->id . '.pdf');
+        } catch (\Exception $e) {
+            Log::error('Ошибка генерации PDF: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Не удалось сгенерировать PDF.');
+        }
     }
 }

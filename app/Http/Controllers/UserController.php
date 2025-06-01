@@ -90,6 +90,7 @@ class UserController extends Controller
 
     public function updateProfile(Request $request)
     {
+        /** @var \App\Models\User $user */
         $user = Auth::user();
 
         try {

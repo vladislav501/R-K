@@ -11,10 +11,7 @@ return new class extends Migration
         Schema::create('supplies', function (Blueprint $table) {
             $table->id();
             $table->foreignId('store_id')->constrained()->onDelete('cascade');
-            $table->foreignId('product_id')->constrained()->onDelete('cascade');
-            $table->integer('quantity');
             $table->string('status')->default('pending');
-            $table->boolean('is_fully_received')->default(false);
             $table->timestamps();
         });
     }

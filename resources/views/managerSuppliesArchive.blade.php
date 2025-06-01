@@ -28,5 +28,5 @@
             </tbody>
         </table>
     @endif
-    <a href="{{ route('manager.supplies.index') }}">Вернуться к активным поставкам</a>
+    <a href="/manager/supplies" class="btn btn-secondary">Назад</a>
 @endsection

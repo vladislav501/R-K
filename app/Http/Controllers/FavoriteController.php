@@ -16,7 +16,9 @@ class FavoriteController extends Controller
 
     public function index()
     {
-        $favorites = Auth::user()->favorites()->with('product')->get();
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+        $favorites = $user->favorites()->with('product')->get();
         return view('favoritesIndex', compact('favorites'));
     }
 

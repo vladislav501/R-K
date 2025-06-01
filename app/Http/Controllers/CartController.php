@@ -23,6 +23,7 @@ class CartController extends Controller
 
     public function index()
     {
+        /** @var \App\Models\User $user */
         $user = Auth::user();
         $carts = $user->carts()->with(['product', 'size', 'color'])->whereNull('order_id')->get();
         $totalSum = $carts->sum('order_amount');
@@ -166,6 +167,7 @@ class CartController extends Controller
 
     public function checkout(Request $request)
     {
+        /** @var \App\Models\User $user */
         $user = Auth::user();
         $stores = Store::all();
         $carts = $user->carts()->with(['product', 'size', 'color'])->whereNull('order_id')->get();
