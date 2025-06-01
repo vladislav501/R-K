@@ -1,230 +1,284 @@
-/* ===== Новая цветовая палитра ===== */
-:root {
-  --primary-dark: #2e1114;
-  --primary: #501b1d;
-  --secondary-dark: #64485c;
-  --secondary: #83677b;
-  --light: #adadad;
-  --white: #ffffff;
-  --light-bg: #f9f6f8;
-  --text-dark: #2e1114;
-  --text-light: #adadad;
-  --border-color: #e0d6df;
-  --shadow-sm: 0 1px 3px rgba(46, 17, 20, 0.12);
-  --shadow-md: 0 4px 6px rgba(46, 17, 20, 0.1);
-  --transition: all 0.3s ease;
+/* Base Styles */
+.profile-page-container {
+    background-color: #f9f7f3;
+    min-height: calc(100vh - 100px);
+    padding: 2rem 1rem;
+    font-family: 'Arial', sans-serif;
+    color: #333;
+    animation: fadeIn 0.5s ease-in;
 }
 
-/* ===== Базовые стили ===== */
-body {
-  font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
-  color: var(--text-dark);
-  background-color: var(--white);
-  line-height: 1.6;
+/* Content Wrapper */
+.profile-content-wrapper {
+    display: flex;
+    max-width: 1200px;
+    margin: 0 auto;
+    gap: 2rem;
+    align-items: flex-start;
 }
 
-/* ===== Верхний хедер ===== */
-.top-header {
-  background-color: var(--primary-dark);
-  color: var(--white);
-  padding: 8px 0;
-  font-size: 0.9rem;
+/* Alerts */
+.profile-alert-success {
+    background-color: #dff0d8;
+    color: #3c763d;
+    padding: 1rem;
+    border-radius: 5px;
+    margin-bottom: 1rem;
+    width: 100%;
+    animation: slideIn 0.5s ease-in;
 }
 
-.top-header a {
-  color: var(--white);
-  text-decoration: none;
-  transition: var(--transition);
+.profile-alert-danger {
+    background-color: #f2dede;
+    color: #a94442;
+    padding: 1rem;
+    border-radius: 5px;
+    margin-bottom: 1rem;
+    width: 100%;
+    animation: slideIn 0.5s ease-in;
 }
 
-.top-header a:hover {
-  color: var(--light);
+/* Profile Card */
+.profile-card {
+    background-color: #fff;
+    padding: 2rem; /* Consistent padding on all sides */
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    width: 35%;
+    min-width: 300px;
+    border-left: 4px solid #b5e2fa;
+    animation: fadeIn 0.5s ease-in;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.top-header i {
-  margin-right: 5px;
+.profile-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
 }
 
-/* ===== Хедер с категориями ===== */
-.categories-header {
-  background-color: var(--primary);
-  padding: 12px 0;
+/* Profile Card Title */
+.profile-card-title {
+    color: #0fa3b1;
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    transition: color 0.3s ease;
 }
 
-.categories-nav ul {
-  display: flex;
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  overflow-x: auto;
-  white-space: nowrap;
+.profile-card-title:hover {
+    color: #f7a072;
 }
 
-.categories-nav li {
-  margin-right: 20px;
+/* Profile Form */
+.profile-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
 }
 
-.categories-nav a {
-  color: var(--white);
-  text-decoration: none;
-  font-weight: 500;
-  transition: var(--transition);
-  padding: 5px 0;
-  position: relative;
+/* Form Group */
+.profile-form-group {
+    margin-bottom: 1rem;
 }
 
-.categories-nav a:hover {
-  color: var(--light);
+/* Form Label */
+.profile-form-label {
+    color: #0fa3b1;
+    font-size: 0.875rem;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    display: block;
 }
 
-.categories-nav a::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 0;
-  height: 2px;
-  background-color: var(--white);
-  transition: var(--transition);
+/* Form Input */
+.profile-input {
+    width: 93%;
+    padding: 0.75rem;
+    border: 1px solid #b5e2fa;
+    border-radius: 5px;
+    font-size: 1rem;
+    background-color: #f9f7f3;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
-.categories-nav a:hover::after {
-  width: 100%;
+.profile-input:focus {
+    border-color: #0fa3b1;
+    box-shadow: 0 0 5px rgba(15, 163, 177, 0.3);
+    outline: none;
 }
 
-/* ===== Основная навигация ===== */
-.main-navbar {
-  box-shadow: var(--shadow-md);
-  padding: 0.8rem 1rem;
-  background: var(--white) !important;
-  position: sticky;
-  top: 0;
-  z-index: 1000;
+/* Form Error */
+.profile-form-error {
+    color: #d9534f;
+    font-size: 0.75rem;
+    margin-top: 0.25rem;
+    display: block;
 }
 
-.navbar-brand {
-  font-weight: 700;
-  font-size: 1.5rem;
-  color: var(--primary-dark) !important;
-  display: flex;
-  align-items: center;
+/* Password Toggle Button */
+.profile-password-toggle {
+    background-color: #b5e2fa;
+    color: #333;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 5px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
-.navbar-brand:hover {
-  color: var(--primary) !important;
+.profile-password-toggle:hover {
+    background-color: #eddea4;
+    transform: scale(1.05);
 }
 
-.navbar-light .navbar-nav .nav-link {
-  color: var(--primary-dark);
-  font-weight: 500;
-  padding: 0.5rem 1rem;
-  margin: 0 0.2rem;
-  border-radius: 4px;
-  transition: var(--transition);
-  position: relative;
+/* Password Fields */
+.profile-password-fields {
+    display: none; /* Hidden by default */
+    flex-direction: column;
+    gap: 1rem;
+    animation: slideIn 0.5s ease-in;
 }
 
-.navbar-light .navbar-nav .nav-link:hover {
-  color: var(--primary);
-  background: rgba(80, 27, 29, 0.05);
+/* Submit Button */
+.profile-submit-button {
+    background-color: #f7a072;
+    color: #f9f7f3;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 5px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
-.navbar-light .navbar-nav .nav-link.active {
-  color: var(--primary);
-  font-weight: 600;
+.profile-submit-button:hover {
+    background-color: #0fa3b1;
+    transform: scale(1.05);
 }
 
-.navbar-light .navbar-nav .nav-link i {
-  margin-right: 6px;
-  font-size: 0.9em;
-  color: var(--secondary-dark);
+/* Orders Container */
+.profile-orders-container {
+    width: 65%;
+    background-color: #fff;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    animation: fadeIn 0.5s ease-in;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-/* Кнопка выхода */
-.nav-link[href*="logout"] {
-  color: #e74c3c !important;
+.profile-orders-container:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
 }
 
-.nav-link[href*="logout"]:hover {
-  background: rgba(231, 76, 60, 0.1) !important;
+/* Orders Title */
+.profile-orders-title {
+    color: #0fa3b1;
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    transition: color 0.3s ease;
 }
 
-/* ===== Подвал ===== */
-.footer {
-  background-color: var(--primary-dark);
-  color: var(--white);
-  padding: 40px 0;
-  margin-top: 60px;
+.profile-orders-title:hover {
+    color: #f7a072;
 }
 
-.footer h5 {
-  color: var(--white);
-  margin-bottom: 20px;
-  font-weight: 600;
-}
-
-.footer ul {
-  padding-left: 0;
-  list-style: none;
-}
-
-.footer ul li {
-  margin-bottom: 10px;
-}
-
-.footer a {
-  color: var(--light);
-  text-decoration: none;
-  transition: var(--transition);
-}
-
-.footer a:hover {
-  color: var(--white);
-}
-
-.social-links a {
-  display: inline-block;
-  width: 36px;
-  height: 36px;
-  background-color: rgba(255, 255, 255, 0.1);
-  border-radius: 50%;
-  text-align: center;
-  line-height: 36px;
-  transition: var(--transition);
-}
-
-.social-links a:hover {
-  background-color: rgba(255, 255, 255, 0.2);
-  transform: translateY(-3px);
-}
-
-/* ===== Адаптивность ===== */
-@media (max-width: 992px) {
-  .navbar-collapse {
-    padding-top: 1rem;
-  }
-  
-  .nav-link {
-    margin: 0.2rem 0 !important;
-    padding: 0.8rem 1rem !important;
-  }
-}
-
-@media (max-width: 768px) {
-  .top-header {
-    font-size: 0.8rem;
-  }
-  
-  .categories-nav ul {
-    padding-bottom: 5px;
-  }
-  
-  .footer {
+/* No Orders Message */
+.profile-no-orders {
+    color: #7f8c8d;
+    font-size: 1rem;
+    margin-bottom: 1rem;
     text-align: center;
-  }
-  
-  .footer .col-md-4 {
-    margin-bottom: 30px;
-  }
 }
 
+/* Orders Table */
+.profile-orders-table {
+    width: 100%;
+    border-collapse: collapse;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+/* Table Header */
+.profile-table-header {
+    background-color: #b5e2fa;
+    color: #333;
+    font-weight: 600;
+    padding: 1rem;
+    text-align: left;
+}
+
+/* Table Row */
+.profile-table-row:hover {
+    background-color: #f9f7f3;
+}
+
+/* Table Cell */
+.profile-table-cell {
+    padding: 1rem;
+    border-bottom: 1px solid #eddea4;
+    font-size: 0.875rem;
+}
+
+/* Confirm Button */
+.profile-confirm-button {
+    background-color: #0fa3b1;
+    color: #f9f7f3;
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 5px;
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.profile-confirm-button:hover {
+    background-color: #f7a072;
+    transform: scale(1.05);
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideIn {
+    from { transform: translateY(20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .profile-content-wrapper {
+        flex-direction: column;
+    }
+
+    .profile-card,
+    .profile-orders-container {
+        width: 100%;
+    }
+
+    .profile-card {
+        margin-bottom: 2rem;
+    }
+
+    .profile-orders-table {
+        font-size: 0.75rem;
+    }
+
+    .profile-table-header,
+    .profile-table-cell {
+        padding: 0.5rem;
+    }
+
+    .profile-submit-button,
+    .profile-confirm-button,
+    .profile-password-toggle {
+        font-size: 0.875rem;
+        padding: 0.5rem 1rem;
+    }
+}
