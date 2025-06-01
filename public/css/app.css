@@ -1920,3 +1920,1035 @@ body {
             height: 60px;
         }
     }
+
+     .admin-panel {
+        display: flex;
+        min-height: calc(100vh - 150px);
+        font-family: "Outfit", sans-serif;
+        background-color: #f0eeea;
+        animation: fadeIn 0.5s ease-in;
+    }
+    .sidebar {
+        width: 250px;
+        background-color: #fff;
+        box-shadow: 2px 0 10px rgba(0, 0, 0, 0.08);
+        padding: 2rem 1rem;
+        position: sticky;
+        top: 0;
+        height: calc(100vh - 150px);
+        overflow-y: auto;
+        animation: slideIn 0.5s ease-in;
+    }
+    .sidebar h2 {
+        color: #0fa3b1;
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+        text-align: center;
+        transition: color 0.3s ease;
+    }
+    .sidebar h2:hover {
+        color: #f7a072;
+    }
+    .sidebar ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+    .sidebar li {
+        margin-bottom: 0.5rem;
+    }
+    .sidebar a {
+        display: block;
+        padding: 0.75rem 1rem;
+        color: #333;
+        font-size: 0.95rem;
+        font-weight: 500;
+        text-decoration: none;
+        border-radius: 6px;
+        transition: background-color 0.3s ease, color 0.3s ease, transform 0.2s ease;
+    }
+    .sidebar a:hover {
+        background-color: #b5e2fa;
+        color: #0fa3b1;
+        transform: translateX(5px);
+    }
+    .main-content {
+        flex: 1;
+        padding: 2rem;
+    }
+    .main-content h1 {
+        color: #0fa3b1;
+        font-size: 2rem;
+        font-weight: 600;
+        margin-bottom: 2rem;
+        text-align: center;
+        transition: color 0.3s ease;
+    }
+    .main-content h1:hover {
+        color: #f7a072;
+    }
+    .card-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+    }
+    .card {
+        background-color: #fff;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        padding: 1.5rem;
+        text-align: center;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        position: relative;
+        overflow: hidden;
+        animation: slideIn 0.5s ease-in;
+        height: 200px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 1rem;
+    }
+    .card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 4px;
+        background: linear-gradient(to right, #0fa3b1, #f7a072);
+    }
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+    }
+    .card a {
+        color: #0fa3b1;
+        font-size: 1.2rem;
+        font-weight: 500;
+        text-decoration: none;
+        transition: color 0.3s ease;
+    }
+    .card a:hover {
+        color: #f7a072;
+    }
+    .card-icon {
+        width: 40px;
+        height: 40px;
+        fill: #0fa3b1;
+        transition: fill 0.3s ease, transform 0.3s ease;
+        margin: 0 auto;
+    }
+    .card:hover .card-icon {
+        fill: #f7a072;
+        transform: scale(1.1);
+    }
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+    @keyframes slideIn {
+        from { transform: translateY(20px); opacity: 0; }
+        to { transform: translateY(0); opacity: 1; }
+    }
+    @media (max-width: 768px) {
+        .admin-panel {
+            flex-direction: column;
+        }
+        .sidebar {
+            width: 100%;
+            height: auto;
+            position: static;
+            padding: 1.5rem 1rem;
+        }
+        .main-content {
+            padding: 1.5rem 1rem;
+        }
+        .main-content h1 {
+            font-size: 1.5rem;
+        }
+        .card-grid {
+            grid-template-columns: 1fr;
+        }
+        .card {
+            height: 180px;
+        }
+        .card a {
+            font-size: 1.1rem;
+        }
+        .card-icon {
+            width: 36px;
+            height: 36px;
+        }
+    }
+
+        .manager-panel {
+        display: flex;
+        min-height: calc(100vh - 150px);
+        font-family: "Outfit", sans-serif;
+        background-color: #f0eeea;
+        animation: fadeIn 0.5s ease-in;
+    }
+    .sidebar {
+        width: 250px;
+        background-color: #fff;
+        box-shadow: 2px 0 10px rgba(0, 0, 0, 0.08);
+        padding: 2rem 1rem;
+        position: sticky;
+        top: 0;
+        height: calc(100vh - 150px);
+        overflow-y: auto;
+        animation: slideIn 0.5s ease-in;
+    }
+    .sidebar h2 {
+        color: #0fa3b1;
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+        text-align: center;
+        transition: color 0.3s ease;
+    }
+    .sidebar h2:hover {
+        color: #f7a072;
+    }
+    .sidebar ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+    .sidebar li {
+        margin-bottom: 0.5rem;
+    }
+    .sidebar a {
+        display: block;
+        padding: 0.75rem 1rem;
+        color: #333;
+        font-size: 0.95rem;
+        font-weight: 500;
+        text-decoration: none;
+        border-radius: 6px;
+        transition: background-color 0.3s ease, color 0.3s ease, transform 0.2s ease;
+    }
+    .sidebar a:hover {
+        background-color: #b5e2fa;
+        color: #0fa3b1;
+        transform: translateX(5px);
+    }
+    .main-content {
+        flex: 1;
+        padding: 2rem;
+    }
+    .main-content h1 {
+        color: #0fa3b1;
+        font-size: 2rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+        transition: color 0.3s ease;
+    }
+    .main-content h1:hover {
+        color: #f7a072;
+    }
+    .store-info {
+        font-size: 1rem;
+        color: #333;
+        margin-bottom: 2rem;
+    }
+    .store-info strong {
+        color: #0fa3b1;
+    }
+    .stats-section,
+    .actions-section {
+        margin-bottom: 2rem;
+    }
+    .stats-section h2,
+    .actions-section h2 {
+        color: #0fa3b1;
+        font-size: 1.5rem;
+        font-weight: 500;
+        margin-bottom: 1rem;
+        transition: color 0.3s ease;
+    }
+    .stats-section h2:hover,
+    .actions-section h2:hover {
+        color: #f7a072;
+    }
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1.5rem;
+    }
+    .stat-card {
+        background-color: #fff;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        padding: 1.5rem;
+        text-align: center;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        position: relative;
+        animation: slideIn 0.5s ease-in;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 1rem;
+        height: 150px;
+    }
+    .stat-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 4px;
+        background: linear-gradient(to right, #0fa3b1, #f7a072);
+    }
+    .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+    }
+    .stat-card p {
+        font-size: 1rem;
+        color: #333;
+        margin: 0;
+    }
+    .stat-card p strong {
+        color: #0fa3b1;
+    }
+    .card-icon {
+        width: 36px;
+        height: 36px;
+        fill: #0fa3b1;
+        transition: fill 0.3s ease, transform 0.3s ease;
+        margin: 0 auto;
+    }
+    .stat-card:hover .card-icon {
+        fill: #f7a072;
+        transform: scale(1.1);
+    }
+    .action-buttons {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+    .action-button {
+        background-color: #f7a072;
+        color: #fff;
+        padding: 0.8rem 1.5rem;
+        border: none;
+        border-radius: 6px;
+        font-family: "Outfit", sans-serif;
+        font-size: 1rem;
+        font-weight: 600;
+        text-decoration: none;
+        transition: background-color 0.3s ease, transform 0.2s ease;
+    }
+    .action-button:hover {
+        background-color: #0fa3b1;
+        transform: scale(1.05);
+    }
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+    @keyframes slideIn {
+        from { transform: translateY(20px); opacity: 0; }
+        to { transform: translateY(0); opacity: 1; }
+    }
+    @media (max-width: 768px) {
+        .manager-panel {
+            flex-direction: column;
+        }
+        .sidebar {
+            width: 100%;
+            height: auto;
+            position: static;
+            padding: 1.5rem 1rem;
+        }
+        .main-content {
+            padding: 1.5rem 1rem;
+        }
+        .main-content h1 {
+            font-size: 1.5rem;
+        }
+        .stats-section h2,
+        .actions-section h2 {
+            font-size: 1.3rem;
+        }
+        .stats-grid {
+            grid-template-columns: 1fr;
+        }
+        .stat-card {
+            height: 140px;
+        }
+        .stat-card p {
+            font-size: 0.9rem;
+        }
+        .card-icon {
+            width: 32px;
+            height: 32px;
+        }
+        .action-button {
+            width: 100%;
+            text-align: center;
+        }
+    }
+
+        .brands-index {
+        display: flex;
+        min-height: calc(100vh - 150px);
+        font-family: "Outfit", sans-serif;
+        background-color: #f0eeea;
+        animation: fadeIn 0.5s ease-in;
+    }
+    .brands-index-sidebar {
+        width: 250px;
+        background-color: #fff;
+        box-shadow: 2px 0 10px rgba(0, 0, 0, 0.08);
+        padding: 2rem 1rem;
+        position: sticky;
+        top: 0;
+        height: calc(100vh - 150px);
+        overflow-y: auto;
+        animation: slideIn 0.5s ease-in;
+    }
+    .brands-index-sidebar h2 {
+        color: #0fa3b1;
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+        text-align: center;
+        transition: color 0.3s ease;
+    }
+    .brands-index-sidebar h2:hover {
+        color: #f7a072;
+    }
+    .brands-index-sidebar ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+    .brands-index-sidebar li {
+        margin-bottom: 0.5rem;
+    }
+    .brands-index-sidebar a {
+        display: block;
+        padding: 0.75rem 1rem;
+        color: #333;
+        font-size: 0.95rem;
+        font-weight: 500;
+        text-decoration: none;
+        border-radius: 6px;
+        transition: background-color 0.3s ease, color 0.3s ease, transform 0.2s ease;
+    }
+    .brands-index-sidebar a:hover {
+        background-color: #b5e2fa;
+        color: #0fa3b1;
+        transform: translateX(5px);
+    }
+    .brands-index-content {
+        flex: 1;
+        padding: 2rem;
+        margin: 0 auto;
+    }
+    .brands-index-content h1 {
+        color: #0fa3b1;
+        font-size: 2rem;
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+        text-align: center;
+        transition: color 0.3s ease;
+    }
+    .brands-index-content h1:hover {
+        color: #f7a072;
+    }
+    .brands-index-add {
+        display: inline-block;
+        margin-bottom: 1rem;
+        font-size: 0.95rem;
+        color: #0fa3b1;
+        text-decoration: none;
+        font-weight: 500;
+        transition: color 0.3s ease, transform 0.2s ease;
+    }
+    .brands-index-add:hover {
+        color: #f7a072;
+        transform: translateX(5px);
+    }
+    .brands-index-success {
+        background-color: #dff0d8;
+        color: #3c763d;
+        padding: 1rem;
+        border-radius: 5px;
+        margin-bottom: 1rem;
+        width: 100%;
+        font-family: "Outfit", sans-serif;
+        font-size: 0.95rem;
+        text-align: center;
+        animation: slideIn 0.5s ease-in;
+    }
+    .brands-index-error {
+        background-color: #f2dede;
+        color: #a94442;
+        padding: 1rem;
+        border-radius: 5px;
+        margin-bottom: 1rem;
+        width: 100%;
+        font-family: "Outfit", sans-serif;
+        font-size: 0.95rem;
+        text-align: center;
+        animation: slideIn 0.5s ease-in;
+    }
+    .brands-index-table {
+        overflow-x: auto;
+        margin-bottom: 1.5rem;
+    }
+    .brands-index-table table {
+        width: 100%;
+        border-collapse: collapse;
+        background-color: #fff;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        animation: slideIn 0.5s ease-in;
+    }
+    .brands-index-table th, .brands-index-table td {
+        padding: 1rem;
+        text-align: left;
+        font-size: 0.95rem;
+        color: #333;
+    }
+    .brands-index-table th {
+        background-color: #b5e2fa;
+        color: #0fa3b1;
+        font-weight: 600;
+    }
+    .brands-index-table tr {
+        transition: background-color 0.3s ease;
+    }
+    .brands-index-table tr:hover {
+        background-color: #f9f7f3;
+    }
+    .brands-index-table td form {
+        display: inline-block;
+        margin-left: 0.5rem;
+    }
+    .brands-index-table a {
+        color: #0fa3b1;
+        text-decoration: none;
+        font-weight: 500;
+        transition: color 0.3s ease;
+    }
+    .brands-index-table a:hover {
+        color: #f7a072;
+    }
+    .brands-index-table button {
+        background-color: #f7a072;
+        color: #fff;
+        padding: 0.6rem 1rem;
+        border: none;
+        border-radius: 6px;
+        font-family: "Outfit", sans-serif;
+        font-size: 0.9rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background-color 0.3s ease, transform 0.2s ease;
+    }
+    .brands-index-table button:hover {
+        background-color: #0fa3b1;
+        transform: scale(1.05);
+    }
+    .brands-index-empty {
+        font-size: 0.95rem;
+        color: #333;
+        text-align: center;
+        margin: 1.5rem 0;
+    }
+    .brands-index-back {
+        display: inline-block;
+        margin-top: 1rem;
+        font-size: 0.95rem;
+        color: #0fa3b1;
+        text-decoration: none;
+        font-weight: 500;
+        transition: color 0.3s ease, transform 0.2s ease;
+    }
+    .brands-index-back:hover {
+        color: #f7a072;
+        transform: translateX(5px);
+    }
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+    @keyframes slideIn {
+        from { transform: translateY(20px); opacity: 0; }
+        to { transform: translateY(0); opacity: 1; }
+    }
+    @media (max-width: 768px) {
+        .brands-index {
+            flex-direction: column;
+        }
+        .brands-index-sidebar {
+            width: 100%;
+            height: auto;
+            position: static;
+            padding: 1.5rem 1rem;
+        }
+        .brands-index-content {
+            padding: 1.5rem 1rem;
+        }
+        .brands-index-content h1 {
+            font-size: 1.5rem;
+        }
+        .brands-index-table th, .brands-index-table td {
+            font-size: 0.9rem;
+            padding: 0.75rem;
+        }
+        .brands-index-table button {
+            font-size: 0.85rem;
+            padding: 0.5rem 0.8rem;
+        }
+        .brands-index-add, .brands-index-back {
+            font-size: 0.9rem;
+        }
+        .brands-index-success, .brands-index-error {
+            font-size: 0.9rem;
+            padding: 0.8rem;
+        }
+    }
+
+        .brands-edit {
+        display: flex;
+        min-height: calc(100vh - 150px);
+        font-family: "Outfit", sans-serif;
+        background-color: #f0eeea;
+        animation: fadeIn 0.5s ease-in;
+    }
+    .brands-edit-sidebar {
+        width: 250px;
+        background-color: #fff;
+        box-shadow: 2px 0 10px rgba(0, 0, 0, 0.08);
+        padding: 2rem 1rem;
+        position: sticky;
+        top: 0;
+        height: calc(100vh - 150px);
+        overflow-y: auto;
+        animation: slideIn 0.5s ease-in;
+    }
+    .brands-edit-sidebar h2 {
+        color: #0fa3b1;
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+        text-align: center;
+        transition: color 0.3s ease;
+    }
+    .brands-edit-sidebar h2:hover {
+        color: #f7a072;
+    }
+    .brands-edit-sidebar ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+    .brands-edit-sidebar li {
+        margin-bottom: 0.5rem;
+    }
+    .brands-edit-sidebar a {
+        display: block;
+        padding: 0.75rem 1rem;
+        color: #333;
+        font-size: 0.95rem;
+        font-weight: 500;
+        text-decoration: none;
+        border-radius: 6px;
+        transition: background-color 0.3s ease, color 0.3s ease, transform 0.2s ease;
+    }
+    .brands-edit-sidebar a:hover {
+        background-color: #b5e2fa;
+        color: #0fa3b1;
+        transform: translateX(5px);
+    }
+    .brands-edit-content {
+        flex: 1;
+        padding: 2rem;
+        margin: 0 auto;
+    }
+    .brands-edit-content h1 {
+        color: #0fa3b1;
+        font-size: 2rem;
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+        text-align: center;
+        transition: color 0.3s ease;
+    }
+    .brands-edit-content h1:hover {
+        color: #f7a072;
+    }
+    .brands-edit-form {
+        background-color: #fff;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        padding: 1.5rem;
+        position: relative;
+        animation: slideIn 0.5s ease-in;
+    }
+    .brands-edit-form::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 4px;
+        background: linear-gradient(to right, #0fa3b1, #f7a072);
+    }
+    .brands-edit-form form {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+    .brands-edit-form label {
+        font-size: 0.95rem;
+        color: #0fa3b1;
+        font-weight: 500;
+        margin-bottom: 0.25rem;
+        display: block;
+        transition: color 0.3s ease;
+    }
+    .brands-edit-form label:hover {
+        color: #f7a072;
+    }
+    .brands-edit-form input {
+        width: 99%;
+        padding: 0.8rem;
+        border: 1px solid #b5e2fa;
+        border-radius: 6px;
+        font-family: "Outfit", sans-serif;
+        font-size: 0.95rem;
+        background-color: #f9f7f3;
+        color: #333;
+        transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+    .brands-edit-form input:focus {
+        border-color: #0fa3b1;
+        box-shadow: 0 0 5px rgba(15, 163, 177, 0.3);
+        outline: none;
+    }
+    .brands-edit-form .error {
+        color: #e63946;
+        font-size: 0.85rem;
+        margin-top: 0.25rem;
+    }
+    .brands-edit-form button {
+        background-color: #f7a072;
+        color: #fff;
+        padding: 0.8rem 1.5rem;
+        border: none;
+        border-radius: 6px;
+        font-family: "Outfit", sans-serif;
+        font-size: 0.95rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background-color 0.3s ease, transform 0.2s ease;
+        align-self: flex-start;
+    }
+    .brands-edit-form button:hover {
+        background-color: #0fa3b1;
+        transform: scale(1.05);
+    }
+    .brands-edit-back {
+        display: inline-block;
+        margin-top: 1rem;
+        font-size: 0.95rem;
+        color: #0fa3b1;
+        text-decoration: none;
+        font-weight: 500;
+        transition: color 0.3s ease, transform 0.2s ease;
+    }
+    .brands-edit-back:hover {
+        color: #f7a072;
+        transform: translateX(5px);
+    }
+    .brands-alert-success {
+        background-color: #dff0d8;
+        color: #3c763d;
+        padding: 1rem;
+        border-radius: 5px;
+        margin-bottom: 1rem;
+        width: 100%;
+        font-family: "Outfit", sans-serif;
+        font-size: 0.95rem;
+        text-align: center;
+        animation: slideIn 0.5s ease-in;
+    }
+    .brands-alert-danger {
+        background-color: #f2dede;
+        color: #a94442;
+        padding: 1rem;
+        border-radius: 5px;
+        margin-bottom: 1rem;
+        width: 100%;
+        font-family: "Outfit", sans-serif;
+        font-size: 0.95rem;
+        text-align: center;
+        animation: slideIn 0.5s ease-in;
+    }
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+    @keyframes slideIn {
+        from { transform: translateY(20px); opacity: 0; }
+        to { transform: translateY(0); opacity: 1; }
+    }
+    @media (max-width: 768px) {
+        .brands-edit {
+            flex-direction: column;
+        }
+        .brands-edit-sidebar {
+            width: 100%;
+            height: auto;
+            position: static;
+            padding: 1.5rem 1rem;
+        }
+        .brands-edit-content {
+            padding: 1.5rem 1rem;
+        }
+        .brands-edit-content h1 {
+            font-size: 1.5rem;
+        }
+        .brands-edit-form {
+            padding: 1rem;
+        }
+        .brands-edit-form input {
+            font-size: 0.9rem;
+        }
+        .brands-edit-form button {
+            font-size: 0.9rem;
+            padding: 0.6rem 1rem;
+        }
+        .brands-edit-back {
+            font-size: 0.9rem;
+        }
+        .brands-alert-success, .brands-alert-danger {
+            font-size: 0.9rem;
+            padding: 0.8rem;
+        }
+    }
+
+    .brands-create {
+        display: flex;
+        min-height: calc(100vh - 150px);
+        font-family: "Outfit", sans-serif;
+        background-color: #f0eeea;
+        animation: fadeIn 0.5s ease-in;
+    }
+    .brands-create-sidebar {
+        width: 250px;
+        background-color: #fff;
+        box-shadow: 2px 0 10px rgba(0, 0, 0, 0.08);
+        padding: 2rem 1rem;
+        position: sticky;
+        top: 0;
+        height: calc(100vh - 150px);
+        overflow-y: auto;
+        animation: slideIn 0.5s ease-in;
+    }
+    .brands-create-sidebar h2 {
+        color: #0fa3b1;
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+        text-align: center;
+        transition: color 0.3s ease;
+    }
+    .brands-create-sidebar h2:hover {
+        color: #f7a072;
+    }
+    .brands-create-sidebar ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+    .brands-create-sidebar li {
+        margin-bottom: 0.5rem;
+    }
+    .brands-create-sidebar a {
+        display: block;
+        padding: 0.75rem 1rem;
+        color: #333;
+        font-size: 0.95rem;
+        font-weight: 500;
+        text-decoration: none;
+        border-radius: 6px;
+        transition: background-color 0.3s ease, color 0.3s ease, transform 0.2s ease;
+    }
+    .brands-create-sidebar a:hover {
+        background-color: #b5e2fa;
+        color: #0fa3b1;
+        transform: translateX(5px);
+    }
+    .brands-create-content {
+        flex: 1;
+        padding: 2rem;
+        margin: 0 auto;
+    }
+    .brands-create-content h1 {
+        color: #0fa3b1;
+        font-size: 2rem;
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+        text-align: center;
+        transition: color 0.3s ease;
+    }
+    .brands-create-content h1:hover {
+        color: #f7a072;
+    }
+    .brands-create-form {
+        background-color: #fff;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        padding: 1.5rem;
+        position: relative;
+        animation: slideIn 0.5s ease-in;
+    }
+    .brands-create-form::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 4px;
+        background: linear-gradient(to right, #0fa3b1, #f7a072);
+    }
+    .brands-create-form form {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+    .brands-create-form label {
+        font-size: 0.95rem;
+        color: #0fa3b1;
+        font-weight: 500;
+        margin-bottom: 0.25rem;
+        display: block;
+        transition: color 0.3s ease;
+    }
+    .brands-create-form label:hover {
+        color: #f7a072;
+    }
+    .brands-create-form input {
+        width: 99%;
+        padding: 0.8rem;
+        border: 1px solid #b5e2fa;
+        border-radius: 6px;
+        font-family: "Outfit", sans-serif;
+        font-size: 0.95rem;
+        background-color: #f9f7f3;
+        color: #333;
+        transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+    .brands-create-form input:focus {
+        border-color: #0fa3b1;
+        box-shadow: 0 0 5px rgba(15, 163, 177, 0.3);
+        outline: none;
+    }
+    .brands-create-form .error {
+        color: #e63946;
+        font-size: 0.85rem;
+        margin-top: 0.25rem;
+    }
+    .brands-create-form button {
+        background-color: #f7a072;
+        color: #fff;
+        padding: 0.8rem 1.5rem;
+        border: none;
+        border-radius: 6px;
+        font-family: "Outfit", sans-serif;
+        font-size: 0.95rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background-color 0.3s ease, transform 0.2s ease;
+        align-self: flex-start;
+    }
+    .brands-create-form button:hover {
+        background-color: #0fa3b1;
+        transform: scale(1.05);
+    }
+    .brands-create-back {
+        display: inline-block;
+        margin-top: 1rem;
+        font-size: 0.95rem;
+        color: #0fa3b1;
+        text-decoration: none;
+        font-weight: 500;
+        transition: color 0.3s ease, transform 0.2s ease;
+    }
+    .brands-create-back:hover {
+        color: #f7a072;
+        transform: translateX(5px);
+    }
+    .brands-alert-success {
+        background-color: #dff0d8;
+        color: #3c763d;
+        padding: 1rem;
+        border-radius: 5px;
+        margin-bottom: 1rem;
+        width: 100%;
+        font-family: "Outfit", sans-serif;
+        font-size: 0.95rem;
+        text-align: center;
+        animation: slideIn 0.5s ease-in;
+    }
+    .brands-alert-danger {
+        background-color: #f2dede;
+        color: #a94442;
+        padding: 1rem;
+        border-radius: 5px;
+        margin-bottom: 1rem;
+        width: 100%;
+        font-family: "Outfit", sans-serif;
+        font-size: 0.95rem;
+        text-align: center;
+        animation: slideIn 0.5s ease-in;
+    }
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+    @keyframes slideIn {
+        from { transform: translateY(20px); opacity: 0; }
+        to { transform: translateY(0); opacity: 1; }
+    }
+    @media (max-width: 768px) {
+        .brands-create {
+            flex-direction: column;
+        }
+        .brands-create-sidebar {
+            width: 100%;
+            height: auto;
+            position: static;
+            padding: 1.5rem 1rem;
+        }
+        .brands-create-content {
+            padding: 1.5rem 1rem;
+        }
+        .brands-create-content h1 {
+            font-size: 1.5rem;
+        }
+        .brands-create-form {
+            padding: 1rem;
+        }
+        .brands-create-form input {
+            font-size: 0.9rem;
+        }
+        .brands-create-form button {
+            font-size: 0.9rem;
+            padding: 0.6rem 1rem;
+        }
+        .brands-create-back {
+            font-size: 0.9rem;
+        }
+        .brands-alert-success, .brands-alert-danger {
+            font-size: 0.9rem;
+            padding: 0.8rem;
+        }
+    }
