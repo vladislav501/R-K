@@ -4,9 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Luxury Comfort</title>
+    <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/3.0.0/uicons-brands/css/uicons-brands.css'>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap');
     </style>
+    <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/3.0.0/uicons-regular-rounded/css/uicons-regular-rounded.css'>
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
     @yield('styles')
 </head>
@@ -51,5 +53,63 @@
     </main>
     <script src="{{ asset('js/app.js') }}"></script>
     @yield('scripts')
+    <footer class="footer-container">
+        <div class="footer-wrapper">
+            <div class="footer-column">
+                <h3>Категории</h3>
+                <ul>
+                    
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Для покупателей</h3>
+                <ul>
+                    <li><a href="/delivery">Варианты доставки</a></li>
+                    <li><a href="/payment">Способы оплаты</a></li>
+                    <li><a href="/pickup">Самовывоз</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Информация</h3>
+                <ul>
+                    <li><a href="/about">О нас</a></li>
+                    <li><a href="/stores">Адреса магазинов</a></li>
+                    <li><a href="/contact">Контакты</a></li>
+                    <li><a href="/privacy">Политика конфиденциальности</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Следите за нами</h3>
+                <div class="footer-social-icons">
+                    <a href="https://vk.com" target="_blank">
+                        <div class="footer-social-icon">
+                            <i class="fi fi-brands-vk"></i>
+                        </div>
+                    </a>
+                    <a href="https://telegram.org" target="_blank">
+                        <div class="footer-social-icon">
+                            <i class="fi fi-brands-telegram"></i>
+                        </div>
+                    </a>
+                    <a href="https://instagram.com" target="_blank">
+                        <div class="footer-social-icon">
+                            <i class="fi fi-brands-instagram"></i>
+                        </div>
+                    </a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>© 2025 LuxuryComfort. Все права защищены. <a href="/privacy">Политика конфиденциальности</a></p>
+            </div>
+        </div>
+    </footer>
+    <button class="back-to-top">
+        <i class="fi fi-rr-arrow-small-up"></i>
+    </button>
+    <script>
+        document.querySelector('.back-to-top').addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+    </script>
 </body>
 </html>
