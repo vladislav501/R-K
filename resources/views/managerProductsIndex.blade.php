@@ -40,4 +40,12 @@
             </tbody>
         </table>
     @endif
+    <button class="back-to-top">
+        <i class="fi fi-rr-arrow-small-up"></i>
+    </button>
+    <script>
+        document.querySelector('.back-to-top').addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+    </script>
 @endsection

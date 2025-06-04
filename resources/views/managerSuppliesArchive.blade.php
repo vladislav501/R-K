@@ -29,4 +29,12 @@
         </table>
     @endif
     <a href="/manager/supplies" class="btn btn-secondary">Назад</a>
+    <button class="back-to-top">
+        <i class="fi fi-rr-arrow-small-up"></i>
+    </button>
+    <script>
+        document.querySelector('.back-to-top').addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+    </script>
 @endsection

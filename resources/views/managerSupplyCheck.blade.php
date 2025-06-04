@@ -49,8 +49,14 @@
     </form>
 
     <a href="/manager/supplies" class="btn btn-secondary">Вернуться к поставкам</a>
-    
+    <button class="back-to-top">
+        <i class="fi fi-rr-arrow-small-up"></i>
+    </button>
     <script>
+        document.querySelector('.back-to-top').addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }); 
+
         document.querySelectorAll('.fully-received, .partially-received').forEach(radio => {
             radio.addEventListener('change', function() {
                 const row = this.closest('tr');

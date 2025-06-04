@@ -58,4 +58,12 @@
         </table>
     @endif
     <a href="{{ route('manager.orders.archive') }}" class="btn btn-secondary mt-4">Архив заказов</a>
+    <button class="back-to-top">
+        <i class="fi fi-rr-arrow-small-up"></i>
+    </button>
+    <script>
+        document.querySelector('.back-to-top').addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+    </script>
 @endsection

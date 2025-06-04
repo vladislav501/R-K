@@ -3,19 +3,42 @@
 @section('title', 'Управление цветами')
 
 @section('content')
-    <h1>Управление цветами</h1>
-    <a href="{{ route('admin.colors.create') }}">Добавить цвет</a>
-    @forelse($colors as $color)
-        <div>
-            <p>{{ $color->name }} ({{ $color->color_code ?? 'Без кода' }})</p>
-            <form action="{{ route('admin.colors.destroy', $color) }}" method="POST">
-                @csrf
-                @method('DELETE')
-                <button type="submit">Удалить</button>
-            </form>
+    <div class="admin-container">
+        <div class="admin-sidebar">
+            <h2>Админ Панель</h2>
+            <ul>
+                <li><a href="{{ route('admin.products.index') }}">Управление товарами</a></li>
+                <li><a href="{{ route('admin.brands.index') }}">Управление брендами</a></li>
+                <li><a href="{{ route('admin.categories.index') }}">Управление категориями</a></li>
+                <li><a href="">Управление типами одежды</a></li>
+                <li><a href="{{ route('admin.collections.index') }}">Управление коллекциями</a></li>
+                <li><a href="{{ route('admin.colors.index') }}">Управление цветами</a></li>
+                <li><a href="{{ route('admin.sizes.index') }}">Управление размерами</a></li>
+                <li><a href="">Управление пунктами выдачи</a></li>
+                <li><a href="">Управление поставками</a></li>
+                <li><a href="">Архив поставок</a></li>
+                <li><a href="">Управление заказами</a></li>
+            </ul>
         </div>
-    @empty
-        <p>Цветов нет.</p>
-    @endforelse
-    <a href="{{ route('admin.index') }}">Назад</a>
+        <div class="admin-content">
+            <h1>Управление цветами</h1>
+            <a href="{{ route('admin.colors.create') }}" class="admin-add">Добавить цвет</a>
+            <div class="admin-list">
+                @forelse($colors as $color)
+                    <div class="admin-list-item">
+                        <p>{{ $color->name }} ({{ $color->color_code ?? 'Без кода' }})</p>
+                        <a href="{{ route('admin.colors.store', $color) }}">Редактировать</a>
+                        <form action="{{ route('admin.colors.destroy', $color) }}" method="POST">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit">Удалить</button>
+                        </form>
+                    </div>
+                @empty
+                    <p class="admin-empty">Цветов нет.</p>
+                @endforelse
+            </div>
+            <a href="{{ route('admin.index') }}" class="admin-back">Назад</a>
+        </div>
+    </div>
 @endsection

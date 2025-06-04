@@ -33,4 +33,12 @@
         </table>
     @endif
     <a href="{{ route('manager.orders.index') }}">Вернуться к активным заказам</a>
+    <button class="back-to-top">
+        <i class="fi fi-rr-arrow-small-up"></i>
+    </button>
+    <script>
+        document.querySelector('.back-to-top').addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+    </script>
 @endsection

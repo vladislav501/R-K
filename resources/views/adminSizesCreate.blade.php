@@ -3,17 +3,47 @@
 @section('title', 'Создать размер')
 
 @section('content')
-    <h1>Создать размер</h1>
-    <form method="POST" action="{{ route('admin.sizes.store') }}">
-        @csrf
-        <div>
-            <label for="name">Название:</label>
-            <input type="text" name="name" id="name" required>
-            @error('name')
-                <span>{{ $message }}</span>
-            @enderror
+    <div class="admin-container">
+        <div class="admin-sidebar">
+            <h2>Админ Панель</h2>
+            <ul>
+                <li><a href="{{ route('admin.products.index') }}">Управление товарами</a></li>
+                <li><a href="{{ route('admin.brands.index') }}">Управление брендами</a></li>
+                <li><a href="{{ route('admin.categories.index') }}">Управление категориями</a></li>
+                <li><a href="">Управление типами одежды</a></li>
+                <li><a href="{{ route('admin.collections.index') }}">Управление коллекциями</a></li>
+                <li><a href="{{ route('admin.colors.index') }}">Управление цветами</a></li>
+                <li><a href="{{ route('admin.sizes.index') }}">Управление размерами</a></li>
+                <li><a href="">Управление пунктами выдачи</a></li>
+                <li><a href="">Управление поставками</a></li>
+                <li><a href="">Архив поставок</a></li>
+                <li><a href="">Управление заказами</a></li>
+            </ul>
         </div>
-        <button type="submit">Создать</button>
-    </form>
-    <a href="{{ route('admin.index') }}">Назад</a>
+        <div class="admin-content">
+            <h1>Создать размер</h1>
+            @if(session('success'))
+                <div class="admin-alert-success">{{ session('success') }}</div>
+            @endif
+            @if($errors->any())
+                <div class="admin-alert-danger">
+                    @foreach($errors->all() as $error)
+                        {{ $error }}<br>
+                    @endforeach
+                </div>
+            @endif
+            <div class="admin-form">
+                <form method="POST" action="{{ route('admin.sizes.store') }}">
+                    @csrf
+                    <div>
+                        <label for="name">Название:</label>
+                        <input type="text" name="name" id="name" value="{{ old('name') }}" required>
+                        @error('name') <span class="error">{{ $message }}</span> @enderror
+                    </div>
+                    <button type="submit">Создать</button>
+                </form>
+            </div>
+            <a href="{{ route('admin.index') }}" class="admin-back">Назад</a>
+        </div>
+    </div>
 @endsection
