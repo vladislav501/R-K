@@ -6861,3 +6861,80 @@ main {
 .cart-table-image {
     height: 300px;
 }
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    padding: 1rem 0;
+}
+
+.pagination-top {
+    margin-bottom: 1rem;
+}
+
+.pagination-bottom {
+    margin-top: 1rem;
+}
+
+.pagination .page-item {
+    margin: 0 0.25rem;
+}
+
+.pagination .page-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #fff;
+    color: #0fa3b1;
+    border: 1px solid #ddd;
+    font-size: 0.95rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: background-color 0.3s ease, color 0.3s ease, transform 0.2s ease;
+}
+
+.page-item {
+    list-style: none;
+}
+
+.pagination .page-link:hover {
+    background-color: #0fa3b1;
+    color: #fff;
+    border-color: #0fa3b1;
+    transform: scale(1.1);
+}
+
+.pagination .page-item.active .page-link {
+    background-color: #0fa3b1;
+    color: #fff;
+    border-color: #0fa3b1;
+}
+
+.pagination .page-item.disabled .page-link {
+    background-color: #f0eeea;
+    color: #666;
+    border-color: #ddd;
+    cursor: not-allowed;
+}
+
+.pagination .page-link svg {
+    stroke: currentColor;
+}
+
+@media (max-width: 768px) {
+    .pagination .page-link {
+        width: 36px;
+        height: 36px;
+        font-size: 0.9rem;
+    }
+}
+
+.paginationContent {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}

@@ -55,65 +55,73 @@
                 <button type="submit" class="catalog-filter-button">Фильтровать</button>
             </form>
 
-            <div class="products">
-                @forelse($products as $product)
-                    <div class="product">
-                        <a href="{{ route('products.show', $product) }}" class="product-link">
-                            <div class="product-image">
-                                @if($product->image_1)
-                                    <img src="{{ Storage::url($product->image_1) }}" alt="{{ $product->name }}" class="product-image-img">
-                                @else
-                                    <div class="product-image-placeholder">Нет изображения</div>
-                                @endif
-                            </div>
-                        </a>
-                        <a href="{{ route('products.show', $product) }}" class="product-link">
-                            <div class="product-info">
-                                <h2>{{ $product->name }}</h2>
-                                <p><strong>Категория:</strong> {{ $product->category->name }}</p>
-                                <h2><strong>Цена:</strong> {{ number_format($product->price, 2) }} byn</h2>
-                            </div>
-                        </a>
-                        <form action="{{ route('cart.add', $product) }}" method="POST" class="product-form hidden" id="cart-form-{{ $product->id }}">
-                            @csrf
-                            <div class="product-cart-form">
-                                <select name="size_id" required class="product-select">
-                                    <option value="">Размер</option>
-                                    @foreach($product->sizes as $size)
-                                        <option value="{{ $size->id }}">{{ $size->name }}</option>
-                                    @endforeach
-                                </select>
-                                <select name="color_id" required class="product-select">
-                                    <option value="">Цвет</option>
-                                    @foreach($product->colors as $color)
-                                        <option value="{{ $color->id }}">{{ $color->name }}</option>
-                                    @endforeach
-                                </select>
-                                <input type="number" name="quantity" value="1" min="1" class="product-input" placeholder="Выберите количество">
-                            </div>
-                            <button type="submit" class="product-button">
-                                Добавить в корзину
-                            </button>
-                        </form>
-                        <div class="product-actions">
-                            @auth
-                                <button class="toggle-cart-button" data-product-id="{{ $product->id }}" {{ $product->is_in_cart ? 'disabled' : '' }}>
-                                    {{ $product->is_in_cart ? 'В корзине' : 'В корзину' }}
+            <div class="paginationContent">
+                <div class="pagination pagination-bottom">
+                    {{ $products->links('vendor.pagination.custom') }}
+                </div>
+                <div class="products">
+                    @forelse($products as $product)
+                        <div class="product">
+                            <a href="{{ route('products.show', $product) }}" class="product-link">
+                                <div class="product-image">
+                                    @if($product->image_1)
+                                        <img src="{{ Storage::url($product->image_1) }}" alt="{{ $product->name }}" class="product-image-img">
+                                    @else
+                                        <div class="product-image-placeholder">Нет изображения</div>
+                                    @endif
+                                </div>
+                            </a>
+                            <a href="{{ route('products.show', $product) }}" class="product-link">
+                                <div class="product-info">
+                                    <h2>{{ $product->name }}</h2>
+                                    <p><strong>Категория:</strong> {{ $product->category->name }}</p>
+                                    <h2><strong>Цена:</strong> {{ number_format($product->price, 2) }} byn</h2>
+                                </div>
+                            </a>
+                            <form action="{{ route('cart.add', $product) }}" method="POST" class="product-form hidden" id="cart-form-{{ $product->id }}">
+                                @csrf
+                                <div class="product-cart-form">
+                                    <select name="size_id" required class="product-select">
+                                        <option value="">Размер</option>
+                                        @foreach($product->sizes as $size)
+                                            <option value="{{ $size->id }}">{{ $size->name }}</option>
+                                        @endforeach
+                                    </select>
+                                    <select name="color_id" required class="product-select">
+                                        <option value="">Цвет</option>
+                                        @foreach($product->colors as $color)
+                                            <option value="{{ $color->id }}">{{ $color->name }}</option>
+                                        @endforeach
+                                    </select>
+                                    <input type="number" name="quantity" value="1" min="1" class="product-input" placeholder="Выберите количество">
+                                </div>
+                                <button type="submit" class="product-button">
+                                    Добавить в корзину
                                 </button>
-                                <form action="{{ route('favorites.add', $product) }}" method="POST" class="product-form" id="favorite-form-{{ $product->id }}">
-                                    @csrf
-                                    <button type="submit" class="product-button" {{ $product->is_favorite ? 'disabled' : '' }}>
-                                        {{ $product->is_favorite ? 'В избранном' : 'В избранное' }}
+                            </form>
+                            <div class="product-actions">
+                                @auth
+                                    <button class="toggle-cart-button" data-product-id="{{ $product->id }}" {{ $product->is_in_cart ? 'disabled' : '' }}>
+                                        {{ $product->is_in_cart ? 'В корзине' : 'В корзину' }}
                                     </button>
-                                </form>
-                            @else
-                                <a href="{{ route('login') }}" class="product-button">Войти, чтобы добавить в корзину или избранное</a>
-                            @endauth
+                                    <form action="{{ route('favorites.add', $product) }}" method="POST" class="product-form" id="favorite-form-{{ $product->id }}">
+                                        @csrf
+                                        <button type="submit" class="product-button" {{ $product->is_favorite ? 'disabled' : '' }}>
+                                            {{ $product->is_favorite ? 'В избранном' : 'В избранное' }}
+                                        </button>
+                                    </form>
+                                @else
+                                    <a href="{{ route('login') }}" class="product-button">Войти, чтобы добавить в корзину или избранное</a>
+                                @endauth
+                            </div>
                         </div>
-                    </div>
-                @empty
-                    <p class="no-products">Товары не найдены.</p>
-                @endforelse
+                    @empty
+                        <p class="no-products">Товары не найдены.</p>
+                    @endforelse
+                </div>
+                <div class="pagination pagination-bottom">
+                    {{ $products->links('vendor.pagination.custom') }}
+                </div>
             </div>
         </div>
     </div>
@@ -159,3 +167,4 @@
         });
     </script>
 @endsection
+

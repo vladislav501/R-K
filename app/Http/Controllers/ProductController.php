@@ -30,27 +30,27 @@ class ProductController extends Controller
     {
         $query = Product::query()->with(['brand', 'category', 'collection', 'clothingType', 'colors', 'sizes']);
         
-        if ($request->has('category_id')) {
+        if ($request->has('category_id') && $request->category_id) {
             $query->where('category_id', $request->category_id);
         }
-        if ($request->has('brand_id')) {
+        if ($request->has('brand_id') && $request->brand_id) {
             $query->where('brand_id', $request->brand_id);
         }
-        if ($request->has('collection_id')) {
+        if ($request->has('collection_id') && $request->collection_id) {
             $query->where('collection_id', $request->collection_id);
         }
-        if ($request->has('color_id')) {
+        if ($request->has('color_id') && $request->color_id) {
             $query->whereHas('colors', function ($q) use ($request) {
                 $q->where('colors.id', $request->color_id);
             });
         }
-        if ($request->has('size_id')) {
+        if ($request->has('size_id') && $request->size_id) {
             $query->whereHas('sizes', function ($q) use ($request) {
                 $q->where('sizes.id', $request->size_id);
             });
         }
 
-        $products = $query->get();
+        $products = $query->paginate(9)->appends($request->query());
         $categories = Category::where('is_active', true)->get();
         $brands = Brand::all();
         $collections = Collection::all();
@@ -68,23 +68,23 @@ class ProductController extends Controller
     {
         $query = Product::query()->with(['brand', 'category', 'collection', 'clothingType', 'colors', 'sizes'])
             ->where('category_id', $category->id);
-        if ($request->has('brand_id')) {
+        if ($request->has('brand_id') && $request->brand_id) {
             $query->where('brand_id', $request->brand_id);
         }
-        if ($request->has('collection_id')) {
+        if ($request->has('collection_id') && $request->collection_id) {
             $query->where('collection_id', $request->collection_id);
         }
-        if ($request->has('color_id')) {
+        if ($request->has('color_id') && $request->color_id) {
             $query->whereHas('colors', function ($q) use ($request) {
                 $q->where('colors.id', $request->color_id);
             });
         }
-        if ($request->has('size_id')) {
+        if ($request->has('size_id') && $request->size_id) {
             $query->whereHas('sizes', function ($q) use ($request) {
                 $q->where('sizes.id', $request->size_id);
             });
         }
-        $products = $query->get();
+        $products = $query->paginate(12)->appends($request->query());
         $brands = Brand::all();
         $collections = Collection::all();
         $colors = Color::all();
