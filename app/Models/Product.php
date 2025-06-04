@@ -17,6 +17,9 @@ class Product extends Model
         'collection_id',
         'clothing_type_id',
         'is_available',
+        'image_1',
+        'image_2',
+        'image_3',
     ];
 
 public function brand()

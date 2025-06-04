@@ -15,6 +15,7 @@ use App\Models\Supply;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Routing\Controller;
 use Illuminate\Validation\ValidationException;
 
@@ -132,6 +133,9 @@ class ProductController extends Controller
                 'stores.*' => 'exists:stores,id',
                 'store_quantities' => 'required|array',
                 'store_quantities.*' => 'nullable|integer|min:0',
+                'image_1' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+                'image_2' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+                'image_3' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
             ]);
 
             if (count($validated['stores']) !== count(array_filter($validated['store_quantities'], fn($q) => !is_null($q)))) {
@@ -139,7 +143,14 @@ class ProductController extends Controller
             }
 
             return DB::transaction(function () use ($validated, $request) {
-                $product = Product::create([
+                $imagePaths = [];
+                foreach (['image_1', 'image_2', 'image_3'] as $imageField) {
+                    if ($request->hasFile($imageField)) {
+                        $imagePaths[$imageField] = $request->file($imageField)->store('product_images', 'public');
+                    }
+                }
+
+                $product = Product::create(array_merge([
                     'name' => $validated['name'],
                     'price' => $validated['price'],
                     'brand_id' => $validated['brand_id'],
@@ -147,7 +158,7 @@ class ProductController extends Controller
                     'collection_id' => $validated['collection_id'],
                     'clothing_type_id' => $validated['clothing_type_id'],
                     'is_available' => $validated['is_available'],
-                ]);
+                ], $imagePaths));
 
                 $product->colors()->sync($validated['colors']);
                 $product->sizes()->sync($validated['sizes']);
@@ -230,10 +241,33 @@ class ProductController extends Controller
             'stores.*' => 'exists:stores,id',
             'store_quantities' => 'required|array',
             'store_quantities.*' => 'nullable|integer|min:0',
+            'image_1' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'image_2' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'image_3' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'remove_image_1' => 'nullable|boolean',
+            'remove_image_2' => 'nullable|boolean',
+            'remove_image_3' => 'nullable|boolean',
         ]);
 
-        return DB::transaction(function () use ($validated, $product) {
-            $product->update([
+        return DB::transaction(function () use ($validated, $request, $product) {
+            $imagePaths = [];
+            foreach (['image_1', 'image_2', 'image_3'] as $imageField) {
+                if ($request->hasFile($imageField)) {
+                    if ($product->$imageField) {
+                        Storage::disk('public')->delete($product->$imageField);
+                    }
+                    $imagePaths[$imageField] = $request->file($imageField)->store('product_images', 'public');
+                } elseif ($request->input("remove_image_$imageField")) {
+                    if ($product->$imageField) {
+                        Storage::disk('public')->delete($product->$imageField);
+                    }
+                    $imagePaths[$imageField] = null;
+                } else {
+                    $imagePaths[$imageField] = $product->$imageField;
+                }
+            }
+
+            $product->update(array_merge([
                 'name' => $validated['name'],
                 'price' => $validated['price'],
                 'brand_id' => $validated['brand_id'],
@@ -241,7 +275,7 @@ class ProductController extends Controller
                 'collection_id' => $validated['collection_id'],
                 'clothing_type_id' => $validated['clothing_type_id'],
                 'is_available' => $validated['is_available'],
-            ]);
+            ], $imagePaths));
 
             $product->colors()->sync($validated['colors']);
             $product->sizes()->sync($validated['sizes']);
@@ -275,6 +309,11 @@ class ProductController extends Controller
 
     public function destroy(Product $product)
     {
+        foreach (['image_1', 'image_2', 'image_3'] as $imageField) {
+            if ($product->$imageField) {
+                Storage::disk('public')->delete($product->$imageField);
+            }
+        }
         $product->delete();
         return redirect()->route('admin.products.index')->with('success', 'Товар удален.');
     }

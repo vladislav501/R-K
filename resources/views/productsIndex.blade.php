@@ -59,13 +59,19 @@
                 @forelse($products as $product)
                     <div class="product">
                         <a href="{{ route('products.show', $product) }}" class="product-link">
-                            <div class="product-image"></div>
+                            <div class="product-image">
+                                @if($product->image_1)
+                                    <img src="{{ Storage::url($product->image_1) }}" alt="{{ $product->name }}" class="product-image-img">
+                                @else
+                                    <div class="product-image-placeholder">Нет изображения</div>
+                                @endif
+                            </div>
                         </a>
                         <a href="{{ route('products.show', $product) }}" class="product-link">
                             <div class="product-info">
                                 <h2>{{ $product->name }}</h2>
                                 <p><strong>Категория:</strong> {{ $product->category->name }}</p>
-                                <h2><strong>Цена:</strong> {{ $product->price }} byn</h2>
+                                <h2><strong>Цена:</strong> {{ number_format($product->price, 2) }} byn</h2>
                             </div>
                         </a>
                         <form action="{{ route('cart.add', $product) }}" method="POST" class="product-form hidden" id="cart-form-{{ $product->id }}">

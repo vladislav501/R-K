@@ -25,7 +25,7 @@
         @if(session('error'))
             <div class="products-error-notice">{{ session('error') }}</div>
         @endif
-        <form method="POST" action="{{ route('admin.products.store') }}" class="products-create-form">
+        <form method="POST" action="{{ route('admin.products.store') }}" class="products-create-form" enctype="multipart/form-data">
             @csrf
             <div class="products-form-group">
                 <label for="name">Название:</label>
@@ -76,6 +76,26 @@
                     @endforeach
                 </select>
                 @error('clothing_type_id') <span class="products-error-text">{{ $message }}</span> @enderror
+            </div>
+            <div class="products-form-group">
+                <label>Изображения (до 3):</label>
+                <div class="products-image-upload">
+                    <div>
+                        <label for="image_1">Изображение 1:</label>
+                        <input type="file" name="image_1" id="image_1" accept="image/jpeg,image/png,image/jpg">
+                        @error('image_1') <span class="products-error-text">{{ $message }}</span> @enderror
+                    </div>
+                    <div>
+                        <label for="image_2">Изображение 2:</label>
+                        <input type="file" name="image_2" id="image_2" accept="image/jpeg,image/png,image/jpg">
+                        @error('image_2') <span class="products-error-text">{{ $message }}</span> @enderror
+                    </div>
+                    <div>
+                        <label for="image_3">Изображение 3:</label>
+                        <input type="file" name="image_3" id="image_3" accept="image/jpeg,image/png,image/jpg">
+                        @error('image_3') <span class="products-error-text">{{ $message }}</span> @enderror
+                    </div>
+                </div>
             </div>
             <div class="products-form-group">
                 <label>Цвета:</label>

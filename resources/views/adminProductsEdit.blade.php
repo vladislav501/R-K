@@ -25,7 +25,7 @@
         @if(session('error'))
             <div class="products-error-notice">{{ session('error') }}</div>
         @endif
-        <form method="POST" action="{{ route('admin.products.update', $product) }}" class="products-create-form">
+        <form method="POST" action="{{ route('admin.products.update', $product) }}" class="products-create-form" enctype="multipart/form-data">
             @csrf
             @method('PUT')
             <div class="products-form-group">
@@ -79,11 +79,29 @@
                 @error('clothing_type_id') <span class="products-error-text">{{ $message }}</span> @enderror
             </div>
             <div class="products-form-group">
+                <label>Изображения (до 3):</label>
+                <div class="products-image-upload">
+                    @foreach(['image_1', 'image_2', 'image_3'] as $imageField)
+                        <div class="products-image-item">
+                            <label for="{{ $imageField }}">Изображение {{ substr($imageField, -1) }}:</label>
+                            @if($product->$imageField)
+                                <img src="{{ Storage::url($product->$imageField) }}" alt="Product Image" class="products-image-preview">
+                                <label>
+                                    <input type="checkbox" name="remove_{{ $imageField }}" value="1"> Удалить изображение
+                                </label>
+                            @endif
+                            <input type="file" name="{{ $imageField }}" id="{{ $imageField }}" accept="image/jpeg,image/png,image/jpg">
+                            @error($imageField) <span class="products-error-text">{{ $message }}</span> @enderror
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+            <div class="products-form-group">
                 <label>Цвета:</label>
                 <div class="products-checkbox-group">
                     @foreach($colors as $color)
                         <label>
-                            <input type="checkbox" name="colors[]" value="{{ $color->id }}" {{ old('colors', $product->colors->pluck('id')->toArray())->contains($color->id) ? 'checked' : '' }}> {{ $color->name }}
+                            <input type="checkbox" name="colors[]" value="{{ $color->id }}" {{ in_array($color->id, old('colors', $product->colors->pluck('id')->toArray())) ? 'checked' : '' }}> {{ $color->name }}
                         </label>
                     @endforeach
                 </div>
@@ -94,7 +112,7 @@
                 <div class="products-checkbox-group">
                     @foreach($sizes as $size)
                         <label>
-                            <input type="checkbox" name="sizes[]" value="{{ $size->id }}" class="size-checkbox" {{ old('sizes', $product->sizes->pluck('id')->toArray())->contains($size->id) ? 'checked' : '' }}> {{ $size->name }}
+                            <input type="checkbox" name="sizes[]" value="{{ $size->id }}" {{ in_array($size->id, old('sizes', $product->sizes->pluck('id')->toArray())) ? 'checked' : '' }}> {{ $size->name }}
                         </label>
                     @endforeach
                 </div>
@@ -108,7 +126,7 @@
                         @foreach($sizes as $size)
                             <div class="products-quantity-item">
                                 <label>{{ $size->name }}:</label>
-                                <input type="number" name="color_size_quantities[{{ $color->id }}][{{ $size->id }}]" min="0" value="{{ old("color_size_quantities.{$color->id}.{$size->id}", isset($colorSizes[$color->id][$size->id]) ? $colorSizes[$color->id][$size->id]->first()->quantity : 0) }}">
+                                <input type="number" name="color_size_quantities[{{ $color->id }}][{{ $size->id }}]" min="0" value="{{ old("color_size_quantities.{$color->id}.{$size->id}", $colorSizes[$color->id][$size->id]->quantity ?? 0) }}">
                             </div>
                         @endforeach
                     </div>
@@ -120,8 +138,8 @@
                 <div class="products-checkbox-group">
                     @foreach($stores as $store)
                         <label>
-                            <input type="checkbox" name="stores[]" value="{{ $store->id }}" class="store-checkbox" {{ old('stores', $product->stores->pluck('id')->toArray())->contains($store->id) ? 'checked' : '' }}> {{ $store->name }}
-                            <input type="number" name="store_quantities[{{ $store->id }}]" class="store-quantity" min="0" value="{{ old("store_quantities.{$store->id}", $product->stores->contains($store->id) ? $product->stores->find($store->id)->pivot->quantity : '') }}">
+                            <input type="checkbox" name="stores[]" value="{{ $store->id }}" class="store-checkbox" {{ in_array($store->id, old('stores', $product->stores->pluck('id')->toArray())) ? 'checked' : '' }}> {{ $store->name }}
+                            <input type="number" name="store_quantities[{{ $store->id }}]" class="store-quantity" min="0" value="{{ old("store_quantities.{$store->id}", $product->stores->firstWhere('id', $store->id)->pivot->quantity ?? '') }}">
                         </label>
                     @endforeach
                 </div>

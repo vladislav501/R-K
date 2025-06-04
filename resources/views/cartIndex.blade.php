@@ -26,6 +26,7 @@
                 <table class="cart-table">
                     <thead>
                         <tr>
+                            <th class="cart-table-header">Изображение</th>
                             <th class="cart-table-header">Товар</th>
                             <th class="cart-table-header">Размер</th>
                             <th class="cart-table-header">Цвет</th>
@@ -37,6 +38,13 @@
                     <tbody>
                         @foreach($carts as $cart)
                             <tr class="cart-table-row">
+                                <td class="cart-table-cell">
+                                    @if($cart->product->image_1)
+                                        <img src="{{ Storage::url($cart->product->image_1) }}" alt="{{ $cart->product->name }}" class="cart-table-image">
+                                    @else
+                                        Нет изображения
+                                    @endif
+                                </td>
                                 <td class="cart-table-cell">{{ $cart->product->name }}</td>
                                 <td class="cart-table-cell">{{ $cart->size->name }}</td>
                                 <td class="cart-table-cell">{{ $cart->color->name }}</td>
@@ -51,7 +59,7 @@
                                         <button type="submit" name="action" value="increment" class="cart-quantity-button">+</button>
                                     </form>
                                 </td>
-                                <td class="cart-table-cell">{{ $cart->order_amount }} ₽</td>
+                                <td class="cart-table-cell">{{ number_format($cart->order_amount, 2) }} ₽</td>
                                 <td class="cart-table-cell">
                                     <form action="{{ route('cart.destroy', $cart) }}" method="POST" class="cart-delete-form">
                                         @csrf
@@ -65,7 +73,7 @@
                 </table>
             </div>
             <div class="cart-summary">
-                <p class="cart-total">Общая сумма: {{ $totalSum }} ₽</p>
+                <p class="cart-total">Общая сумма: {{ number_format($totalSum, 2) }} ₽</p>
                 <a href="{{ route('cart.checkout') }}" class="cart-checkout-button">Оформить заказ</a>
             </div>
         @endif
