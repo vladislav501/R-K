@@ -24,8 +24,8 @@
             <div class="header-collapsible">
                 <select class="header-store-select" onchange="window.location.href=this.value">
                     <option value="{{ route('products.index') }}">Общий каталог</option>
-                    @foreach(\App\Models\Store::all() as $store)
-                        <option value="{{ route('products.index', ['store_id' => $store->id]) }}" {{ request('store_id') == $store->id ? 'selected' : '' }}>{{ $store->name }}</option>
+                    @foreach(\App\Models\PickupPoint::all() as $pickupPoint)
+                        <option value="{{ route('products.index', ['pickup_point_id' => $pickupPoint->id]) }}" {{ request('pickup_point_id') == $pickupPoint->id ? 'selected' : '' }}>{{ $pickupPoint->name }}</option>
                     @endforeach
                 </select>
                 <form action="{{ route('products.search') }}" method="GET" class="header-search-form">

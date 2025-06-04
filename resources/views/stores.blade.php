@@ -1,17 +1,20 @@
 @extends('layouts.app')
 
-@section('title', 'Адреса магазинов')
+@section('title', 'Адреса пунктов выдачи')
 
 @section('content')
 <div class="static-page">
-    <h1>Адреса магазинов</h1>
-    <p>Посетите наши магазины:</p>
-    <ul>
-        <li>Москва, ул. Тверская, д. 10 – ежедневно с 10:00 до 20:00.</li>
-        <li>Санкт-Петербург, Невский пр., д. 50 – пн-пт с 11:00 до 19:00.</li>
-        <li>Екатеринбург, ул. Ленина, д. 25 – ежедневно с 10:00 до 18:00.</li>
-    </ul>
-    <p>Для связи с нами используйте <a href="{{ route('contact') }}">форму обратной связи</a>.</p>
+    <h1>Адреса пунктов выдачи</h1>
+    <p>Посетите наши пункты выдачи:</p>
+    @if(\App\Models\PickupPoint::count() > 0)
+        <ul>
+            @foreach(\App\Models\PickupPoint::all() as $pickupPoint)
+                <li><b>{{ $pickupPoint->name }}</b> - {{ $pickupPoint->address }} – {{ $pickupPoint->working_hours ?? 'ежедневно с 10:00 до 20:00' }}.</li>
+            @endforeach
+        </ul>
+    @else
+        <p>Пункты выдачи отсутствуют.</p>
+    @endif
 </div>
 @endsection
 

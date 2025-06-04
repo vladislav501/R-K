@@ -35,12 +35,12 @@
             <form method="POST" action="{{ route('admin.pickup_points.store') }}">
                 @csrf
                 <div>
-                    <label for="name">Название:</label>
+                    <label for="name">Город:</label>
                     <input type="text" name="name" id="name" value="{{ old('name') }}" required>
                     @error('name') <span class="pickup-point-create-error-text">{{ $message }}</span> @enderror
                 </div>
                 <div>
-                    <label for="address">Адрес:</label>
+                    <label for="address">Улица, номер:</label>
                     <input type="text" name="address" id="address" value="{{ old('address') }}" required>
                     @error('address') <span class="pickup-point-create-error-text">{{ $message }}</span> @enderror
                 </div>
