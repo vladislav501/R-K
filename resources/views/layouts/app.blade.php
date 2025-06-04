@@ -15,37 +15,44 @@
 <body>
     <header class="header-container">
         <div class="header-wrapper">
-            <select class="header-store-select" onchange="window.location.href=this.value">
-                <option value="{{ route('products.index') }}">Общий каталог</option>
-                @foreach(\App\Models\Store::all() as $store)
-                    <option value="{{ route('products.index', ['store_id' => $store->id]) }}" {{ request('store_id') == $store->id ? 'selected' : '' }}>{{ $store->name }}</option>
-                @endforeach
-            </select>
             <a href="{{ route('products.index') }}" class="header-logo">Luxury Comfort</a>
-            <form action="#" method="GET" class="header-search-form">
-                <input type="text" name="query" placeholder="Поиск товаров..." class="header-search-input" required>
-                <button type="submit" class="header-search-button">Поиск</button>
-            </form>
-            <nav class="header-nav">
-                <a href="{{ route('products.index') }}" class="header-nav-link">Каталог</a>
-                @auth
-                    <a href="{{ route('cart.index') }}" class="header-nav-link">Корзина</a>
-                    <a href="{{ route('profile.index') }}" class="header-nav-link">Профиль</a>
-                    @can('is-admin')
-                        <a href="{{ route('admin.index') }}" class="header-nav-link">Админ-панель</a>
-                    @endcan
-                    @can('is-manager')
-                        <a href="{{ route('manager.index') }}" class="header-nav-link">Менеджер-панель</a>
-                    @endcan
-                    <form action="{{ route('logout') }}" method="POST" class="header-logout-form">
-                        @csrf
-                        <button type="submit" class="header-nav-link header-logout-button">Выйти</button>
-                    </form>
-                @else
-                    <a href="{{ route('login') }}" class="header-nav-link">Войти</a>
-                    <a href="{{ route('register') }}" class="header-nav-link">Регистрация</a>
-                @endauth
-            </nav>
+            <button class="header-burger" aria-label="Toggle Menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <div class="header-collapsible">
+                <select class="header-store-select" onchange="window.location.href=this.value">
+                    <option value="{{ route('products.index') }}">Общий каталог</option>
+                    @foreach(\App\Models\Store::all() as $store)
+                        <option value="{{ route('products.index', ['store_id' => $store->id]) }}" {{ request('store_id') == $store->id ? 'selected' : '' }}>{{ $store->name }}</option>
+                    @endforeach
+                </select>
+                <form action="#" method="GET" class="header-search-form">
+                    <input type="text" name="query" placeholder="Поиск товаров..." class="header-search-input" required>
+                    <button type="submit" class="header-search-button">Поиск</button>
+                </form>
+                <nav class="header-nav">
+                    <a href="{{ route('products.index') }}" class="header-nav-link">Каталог</a>
+                    @auth
+                        <a href="{{ route('cart.index') }}" class="header-nav-link">Корзина</a>
+                        <a href="{{ route('profile.index') }}" class="header-nav-link">Профиль</a>
+                        @can('is-admin')
+                            <a href="{{ route('admin.index') }}" class="header-nav-link">Админ-панель</a>
+                        @endcan
+                        @can('is-manager')
+                            <a href="{{ route('manager.index') }}" class="header-nav-link">Менеджер-панель</a>
+                        @endcan
+                        <form action="{{ route('logout') }}" method="POST" class="header-logout-form">
+                            @csrf
+                            <button type="submit" class="header-nav-link header-logout-button">Выйти</button>
+                        </form>
+                    @else
+                        <a href="{{ route('login') }}" class="header-nav-link">Войти</a>
+                        <a href="{{ route('register') }}" class="header-nav-link">Регистрация</a>
+                    @endauth
+                </nav>
+            </div>
         </div>
     </header>
     <main>
@@ -103,5 +110,23 @@
             </div>
         </div>
     </footer>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const burger = document.querySelector('.header-burger');
+            const collapsible = document.querySelector('.header-collapsible');
+
+            burger.addEventListener('click', () => {
+                burger.classList.toggle('active');
+                collapsible.classList.toggle('active');
+            });
+
+            collapsible.querySelectorAll('a, button').forEach(element => {
+                element.addEventListener('click', () => {
+                    burger.classList.remove('active');
+                    collapsible.classList.remove('active');
+                });
+            });
+        });
+    </script>
 </body>
 </html>
