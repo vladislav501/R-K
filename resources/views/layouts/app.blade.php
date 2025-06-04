@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Luxury Comfort</title>
+    <title>@yield('title', 'Luxury Comfort')</title>
     <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/3.0.0/uicons-brands/css/uicons-brands.css'>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap');
@@ -28,13 +28,14 @@
                         <option value="{{ route('products.index', ['store_id' => $store->id]) }}" {{ request('store_id') == $store->id ? 'selected' : '' }}>{{ $store->name }}</option>
                     @endforeach
                 </select>
-                <form action="#" method="GET" class="header-search-form">
+                <form action="{{ route('products.search') }}" method="GET" class="header-search-form">
                     <input type="text" name="query" placeholder="Поиск товаров..." class="header-search-input" required>
                     <button type="submit" class="header-search-button">Поиск</button>
                 </form>
                 <nav class="header-nav">
                     <a href="{{ route('products.index') }}" class="header-nav-link">Каталог</a>
                     @auth
+                        <a href="{{ route('favorites.index') }}" class="header-nav-link">Избранное</a>
                         <a href="{{ route('cart.index') }}" class="header-nav-link">Корзина</a>
                         <a href="{{ route('profile.index') }}" class="header-nav-link">Профиль</a>
                         @can('is-admin')
@@ -58,31 +59,31 @@
     <main>
         @yield('content')
     </main>
-    <script src="{{ asset('js/app.js') }}"></script>
-    @yield('scripts')
     <footer class="footer-container">
         <div class="footer-wrapper">
             <div class="footer-column">
                 <h3>Категории</h3>
                 <ul>
-                    
+                    @foreach(\App\Models\Category::all() as $category)
+                        <li><a href="{{ route('products.category', $category) }}">{{ $category->name }}</a></li>
+                    @endforeach
                 </ul>
             </div>
             <div class="footer-column">
                 <h3>Для покупателей</h3>
                 <ul>
-                    <li><a href="/delivery">Варианты доставки</a></li>
-                    <li><a href="/payment">Способы оплаты</a></li>
-                    <li><a href="/pickup">Самовывоз</a></li>
+                    <li><a href="{{ route('delivery') }}">Доставка</a></li>
+                    <li><a href="{{ route('payment') }}">Способы оплаты</a></li>
+                    <li><a href="{{ route('pickup') }}">Самовывоз</a></li>
                 </ul>
             </div>
             <div class="footer-column">
                 <h3>Информация</h3>
                 <ul>
-                    <li><a href="/about">О нас</a></li>
-                    <li><a href="/stores">Адреса магазинов</a></li>
-                    <li><a href="/contact">Контакты</a></li>
-                    <li><a href="/privacy">Политика конфиденциальности</a></li>
+                    <li><a href="{{ route('about') }}">О нас</a></li>
+                    <li><a href="{{ route('stores') }}">Адреса магазинов</a></li>
+                    <li><a href="{{ route('contact') }}">Контакты</a></li>
+                    <li><a href="{{ route('privacy') }}">Политика конфиденциальности</a></li>
                 </ul>
             </div>
             <div class="footer-column">
@@ -106,27 +107,11 @@
                 </div>
             </div>
             <div class="footer-bottom">
-                <p>© 2025 LuxuryComfort. Все права защищены. <a href="/privacy">Политика конфиденциальности</a></p>
+                <p>© 2025 LuxuryComfort. Все права защищены. <a href="{{ route('privacy') }}">Политика конфиденциальности</a></p>
             </div>
         </div>
     </footer>
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const burger = document.querySelector('.header-burger');
-            const collapsible = document.querySelector('.header-collapsible');
-
-            burger.addEventListener('click', () => {
-                burger.classList.toggle('active');
-                collapsible.classList.toggle('active');
-            });
-
-            collapsible.querySelectorAll('a, button').forEach(element => {
-                element.addEventListener('click', () => {
-                    burger.classList.remove('active');
-                    collapsible.classList.remove('active');
-                });
-            });
-        });
-    </script>
+    <script src="{{ asset('js/app.js') }}"></script>
+    @yield('scripts')
 </body>
 </html>

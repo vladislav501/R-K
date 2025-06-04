@@ -1,10 +1,10 @@
 @extends('layouts.app')
 
-@section('title', 'Создать категорию')
+@section('title', 'Редактировать пункт выдачи')
 
 @section('content')
-<div class="category-create-wrapper">
-    <div class="category-create-nav">
+<div class="pickup-point-edit-wrapper">
+    <div class="pickup-point-edit-nav">
         <h2>Админ Панель</h2>
         <ul>
             <li><a href="{{ route('admin.products.index') }}">Управление товарами</a></li>
@@ -19,35 +19,41 @@
             <li><a href="{{ route('admin.supplies.archive') }}">Архив поставок</a></li>
         </ul>
     </div>
-    <div class="category-create-content">
-        <h1>Создать категорию</h1>
+    <div class="pickup-point-edit-content">
+        <h1>Редактировать пункт выдачи</h1>
         @if(session('success'))
-            <div class="category-create-success">{{ session('success') }}</div>
+            <div class="pickup-point-edit-success">{{ session('success') }}</div>
         @endif
         @if($errors->any())
-            <div class="category-create-error">
+            <div class="pickup-point-edit-error">
                 @foreach($errors->all() as $error)
                     {{ $error }}<br>
                 @endforeach
             </div>
         @endif
-        <div class="category-create-form">
-            <form method="POST" action="{{ route('admin.categories.store') }}">
+        <div class="pickup-point-edit-form">
+            <form method="POST" action="{{ route('admin.pickup_points.update', $pickupPoint) }}">
                 @csrf
+                @method('PUT')
                 <div>
                     <label for="name">Название:</label>
-                    <input type="text" name="name" id="name" value="{{ old('name') }}" required>
-                    @error('name') <span class="category-create-error-text">{{ $message }}</span> @enderror
+                    <input type="text" name="name" id="name" value="{{ old('name', $pickupPoint->name) }}" required>
+                    @error('name') <span class="pickup-point-edit-error-text">{{ $message }}</span> @enderror
                 </div>
                 <div>
-                    <label for="is_active">Активна:</label>
-                    <input type="hidden" name="is_active" value="0">
-                    <input type="checkbox" name="is_active" id="is_active" value="1" {{ old('is_active', 1) ? 'checked' : '' }}>
+                    <label for="address">Адрес:</label>
+                    <input type="text" name="address" id="address" value="{{ old('address', $pickupPoint->address) }}" required>
+                    @error('address') <span class="pickup-point-edit-error-text">{{ $message }}</span> @enderror
                 </div>
-                <button type="submit">Создать</button>
+                <div>
+                    <label for="hours">Часы работы:</label>
+                    <input type="text" name="hours" id="hours" value="{{ old('hours', $pickupPoint->hours) }}" required>
+                    @error('hours') <span class="pickup-point-edit-error-text">{{ $message }}</span> @enderror
+                </div>
+                <button type="submit">Обновить</button>
             </form>
         </div>
-        <a href="{{ route('admin.categories.index') }}" class="category-create-back">Назад</a>
+        <a href="{{ route('admin.pickup_points.index') }}" class="pickup-point-edit-back">Назад</a>
     </div>
 </div>
 @endsection

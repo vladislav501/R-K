@@ -42,7 +42,7 @@ class UserController extends Controller
 
         Auth::login($user);
 
-        return redirect()->route('products.index')->with('success', 'Регистрация успешна.');
+        return redirect()->route('home')->with('success', 'Регистрация успешна.');
     }
 
     public function login()
@@ -59,7 +59,7 @@ class UserController extends Controller
 
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
-            return redirect()->intended(route('products.index'))->with('success', 'Вход выполнен.');
+            return redirect()->intended(route('home'))->with('success', 'Вход выполнен.');
         }
 
         return back()->withErrors([

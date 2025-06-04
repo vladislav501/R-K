@@ -9,7 +9,9 @@
             <ul>
                 <li><a href="{{ route('manager.orders.index') }}">Просмотреть заказы</a></li>
                 <li><a href="{{ route('manager.products.index') }}">Управление товарами</a></li>
-                <li><a href="/manager/supplies">Поставки</a></li>
+                <li><a href="{{ route('manager.supplies.index') }}">Поставки</a></li>
+                <li><a href="{{ route('manager.supplies.archive') }}">Архив поставок</a></li>
+                <li><a href="{{ route('manager.orders.archive') }}">Архив заказов</a></li>
             </ul>
         </div>
         <div class="main-content">
