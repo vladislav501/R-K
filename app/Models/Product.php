@@ -19,7 +19,7 @@ class Product extends Model
         'is_available',
     ];
 
-    public function brand()
+public function brand()
     {
         return $this->belongsTo(Brand::class);
     }
@@ -50,19 +50,18 @@ class Product extends Model
     }
 
     public function colorSizes()
-{
-    return $this->hasMany(ProductColorSize::class);
-}
+    {
+        return $this->hasMany(ProductColorSize::class);
+    }
 
     public function stores()
     {
-        return $this->belongsToMany(Store::class, 'product_store')
-                    ->withPivot('quantity');
+        return $this->belongsToMany(Store::class, 'product_store')->withPivot('quantity');
     }
 
-    public function supplies()
+    public function users()
     {
-        return $this->hasMany(Supply::class);
+        return $this->belongsToMany(User::class, 'favorites', 'product_id', 'user_id')->withTimestamps();
     }
 }
 

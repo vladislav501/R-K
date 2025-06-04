@@ -28,6 +28,7 @@ class ProductController extends Controller
     public function index(Request $request)
     {
         $query = Product::query()->with(['brand', 'category', 'collection', 'clothingType', 'colors', 'sizes']);
+        
         if ($request->has('category_id')) {
             $query->where('category_id', $request->category_id);
         }
@@ -47,12 +48,18 @@ class ProductController extends Controller
                 $q->where('sizes.id', $request->size_id);
             });
         }
+
         $products = $query->get();
         $categories = Category::where('is_active', true)->get();
         $brands = Brand::all();
         $collections = Collection::all();
         $colors = Color::all();
         $sizes = Size::all();
+
+        if ($request->is('admin/*')) {
+            return view('adminProductsIndex', compact('products', 'categories', 'brands', 'collections', 'colors', 'sizes'));
+        }
+
         return view('productsIndex', compact('products', 'categories', 'brands', 'collections', 'colors', 'sizes'));
     }
 
@@ -123,11 +130,11 @@ class ProductController extends Controller
                 'color_size_quantities.*.*' => 'nullable|integer|min:0',
                 'stores' => 'required|array|min:1',
                 'stores.*' => 'exists:stores,id',
-                'store_quantities' => 'required|array|min:1',
-                'store_quantities.*' => 'required|integer|min:0',
+                'store_quantities' => 'required|array',
+                'store_quantities.*' => 'nullable|integer|min:0',
             ]);
 
-            if (count($validated['stores']) !== count($validated['store_quantities'])) {
+            if (count($validated['stores']) !== count(array_filter($validated['store_quantities'], fn($q) => !is_null($q)))) {
                 throw new \Exception('The number of stores and store quantities do not match.');
             }
 
@@ -160,7 +167,7 @@ class ProductController extends Controller
                 }
 
                 foreach ($validated['stores'] as $index => $store_id) {
-                    $quantity = $validated['store_quantities'][$index];
+                    $quantity = $validated['store_quantities'][$store_id] ?? 0;
                     if ($quantity > 0) {
                         $product->stores()->attach($store_id, ['quantity' => $quantity]);
                         Supply::create([
@@ -221,8 +228,8 @@ class ProductController extends Controller
             'color_size_quantities.*.*' => 'nullable|integer|min:0',
             'stores' => 'required|array|min:1',
             'stores.*' => 'exists:stores,id',
-            'store_quantities' => 'required|array|min:1',
-            'store_quantities.*' => 'required|integer|min:0',
+            'store_quantities' => 'required|array',
+            'store_quantities.*' => 'nullable|integer|min:0',
         ]);
 
         return DB::transaction(function () use ($validated, $product) {
@@ -255,8 +262,8 @@ class ProductController extends Controller
             }
 
             $product->stores()->sync([]);
-            foreach ($validated['stores'] as $index => $store_id) {
-                $quantity = $validated['store_quantities'][$index];
+            foreach ($validated['stores'] as $store_id) {
+                $quantity = $validated['store_quantities'][$store_id] ?? 0;
                 if ($quantity > 0) {
                     $product->stores()->attach($store_id, ['quantity' => $quantity]);
                 }

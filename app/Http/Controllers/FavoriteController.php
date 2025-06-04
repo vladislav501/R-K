@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Favorite;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -18,35 +17,24 @@ class FavoriteController extends Controller
     {
         /** @var \App\Models\User $user */
         $user = Auth::user();
-        $favorites = $user->favorites()->with('product')->get();
+        $favorites = Auth::user()->favorites()->with(['brand', 'category', 'colors', 'sizes'])->get();
         return view('favoritesIndex', compact('favorites'));
     }
 
-    public function add(Product $product)
+    public function add(Request $request, Product $product)
     {
-        $existingFavorite = Favorite::where('user_id', Auth::id())
-            ->where('product_id', $product->id)
-            ->first();
-
-        if ($existingFavorite) {
-            return redirect()->route('favorites.index')->with('info', 'Товар уже в избранном.');
+        $user = Auth::user();
+        if (!$user->favorites()->where('product_id', $product->id)->exists()) {
+            $user->favorites()->attach($product->id);
+            return redirect()->back()->with('success', 'Товар добавлен в избранное.');
         }
-
-        Favorite::create([
-            'user_id' => Auth::id(),
-            'product_id' => $product->id,
-        ]);
-
-        return redirect()->route('favorites.index')->with('success', 'Товар добавлен в избранное.');
+        return redirect()->back()->with('error', 'Товар уже в избранном.');
     }
 
-    public function destroy(Favorite $favorite)
+    public function destroy($favoriteId)
     {
-        if ($favorite->user_id !== Auth::id()) {
-            abort(403, 'Доступ запрещён.');
-        }
-
-        $favorite->delete();
-        return redirect()->route('favorites.index')->with('success', 'Товар удалён из избранного.');
+        $user = Auth::user();
+        $user->favorites()->detach($favoriteId);
+        return redirect()->back()->with('success', 'Товар удален из избранного.');
     }
 }
