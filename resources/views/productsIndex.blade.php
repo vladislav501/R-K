@@ -52,12 +52,13 @@
                         @endforeach
                     </select>
                 </div>
+                <input type="hidden" name="query" value="{{ request('query') }}">
                 <button type="submit" class="catalog-filter-button">Фильтровать</button>
             </form>
 
             <div class="paginationContent">
                 <div class="pagination pagination-bottom">
-                    {{ $products->links('vendor.pagination.custom') }}
+                    {{ $products->appends(request()->query())->links('vendor.pagination.custom') }}
                 </div>
                 <div class="products">
                     @forelse($products as $product)
@@ -75,7 +76,12 @@
                                 <div class="product-info">
                                     <h2>{{ $product->name }}</h2>
                                     <p><strong>Категория:</strong> {{ $product->category->name }}</p>
-                                    <h2><strong>Цена:</strong> {{ number_format($product->price, 2) }} byn</h2>
+                                    <h2><strong>Цена:</strong> {{ number_format($product->price, 2) }} ₽</h2>
+                                    <p><strong>Бренд:</strong> {{ $product->brand->name }}</p>
+                                    @if($product->collection)
+                                        <p><strong>Коллекция:</strong> {{ $product->collection->name }}</p>
+                                    @endif
+                                    <p><strong>Тип одежды:</strong> {{ $product->clothingType->name }}</p>
                                 </div>
                             </a>
                             <form action="{{ route('cart.add', $product) }}" method="POST" class="product-form hidden" id="cart-form-{{ $product->id }}">
@@ -120,7 +126,7 @@
                     @endforelse
                 </div>
                 <div class="pagination pagination-bottom">
-                    {{ $products->links('vendor.pagination.custom') }}
+                    {{ $products->appends(request()->query())->links('vendor.pagination.custom') }}
                 </div>
             </div>
         </div>
@@ -167,4 +173,3 @@
         });
     </script>
 @endsection
-

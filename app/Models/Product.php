@@ -2,13 +2,11 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
 
 class Product extends Model
 {
-    use HasFactory;
-
     protected $fillable = [
         'name',
         'price',
@@ -22,7 +20,8 @@ class Product extends Model
         'image_3',
     ];
 
-public function brand()
+    // Define relationships (assuming they exist based on your controller)
+    public function brand()
     {
         return $this->belongsTo(Brand::class);
     }
@@ -44,12 +43,12 @@ public function brand()
 
     public function colors()
     {
-        return $this->belongsToMany(Color::class, 'product_color');
+        return $this->belongsToMany(Color::class, 'product_color_sizes');
     }
 
     public function sizes()
     {
-        return $this->belongsToMany(Size::class, 'product_size');
+        return $this->belongsToMany(Size::class, 'product_color_sizes');
     }
 
     public function colorSizes()
@@ -59,13 +58,22 @@ public function brand()
 
     public function stores()
     {
-        return $this->belongsToMany(Store::class, 'product_store')->withPivot('quantity');
+        return $this->belongsToMany(Store::class)->withPivot('quantity');
     }
 
-    public function users()
+    public function favorites()
     {
-        return $this->belongsToMany(User::class, 'favorites', 'product_id', 'user_id')->withTimestamps();
+        return $this->belongsToMany(User::class, 'favorites', 'product_id', 'user_id');
+    }
+
+    public function isInCart()
+    {
+        if (!Auth::check()) {
+            return false;
+        }
+
+        return Cart::where('user_id', Auth::id())
+            ->where('product_id', $this->id)
+            ->exists();
     }
 }
-
-?>

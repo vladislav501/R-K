@@ -70,7 +70,7 @@ Route::prefix('admin')->middleware(['auth', 'can:is-admin'])->name('admin.')->gr
     Route::resource('colors', ColorController::class)->only(['index', 'create', 'store', 'destroy']);
     Route::resource('sizes', SizeController::class)->only(['index', 'create', 'store', 'destroy']);
     Route::resource('collections', CollectionController::class)->except(['show']);
-    Route::resource('products', ProductController::class); // Full resource for all actions
+    Route::resource('products', ProductController::class);
     Route::resource('pickup_points', PickupPointController::class)->only(['index', 'create', 'store', 'edit', 'update', 'destroy']);
     Route::get('/orders', [ManagerController::class, 'index'])->name('orders.index');
     Route::get('/supplies', [SupplyController::class, 'index'])->name('supplies.index');

@@ -10,6 +10,8 @@
     </style>
     <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/3.0.0/uicons-regular-rounded/css/uicons-regular-rounded.css'>
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/categories.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/products.css') }}" rel="stylesheet">
     @yield('styles')
 </head>
 <body>
@@ -29,15 +31,39 @@
                     @endforeach
                 </select>
                 <form action="{{ route('products.search') }}" method="GET" class="header-search-form">
-                    <input type="text" name="query" placeholder="Поиск товаров..." class="header-search-input" required>
+                    <input type="text" name="query" placeholder="Поиск товаров..." class="header-search-input" value="{{ request('query') }}" required>
                     <button type="submit" class="header-search-button">Поиск</button>
                 </form>
                 <nav class="header-nav">
                     <a href="{{ route('products.index') }}" class="header-nav-link">Каталог</a>
                     @auth
-                        <a href="{{ route('favorites.index') }}" class="header-nav-link">Избранное</a>
-                        <a href="{{ route('cart.index') }}" class="header-nav-link">Корзина</a>
-                        <a href="{{ route('profile.index') }}" class="header-nav-link">Профиль</a>
+                        <a href="{{ route('favorites.index') }}" class="header-nav-link">
+                            Избранное
+                            @php
+                                $favoritesCount = Auth::user()->favorites()->count();
+                            @endphp
+                            @if($favoritesCount > 0)
+                                <span class="header-badge">{{ $favoritesCount }}</span>
+                            @endif
+                        </a>
+                        <a href="{{ route('cart.index') }}" class="header-nav-link">
+                            Корзина
+                            @php
+                                $cartCount = Auth::user()->carts()->whereNull('order_id')->count();
+                            @endphp
+                            @if($cartCount > 0)
+                                <span class="header-badge">{{ $cartCount }}</span>
+                            @endif
+                        </a>
+                        <a href="{{ route('profile.index') }}" class="header-nav-link">
+                            Профиль
+                            @php
+                                $readyOrdersCount = Auth::user()->orders()->where('status', 'ready_for_pickup')->count();
+                            @endphp
+                            @if($readyOrdersCount > 0)
+                                <span class="header-badge">{{ $readyOrdersCount }}</span>
+                            @endif
+                        </a>
                         @can('is-admin')
                             <a href="{{ route('admin.index') }}" class="header-nav-link">Админ-панель</a>
                         @endcan
@@ -56,6 +82,20 @@
             </div>
         </div>
     </header>
+    <nav class="categories-nav">
+        <div class="categories-wrapper">
+            <ul class="categories-list">
+                <li class="categories-item">
+                    <a href="{{ route('products.index') }}" class="categories-link {{ !request('category_id') && !Route::is('products.category') ? 'active' : '' }}">Все категории</a>
+                </li>
+                @foreach(\App\Models\Category::all() as $category)
+                    <li class="categories-item">
+                        <a href="{{ route('products.category', $category) }}" class="categories-link {{ Route::is('products.category') && request()->route('category')->id == $category->id ? 'active' : '' }}">{{ $category->name }}</a>
+                    </li>
+                @endforeach
+            </ul>
+        </div>
+    </nav>
     <main>
         @yield('content')
     </main>

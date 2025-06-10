@@ -135,19 +135,6 @@
                 @error('color_size_quantities') <span class="products-error-text">{{ $message }}</span> @enderror
             </div>
             <div class="products-form-group">
-                <label>Пункты выдачи:</label>
-                <div class="products-checkbox-group">
-                    @foreach($stores as $store)
-                        <label>
-                            <input type="checkbox" name="stores[]" value="{{ $store->id }}" class="store-checkbox" {{ in_array($store->id, old('stores', [])) ? 'checked' : '' }}> {{ $store->name }}
-                            <input type="number" name="store_quantities[{{ $store->id }}]" class="store-quantity" min="0" value="{{ old("store_quantities.{$store->id}") }}">
-                        </label>
-                    @endforeach
-                </div>
-                @error('stores') <span class="products-error-text">{{ $message }}</span> @enderror
-                @error('store_quantities') <span class="products-error-text">{{ $message }}</span> @enderror
-            </div>
-            <div class="products-form-group">
                 <label>
                     <input type="checkbox" name="is_available" value="1" {{ old('is_available', 1) ? 'checked' : '' }}> В наличии
                     <input type="hidden" name="is_available" value="0">
@@ -161,18 +148,18 @@
 </div>
 
 <script>
-    document.querySelectorAll('.store-checkbox').forEach(checkbox => {
-        const quantityInput = checkbox.nextElementSibling;
-        quantityInput.style.display = checkbox.checked ? 'inline' : 'none';
-        quantityInput.required = checkbox.checked;
-
-        checkbox.addEventListener('change', function() {
-            quantityInput.style.display = this.checked ? 'inline' : 'none';
-            quantityInput.required = this.checked;
-            if (!this.checked) {
-                quantityInput.value = '';
+    document.querySelector('.products-create-form').addEventListener('submit', function(e) {
+        const quantities = document.querySelectorAll('input[name^="color_size_quantities"]');
+        let hasQuantity = false;
+        quantities.forEach(input => {
+            if (input.value && parseInt(input.value) > 0) {
+                hasQuantity = true;
             }
         });
+        if (!hasQuantity) {
+            e.preventDefault();
+            alert('Укажите хотя бы одно количество для комбинации цвет/размер.');
+        }
     });
 </script>
 @endsection

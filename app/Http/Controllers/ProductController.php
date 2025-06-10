@@ -10,13 +10,10 @@ use App\Models\Color;
 use App\Models\Product;
 use App\Models\ProductColorSize;
 use App\Models\Size;
-use App\Models\Store;
-use App\Models\Supply;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Routing\Controller;
 use Illuminate\Validation\ValidationException;
 
 class ProductController extends Controller
@@ -29,28 +26,37 @@ class ProductController extends Controller
     public function index(Request $request)
     {
         $query = Product::query()->with(['brand', 'category', 'collection', 'clothingType', 'colors', 'sizes']);
-        
-        if ($request->has('category_id') && $request->category_id) {
+
+        if ($request->filled('category_id')) {
             $query->where('category_id', $request->category_id);
         }
-        if ($request->has('brand_id') && $request->brand_id) {
+        if ($request->filled('brand_id')) {
             $query->where('brand_id', $request->brand_id);
         }
-        if ($request->has('collection_id') && $request->collection_id) {
+        if ($request->filled('collection_id')) {
             $query->where('collection_id', $request->collection_id);
         }
-        if ($request->has('color_id') && $request->color_id) {
+        if ($request->filled('color_id')) {
             $query->whereHas('colors', function ($q) use ($request) {
                 $q->where('colors.id', $request->color_id);
             });
         }
-        if ($request->has('size_id') && $request->size_id) {
+        if ($request->filled('size_id')) {
             $query->whereHas('sizes', function ($q) use ($request) {
                 $q->where('sizes.id', $request->size_id);
             });
         }
+        if ($request->filled('query')) {
+            $query->where('name', 'like', '%' . $request->query('query') . '%');
+        }
 
         $products = $query->paginate(9)->appends($request->query());
+        $products->getCollection()->transform(function ($product) {
+            $product->is_in_cart = $product->isInCart();
+            $product->is_favorite = auth()->check() && $product->favorites()->where('user_id', auth()->id())->exists();
+            return $product;
+        });
+
         $categories = Category::where('is_active', true)->get();
         $brands = Brand::all();
         $collections = Collection::all();
@@ -68,23 +74,33 @@ class ProductController extends Controller
     {
         $query = Product::query()->with(['brand', 'category', 'collection', 'clothingType', 'colors', 'sizes'])
             ->where('category_id', $category->id);
-        if ($request->has('brand_id') && $request->brand_id) {
+        if ($request->filled('brand_id')) {
             $query->where('brand_id', $request->brand_id);
         }
-        if ($request->has('collection_id') && $request->collection_id) {
+        if ($request->filled('collection_id')) {
             $query->where('collection_id', $request->collection_id);
         }
-        if ($request->has('color_id') && $request->color_id) {
+        if ($request->filled('color_id')) {
             $query->whereHas('colors', function ($q) use ($request) {
                 $q->where('colors.id', $request->color_id);
             });
         }
-        if ($request->has('size_id') && $request->size_id) {
+        if ($request->filled('size_id')) {
             $query->whereHas('sizes', function ($q) use ($request) {
                 $q->where('sizes.id', $request->size_id);
             });
         }
+        if ($request->filled('query')) {
+            $query->where('name', 'like', '%' . $request->query('query') . '%');
+        }
+
         $products = $query->paginate(12)->appends($request->query());
+        $products->getCollection()->transform(function ($product) {
+            $product->is_in_cart = $product->isInCart();
+            $product->is_favorite = auth()->check() && $product->favorites()->where('user_id', auth()->id())->exists();
+            return $product;
+        });
+
         $brands = Brand::all();
         $collections = Collection::all();
         $colors = Color::all();
@@ -95,7 +111,14 @@ class ProductController extends Controller
     public function show(Product $product)
     {
         $product->load(['brand', 'category', 'collection', 'clothingType', 'colors', 'sizes']);
+        $product->is_in_cart = $product->isInCart();
+        $product->is_favorite = auth()->check() && $product->favorites()->where('user_id', auth()->id())->exists();
         return view('productsShow', compact('product'));
+    }
+
+    public function search(Request $request)
+    {
+        return redirect()->route('products.index', array_merge($request->query(), ['query' => $request->input('query')]));
     }
 
     public function create()
@@ -106,8 +129,7 @@ class ProductController extends Controller
         $clothingTypes = ClothingType::all();
         $colors = Color::all();
         $sizes = Size::all();
-        $stores = Store::all();
-        return view('adminProductsCreate', compact('brands', 'categories', 'collections', 'clothingTypes', 'colors', 'sizes', 'stores'));
+        return view('adminProductsCreate', compact('brands', 'categories', 'collections', 'clothingTypes', 'colors', 'sizes'));
     }
 
     public function store(Request $request)
@@ -129,18 +151,10 @@ class ProductController extends Controller
                 'sizes.*' => 'exists:sizes,id',
                 'color_size_quantities' => 'required|array',
                 'color_size_quantities.*.*' => 'nullable|integer|min:0',
-                'stores' => 'required|array|min:1',
-                'stores.*' => 'exists:stores,id',
-                'store_quantities' => 'required|array',
-                'store_quantities.*' => 'nullable|integer|min:0',
                 'image_1' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
                 'image_2' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
                 'image_3' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
             ]);
-
-            if (count($validated['stores']) !== count(array_filter($validated['store_quantities'], fn($q) => !is_null($q)))) {
-                throw new \Exception('The number of stores and store quantities do not match.');
-            }
 
             return DB::transaction(function () use ($validated, $request) {
                 $imagePaths = [];
@@ -160,9 +174,6 @@ class ProductController extends Controller
                     'is_available' => $validated['is_available'],
                 ], $imagePaths));
 
-                $product->colors()->sync($validated['colors']);
-                $product->sizes()->sync($validated['sizes']);
-
                 foreach ($validated['colors'] as $color_id) {
                     foreach ($validated['sizes'] as $size_id) {
                         $quantity = $validated['color_size_quantities'][$color_id][$size_id] ?? 0;
@@ -174,19 +185,6 @@ class ProductController extends Controller
                                 'quantity' => $quantity,
                             ]);
                         }
-                    }
-                }
-
-                foreach ($validated['stores'] as $index => $store_id) {
-                    $quantity = $validated['store_quantities'][$store_id] ?? 0;
-                    if ($quantity > 0) {
-                        $product->stores()->attach($store_id, ['quantity' => $quantity]);
-                        Supply::create([
-                            'store_id' => $store_id,
-                            'product_id' => $product->id,
-                            'quantity' => $quantity,
-                            'status' => 'pending',
-                        ]);
                     }
                 }
 
@@ -216,96 +214,81 @@ class ProductController extends Controller
         $clothingTypes = ClothingType::all();
         $colors = Color::all();
         $sizes = Size::all();
-        $stores = Store::all();
         $colorSizes = $product->colorSizes()->get()->groupBy(['color_id', 'size_id']);
-        return view('adminProductsEdit', compact('product', 'brands', 'categories', 'collections', 'clothingTypes', 'colors', 'sizes', 'stores', 'colorSizes'));
+        return view('adminProductsEdit', compact('product', 'brands', 'categories', 'collections', 'clothingTypes', 'colors', 'sizes', 'colorSizes'));
     }
 
     public function update(Request $request, Product $product)
-    {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'price' => 'required|numeric|min:0',
-            'brand_id' => 'required|exists:brands,id',
-            'category_id' => 'required|exists:categories,id',
-            'collection_id' => 'nullable|exists:collections,id',
-            'clothing_type_id' => 'required|exists:clothing_types,id',
-            'is_available' => 'required|boolean',
-            'colors' => 'required|array|min:1',
-            'colors.*' => 'exists:colors,id',
-            'sizes' => 'required|array|min:1',
-            'sizes.*' => 'exists:sizes,id',
-            'color_size_quantities' => 'required|array',
-            'color_size_quantities.*.*' => 'nullable|integer|min:0',
-            'stores' => 'required|array|min:1',
-            'stores.*' => 'exists:stores,id',
-            'store_quantities' => 'required|array',
-            'store_quantities.*' => 'nullable|integer|min:0',
-            'image_1' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
-            'image_2' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
-            'image_3' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
-            'remove_image_1' => 'nullable|boolean',
-            'remove_image_2' => 'nullable|boolean',
-            'remove_image_3' => 'nullable|boolean',
-        ]);
+{
+    $validated = $request->validate([
+        'name' => 'required|string|max:255',
+        'price' => 'required|numeric|min:0',
+        'brand_id' => 'required|exists:brands,id',
+        'category_id' => 'required|exists:categories,id',
+        'collection_id' => 'nullable|exists:collections,id',
+        'clothing_type_id' => 'required|exists:clothing_types,id',
+        'is_available' => 'required|boolean',
+        'colors' => 'required|array|min:1',
+        'colors.*' => 'exists:colors,id',
+        'sizes' => 'required|array|min:1',
+        'sizes.*' => 'exists:sizes,id',
+        'color_size_quantities' => 'required|array',
+        'color_size_quantities.*.*' => 'nullable|integer|min:0',
+        'image_1' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+        'image_2' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+        'image_3' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+        'remove_image_1' => 'nullable|boolean',
+        'remove_image_2' => 'nullable|boolean',
+        'remove_image_3' => 'nullable|boolean',
+    ]);
 
-        return DB::transaction(function () use ($validated, $request, $product) {
-            $imagePaths = [];
-            foreach (['image_1', 'image_2', 'image_3'] as $imageField) {
-                if ($request->hasFile($imageField)) {
-                    if ($product->$imageField) {
-                        Storage::disk('public')->delete($product->$imageField);
-                    }
-                    $imagePaths[$imageField] = $request->file($imageField)->store('product_images', 'public');
-                } elseif ($request->input("remove_image_$imageField")) {
-                    if ($product->$imageField) {
-                        Storage::disk('public')->delete($product->$imageField);
-                    }
-                    $imagePaths[$imageField] = null;
-                } else {
-                    $imagePaths[$imageField] = $product->$imageField;
+    return DB::transaction(function () use ($validated, $request, $product) {
+        $imagePaths = [];
+        foreach (['image_1', 'image_2', 'image_3'] as $imageField) {
+            if ($request->hasFile($imageField)) {
+                if ($product->$imageField) {
+                    Storage::disk('public')->delete($product->$imageField);
                 }
-            }
-
-            $product->update(array_merge([
-                'name' => $validated['name'],
-                'price' => $validated['price'],
-                'brand_id' => $validated['brand_id'],
-                'category_id' => $validated['category_id'],
-                'collection_id' => $validated['collection_id'],
-                'clothing_type_id' => $validated['clothing_type_id'],
-                'is_available' => $validated['is_available'],
-            ], $imagePaths));
-
-            $product->colors()->sync($validated['colors']);
-            $product->sizes()->sync($validated['sizes']);
-            $product->colorSizes()->delete();
-
-            foreach ($validated['colors'] as $color_id) {
-                foreach ($validated['sizes'] as $size_id) {
-                    $quantity = $validated['color_size_quantities'][$color_id][$size_id] ?? 0;
-                    if ($quantity > 0) {
-                        ProductColorSize::create([
-                            'product_id' => $product->id,
-                            'color_id' => $color_id,
-                            'size_id' => $size_id,
-                            'quantity' => $quantity,
-                        ]);
-                    }
+                $imagePaths[$imageField] = $request->file($imageField)->store('product_images', 'public');
+            } elseif ($request->input("remove_image_$imageField")) {
+                if ($product->$imageField) {
+                    Storage::disk('public')->delete($product->$imageField);
                 }
+                $imagePaths[$imageField] = null;
+            } else {
+                $imagePaths[$imageField] = $product->$imageField;
             }
+        }
 
-            $product->stores()->sync([]);
-            foreach ($validated['stores'] as $store_id) {
-                $quantity = $validated['store_quantities'][$store_id] ?? 0;
+        $product->update(array_merge([
+            'name' => $validated['name'],
+            'price' => $validated['price'],
+            'brand_id' => $validated['brand_id'],
+            'category_id' => $validated['category_id'],
+            'collection_id' => $validated['collection_id'],
+            'clothing_type_id' => $validated['clothing_type_id'],
+            'is_available' => $validated['is_available'],
+        ], $imagePaths));
+
+        $product->colorSizes()->delete();
+
+        foreach ($validated['colors'] as $color_id) {
+            foreach ($validated['sizes'] as $size_id) {
+                $quantity = $validated['color_size_quantities'][$color_id][$size_id] ?? 0;
                 if ($quantity > 0) {
-                    $product->stores()->attach($store_id, ['quantity' => $quantity]);
+                    ProductColorSize::create([
+                        'product_id' => $product->id,
+                        'color_id' => $color_id,
+                        'size_id' => $size_id,
+                        'quantity' => $quantity,
+                    ]);
                 }
             }
+        }
 
-            return redirect()->route('admin.products.index')->with('success', 'Товар обновлён.');
-        });
-    }
+        return redirect()->route('admin.products.index')->with('success', 'Товар обновлён.');
+    });
+}
 
     public function destroy(Product $product)
     {

@@ -26,7 +26,7 @@
                     </div>
                     <div class="favorite-details">
                         <h3>{{ $product->name }}</h3>
-                        <p><strong>Цена:</strong> BYR {{ number_format($product->price, 2) }}</p>
+                        <p><strong>Цена:</strong> ₽ {{ number_format($product->price, 2) }}</p>
                         <p><strong>Бренд:</strong> {{ $product->brand->name }}</p>
                         <p><strong>Категория:</strong> {{ $product->category->name }}</p>
                         <p><strong>Цвета:</strong> {{ $product->colors->pluck('name')->join(', ') }}</p>

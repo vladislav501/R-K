@@ -103,7 +103,7 @@
                                     <td class="profile-table-cell">{{ $order->order_date ? $order->order_date->format('d.m.Y H:i') : 'Не указана' }}</td>
                                     <td class="profile-table-cell">{{ $order->status }} (Raw: {{ $order->getRawOriginal('status') }})</td>
                                     <td class="profile-table-cell">
-                                        @if(in_array($order->status, ['assembled', 'ready_for_pickup', 'handed_to_courier']))
+                                        @if($order->status === 'ready_for_pickup')
                                             <form action="{{ route('orders.confirm', $order->id) }}" method="POST">
                                                 @csrf
                                                 <button type="submit" class="profile-confirm-button">Подтвердить</button>
