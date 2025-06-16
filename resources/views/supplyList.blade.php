@@ -40,5 +40,13 @@
         </tbody>
     </table>
     <p><strong>Примечание:</strong> Пожалуйста, отметьте галочкой соответствующий статус получения и укажите количество для частично полученных товаров.</p>
+    <button class="back-to-top">
+        <i class="fi fi-rr-arrow-small-up"></i>
+    </button>
+    <script>
+        document.querySelector('.back-to-top').addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+    </script>
 </body>
 </html>

@@ -17,8 +17,8 @@
 <body>
     <header class="header-container">
         <div class="header-wrapper">
-            <a href="{{ route('products.index') }}" class="header-logo">Luxury Comfort</a>
-            <button class="header-burger" aria-label="Toggle Menu">
+            <a href="{{ route('home') }}" class="header-logo">Luxury Comfort</a>
+            <button class="header-burger" aria-label="Toggle Menu" onclick="document.querySelector('.header-burger').classList.toggle('active'); document.querySelector('.header-collapsible').classList.toggle('active');">
                 <span></span>
                 <span></span>
                 <span></span>

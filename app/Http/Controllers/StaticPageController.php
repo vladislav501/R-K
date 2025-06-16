@@ -2,13 +2,19 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Product;
 use Illuminate\Http\Request;
 
 class StaticPageController extends Controller
 {
     public function home()
     {
-        return view('home');
+        $newProducts = Product::with(['category', 'brand', 'collection', 'clothingType'])
+            ->latest()
+            ->take(9)
+            ->get();
+            
+        return view('home', compact('newProducts'));
     }
 
     public function delivery()

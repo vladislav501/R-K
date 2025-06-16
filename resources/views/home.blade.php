@@ -4,75 +4,140 @@
 
 @section('content')
 <div class="home-page-wrapper">
-    <div class="home-nav-panel">
-        <h2>Навигация</h2>
-        <ul>
-            <li><a href="{{ route('home') }}">Главная</a></li>
-            <li><a href="{{ route('products.index') }}">Каталог</a></li>
-            <li><a href="{{ route('about') }}">О нас</a></li>
-            <li><a href="{{ route('contact') }}">Контакты</a></li>
-        </ul>
-    </div>
-    <div class="home-main-content">
-        <section class="home-new-arrivals">
-            <h1>Новые поступления для нее</h1>
-            <div class="home-product-grid">
-                <!-- Placeholder for dynamic products -->
-                @for ($i = 1; $i <= 4; $i++)
-                    <div class="home-product-item">
-                        <img src="{{ asset('images/product-placeholder.jpg') }}" alt="Новинка">
-                        <p>Товар {{ $i }}</p>
-                        <span>BYR 99.99</span>
-                        <a href="{{ route('products.index') }}" class="home-product-link">Купить</a>
+    <section class="home-hero">
+        <div class="home-hero-content">
+            <h1>Стиль, вдохновляющий на великое</h1>
+            <p>Погрузитесь в мир моды с нашими эксклюзивными коллекциями, созданными для тех, кто стремится к уникальности. От изысканных силуэтов до смелых акцентов — найдите свой идеальный образ.</p>
+            <a href="{{ route('products.index') }}" class="home-hero-cta">Открыть каталог</a>
+        </div>
+        <img src="{{ asset('images/bannerHome.webp') }}" class="home-hero-image">
+    </section>
+
+    <section class="home-about-brands">
+        <div class="home-about-brands-content">
+            <h2>Иконы стиля</h2>
+            <p>Мировые знаменитости задают тренды, вдохновляя нас на эксперименты с образом. От красных ковровых дорожек до уличного стиля – их выбор в моде становится эталоном вкуса. Исследуйте коллекции, созданные по мотивам культовых образов, и найдите свой стиль.</p>
+            <a href="{{ route('products.index') }}" class="home-brand-cta">Подробнее</a>
+        </div>
+        <img src="{{ asset('images/bannerVip.webp') }}" class="home-hero-image">
+    </section>
+
+    <section class="home-new-arrivals">
+        <h2>Новинки каталога</h2>
+        <div class="home-carousel-wrapper">
+            <button class="carousel-prev" aria-label="Предыдущий слайд">❮</button>
+            <div class="home-carousel">
+                @foreach($newProducts->take(9) as $product)
+                    <div class="home-product-card">
+                        <a href="{{ route('products.show', $product) }}" class="home-product-link">
+                            <div class="home-product-image">
+                                @if($product->image_1)
+                                    <img src="{{ Storage::url($product->image_1) }}" alt="{{ $product->name }}" class="home-product-image-img">
+                                @else
+                                    <div class="home-product-image-placeholder">Нет изображения</div>
+                                @endif
+                            </div>
+                            <div class="home-product-info">
+                                <h3>{{ $product->name }}</h3>
+                            </div>
+                        </a>
                     </div>
-                @endfor
+                @endforeach
             </div>
-            <a href="{{ route('products.index') }}" class="home-section-link">Посмотреть все новинки</a>
-        </section>
+            <button class="carousel-next" aria-label="Следующий слайд">❯</button>
+        </div>
+        <div class="carousel-dots">
+            <span class="carousel-dot active" data-slide="0"></span>
+            <span class="carousel-dot" data-slide="1"></span>
+            <span class="carousel-dot" data-slide="2"></span>
+        </div>
+        <a href="{{ route('products.index') }}" class="home-section-link">Посмотреть все новинки</a>
+    </section>
 
-        <section class="home-brand-highlights">
-            <h2>Новинки в брендах</h2>
-            <div class="home-brand-grid">
-                <!-- Placeholder for dynamic brands -->
-                @for ($i = 1; $i <= 3; $i++)
-                    <div class="home-brand-item">
-                        <img src="{{ asset('https://imageproxy.fh.by/NhMPYPMzAMZ2nWlZliwjZSkBPwdsnL8U7L73YIX1I8A/w:2528/h:1010/rt:fill/q:95/czM6Ly9maC1wcm9kdWN0aW9uLXJmMy8xMjg2ODA1L2Jhbm5lci5wbmc.webp') }}" alt="Бренд">
-                        <p>Бренд {{ $i }}</p>
-                        <a href="{{ route('products.index') }}" class="home-brand-link">Каталог</a>
-                    </div>
-                @endfor
+    <section class="home-promo-banner">
+        <div class="home-promo-item">
+            <img src="{{ asset('images/summerHome.webp') }}" class="home-promo-image">
+            <div class="home-promo-text">
+                <h3>Летняя коллекция</h3>
+                <p>Яркие краски, легкие ткани и смелые решения для вашего идеального лета. Создайте образ, который запомнится!</p>
+                <a href="{{ route('products.index') }}" class="home-promo-link">Подробнее</a>
             </div>
-        </section>
+        </div>
+    </section>
 
-        <section class="home-promo-banner">
-            <div class="home-promo-item">
-                <img src="{{ asset('https://imageproxy.fh.by/zLvKcu-Qg_1993JjfeUs9e3YznQXmcM0Y52x84402Gg/w:2528/h:1010/rt:fill/q:95/czM6Ly9maC1wcm9kdWN0aW9uLXJmMy8xMjg2MjcxL2Jhbm5lci0zLnBuZw.webp') }}" alt="Vacation Vibes">
-                <div class="home-promo-text">
-                    <h3>Vacation Vibes</h3>
-                    <p>Откройте для себя беззаботное настроение и непревзойденный комфорт образов, вдохновленных солнцем. Ощутите гармонию ярких красок и легких текстур, отражающих совершенство летних сочетаний для вашего незабываемого отпуска. Let’s get away!</p>
-                    <a href="{{ route('products.index') }}" class="home-promo-link">Яркие акценты для запоминающихся образов</a>
-                </div>
+    <section class="home-promo-grid">
+        <div class="home-promo-small">
+            <img src="{{ asset('images/accesoryHome.webp') }}" class="home-promo-small-image">
+            <div class="home-promo-text-small">
+                <h3>Аксессуары</h3>
+                <p>Дополните ваш стиль с нашими уникальными аксессуарами от культовых брендов.</p>
+                <a href="{{ route('products.index') }}" class="home-promo-link-small">Подробнее</a>
             </div>
-        </section>
-
-        <section class="home-promo-grid">
-            <div class="home-promo-small">
-                <img src="{{ asset('https://imageproxy.fh.by/sdhVanCY99xnzHDI9mPB_I4Gpj-0shRyFNLsYzPon4Q/w:1232/h:924/rt:fill/q:95/czM6Ly9maC1wcm9kdWN0aW9uLXJmMy8xMjg2NzkxLzYxNng0NjIucG5n.webp') }}" alt="Солнцезащитные очки">
-                <div class="home-promo-text-small">
-                    <h3>Лето — в каждом взгляде</h3>
-                    <p>Выбирайте идеальные солнцезащитные очки для эффектного образа</p>
-                    <a href="{{ route('products.index') }}" class="home-promo-link-small">Посмотреть</a>
-                </div>
+        </div>
+        <div class="home-promo-small">
+            <img src="{{ asset('images/shoesHome.webp') }}" class="home-promo-small-image">
+            <div class="home-promo-text-small">
+                <h3>Обувь</h3>
+                <p>Комфорт и стиль в каждой паре — от кроссовок до элегантных туфель.</p>
+                <a href="{{ route('products.index') }}" class="home-promo-link-small">Подробнее</a>
             </div>
-            <div class="home-promo-small">
-                <img src="{{ asset('https://imageproxy.fh.by/7deVAUQUbEqGhbbVzpVkN6DofS0L617Ju6WH3mYwlp0/w:1232/h:924/rt:fill/q:95/czM6Ly9maC1wcm9kdWN0aW9uLXJmMy8xMjg2NzkyLzYxNng0NjItMS5wbmc.webp') }}" alt="Спортивная обувь">
-                <div class="home-promo-text-small">
-                    <h3>Идеальны для весенних прогулок</h3>
-                    <p>Дополните ваш образ стильной спортивной обувью от культовых брендов</p>
-                    <a href="{{ route('products.index') }}" class="home-promo-link-small">Посмотреть</a>
-                </div>
-            </div>
-        </section>
-    </div>
+        </div>
+    </section>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const carousel = document.querySelector('.home-carousel');
+    const prevButton = document.querySelector('.carousel-prev');
+    const nextButton = document.querySelector('.carousel-next');
+    const dots = document.querySelectorAll('.carousel-dot');
+    let currentSlide = 0;
+    const totalSlides = 3;
+    const slideWidth = carousel.querySelector('.home-product-card').offsetWidth + 20;
+    let autoSlideInterval;
+
+    function updateCarousel() {
+        carousel.style.transform = `translateX(-${currentSlide * slideWidth * 3}px)`;
+        dots.forEach((dot, index) => {
+            dot.classList.toggle('active', index === currentSlide);
+        });
+    }
+
+    function startAutoSlide() {
+        autoSlideInterval = setInterval(() => {
+            currentSlide = (currentSlide + 1) % totalSlides;
+            updateCarousel();
+        }, 10000);
+    }
+
+    function stopAutoSlide() {
+        clearInterval(autoSlideInterval);
+    }
+
+    prevButton.addEventListener('click', () => {
+        stopAutoSlide();
+        currentSlide = (currentSlide - 1 + totalSlides) % totalSlides;
+        updateCarousel();
+        startAutoSlide();
+    });
+
+    nextButton.addEventListener('click', () => {
+        stopAutoSlide();
+        currentSlide = (currentSlide + 1) % totalSlides;
+        updateCarousel();
+        startAutoSlide();
+    });
+
+    dots.forEach(dot => {
+        dot.addEventListener('click', () => {
+            stopAutoSlide();
+            currentSlide = parseInt(dot.dataset.slide);
+            updateCarousel();
+            startAutoSlide();
+        });
+    });
+
+    startAutoSlide();
+});
+</script>
 @endsection
