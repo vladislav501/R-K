@@ -32,7 +32,7 @@
                             @foreach($products as $product)
                                 <tr>
                                     <td>{{ $product->name }}</td>
-                                    <td>{{ $product->price }} ₽</td>
+                                    <td>{{ $product->price }} BYN</td>
                                     <td>{{ $product->pivot->quantity }}</td>
                                     <td>{{ $product->is_available ? 'Да' : 'Нет' }}</td>
                                     <td>

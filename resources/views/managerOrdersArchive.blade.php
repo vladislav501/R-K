@@ -33,7 +33,7 @@
                                 <tr>
                                     <td>{{ $order->id }}</td>
                                     <td>{{ $order->user->first_name }} {{ $order->user->last_name }}</td>
-                                    <td>{{ $order->total }} ₽</td>
+                                    <td>{{ $order->total }} BYN</td>
                                     <td>{{ $order->status }}</td>
                                     <td>
                                         <a href="{{ route('manager.orders.show', $order) }}">Подробности</a>

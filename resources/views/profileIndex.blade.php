@@ -16,7 +16,6 @@
         @endif
 
         <div class="profile-content-wrapper">
-            <!-- Profile Card -->
             <div class="profile-card">
                 <h2 class="profile-card-title">Личные данные</h2>
                 <form action="{{ route('profile.update') }}" method="POST" class="profile-form">
@@ -75,7 +74,6 @@
                 </form>
             </div>
 
-            <!-- Orders List -->
             <div class="profile-orders-container">
                 <h2 class="profile-orders-title">Ваши заказы</h2>
                 @if($orders->isEmpty())

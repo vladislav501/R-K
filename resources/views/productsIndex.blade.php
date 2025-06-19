@@ -76,7 +76,7 @@
                                 <div class="product-info">
                                     <h2>{{ $product->name }}</h2>
                                     <p><strong>Категория:</strong> {{ $product->category->name }}</p>
-                                    <h2><strong>Цена:</strong> {{ number_format($product->price, 2) }} ₽</h2>
+                                    <h2><strong>Цена:</strong> {{ number_format($product->price, 2) }} BYN</h2>
                                     <p><strong>Бренд:</strong> {{ $product->brand->name }}</p>
                                     @if($product->collection)
                                         <p><strong>Коллекция:</strong> {{ $product->collection->name }}</p>

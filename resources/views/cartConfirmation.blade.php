@@ -51,13 +51,13 @@
                                     <td class="confirmation-table-cell">{{ $item->color->name }}</td>
                                     <td class="confirmation-table-cell">{{ $item->size->name }}</td>
                                     <td class="confirmation-table-cell">{{ $item->quantity }}</td>
-                                    <td class="confirmation-table-cell">{{ $item->price }} ₽</td>
+                                    <td class="confirmation-table-cell">{{ $item->price }} BYN</td>
                                 </tr>
                             @endforeach
                         </tbody>
                     </table>
                 </div>
-                <p class="new-total-amount">Общая сумма: <span>{{ $order->total }} ₽</span></p>
+                <p class="new-total-amount">Общая сумма: <span>{{ $order->total }} BYN</span></p>
                 <div class="decorative-divider"></div>
                 <p><strong>Важно:</strong> Чек сгенерирован и доступен для скачивания. Пожалуйста, сохраните чек и предъявите его при получении заказа.</p>
                 <a href="{{ route('cart.downloadReceipt', $order->id) }}" class="new-checkout-button">

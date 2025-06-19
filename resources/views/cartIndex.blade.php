@@ -59,7 +59,7 @@
                                         <button type="submit" name="action" value="increment" class="cart-quantity-button">+</button>
                                     </form>
                                 </td>
-                                <td class="cart-table-cell">{{ number_format($cart->order_amount, 2) }} ₽</td>
+                                <td class="cart-table-cell">{{ number_format($cart->order_amount, 2) }} BYN</td>
                                 <td class="cart-table-cell">
                                     <form action="{{ route('cart.destroy', $cart) }}" method="POST" class="cart-delete-form">
                                         @csrf
@@ -73,7 +73,7 @@
                 </table>
             </div>
             <div class="cart-summary">
-                <p class="cart-total">Общая сумма: {{ number_format($totalSum, 2) }} ₽</p>
+                <p class="cart-total">Общая сумма: {{ number_format($totalSum, 2) }} BYN</p>
                 <a href="{{ route('cart.checkout') }}" class="cart-checkout-button">Оформить заказ</a>
             </div>
         @endif

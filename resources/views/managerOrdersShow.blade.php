@@ -15,7 +15,7 @@
         <div class="order-details-content">
             <h1>Заказ №{{ $order->id }}</h1>
             <p><strong>Клиент:</strong> {{ $order->user->first_name }} {{ $order->user->last_name }}</p>
-            <p><strong>Сумма:</strong> {{ $order->total }} ₽</p>
+            <p><strong>Сумма:</strong> {{ $order->total }} BYN</p>
             <p><strong>Статус:</strong> {{ $order->status }}</p>
             <p><strong>Способ доставки:</strong> {{ $order->delivery_method == 'delivery' ? 'Доставка' : 'Самовывоз' }}</p>
             @if($order->delivery_address)
@@ -43,7 +43,7 @@
                                 <td>{{ $item->size->name }}</td>
                                 <td>{{ $item->color->name }}</td>
                                 <td>{{ $item->quantity }}</td>
-                                <td>{{ $item->price * $item->quantity }} ₽</td>
+                                <td>{{ $item->price * $item->quantity }} BYN</td>
                             </tr>
                         @endforeach
                     </tbody>

@@ -41,13 +41,13 @@
                                         <td class="checkout-table-cell">{{ $cart->color->name }}</td>
                                         <td class="checkout-table-cell">{{ $cart->size->name }}</td>
                                         <td class="checkout-table-cell">{{ $cart->quantity }}</td>
-                                        <td class="checkout-table-cell">{{ $cart->product->price }} ₽</td>
+                                        <td class="checkout-table-cell">{{ $cart->product->price }} BYN</td>
                                     </tr>
                                 @endforeach
                             </tbody>
                         </table>
                     </div>
-                    <p class="checkout-total-amount">Общая сумма: <span>{{ $totalSum }} ₽</span></p>
+                    <p class="checkout-total-amount">Общая сумма: <span>{{ $totalSum }} BYN</span></p>
                 </div>
             </div>
             <div class="checkout-divider"></div>

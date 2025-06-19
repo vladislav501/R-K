@@ -9,11 +9,11 @@
             <h2>Заказ #{{ $order->id }}</h2>
             <p>Статус: {{ $order->status }}</p>
             <p>Способ получения: {{ $order->delivery_method }}</p>
-            <p>Общая сумма: {{ $order->total }} ₽</p>
+            <p>Общая сумма: {{ $order->total }} BYN</p>
             <h3>Товары:</h3>
             <ul>
                 @foreach($order->items as $item)
-                    <li>{{ $item->product->name }} - {{ $item->quantity }} шт. ({{ $item->price }} ₽)</li>
+                    <li>{{ $item->product->name }} - {{ $item->quantity }} шт. ({{ $item->price }} BYN)</li>
                 @endforeach
             </ul>
         </div>

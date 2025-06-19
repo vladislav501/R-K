@@ -217,13 +217,13 @@
                             <td>{{ $item->color->name ?? 'Не указан' }}</td>
                             <td>{{ $item->size->name ?? 'Не указан' }}</td>
                             <td>{{ $item->quantity }}</td>
-                            <td>{{ number_format($item->price, 2) }} ₽</td>
+                            <td>{{ number_format($item->price, 2) }} BYN</td>
                         </tr>
                     @endforeach
                 </tbody>
             </table>
         </div>
-        <p class="receipt-total">Общая сумма: <span>{{ number_format($order->total, 2) }} ₽</span></p>
+        <p class="receipt-total">Общая сумма: <span>{{ number_format($order->total, 2) }} BYN</span></p>
         <div class="decorative-divider"></div>
         <div class="receipt-footer">
             Пожалуйста, предъявите этот чек при получении заказа.
