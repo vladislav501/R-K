@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', '{{ $product->name }}')
+@section('title', 'Карточка товара')
 
 @section('content')
 <div class="item-page-container">
@@ -11,7 +11,6 @@
                     <img src="{{ Storage::url($product->image_1 ?? $product->image_2 ?? $product->image_3) }}" alt="{{ $product->name }}" class="item-main-image" id="main-image">
                 </div>
                 <div class="item-thumbnails-container">
-                    <button class="thumbnail-nav-prev" aria-label="Предыдущая миниатюра">❮</button>
                     <div class="item-thumbnails">
                         @foreach(['image_1', 'image_2', 'image_3'] as $imageField)
                             @if($product->$imageField)
@@ -19,7 +18,6 @@
                             @endif
                         @endforeach
                     </div>
-                    <button class="thumbnail-nav-next" aria-label="Следующая миниатюра">❯</button>
                 </div>
             @else
                 <div class="item-image-placeholder">Нет изображений</div>
@@ -28,7 +26,7 @@
         <div class="item-description">
             <h1>{{ $product->name }}</h1>
             <div class="item-specs">
-                <p><strong>Цена:</strong> BYR {{ number_format($product->price, 2) }}</p>
+                <p><strong>Цена:</strong> BYN {{ number_format($product->price, 2) }}</p>
                 <p><strong>Бренд:</strong> {{ $product->brand->name }}</p>
                 <p><strong>Категория:</strong> {{ $product->category->name }}</p>
                 <p><strong>Коллекция:</strong> {{ $product->collection->name ?? 'Нет' }}</p>
@@ -73,7 +71,6 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-    // Image Gallery
     const mainImage = document.getElementById('main-image');
     const thumbnails = document.querySelectorAll('.item-thumbnail');
 

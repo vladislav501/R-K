@@ -54,7 +54,7 @@
                                 @endif
                             </td>
                             <td>{{ $product->name }}</td>
-                            <td>BYR {{ number_format($product->price, 2) }}</td>
+                            <td>BYN {{ number_format($product->price, 2) }}</td>
                             <td>{{ $product->brand->name }}</td>
                             <td>{{ $product->category->name }}</td>
                             <td>{{ $product->is_available ? 'Да' : 'Нет' }}</td>
