@@ -26,7 +26,7 @@
                     <div class="supply-product">
                         <div class="supply-product-header">
                             @if($product->image_1)
-                                    <img src="{{ Storage::url($product->image_1) }}" alt="{{ $product->name }}" class="supply-product-image">
+                                <img src="{{ Storage::url($product->image_1) }}" alt="{{ $product->name }}" class="supply-product-image">
                             @else
                                 Нет изображения
                             @endif
@@ -35,7 +35,7 @@
                                 <span class="supply-product-name">{{ $product->name }}</span>
                             </label>
                         </div>
-                        <div class="product-variants" style="display: none;" data-product-id="{{ $product->id }}">
+                        <div class="product-variants" data-product-id="{{ $product->id }}">
                             @foreach($product->colors as $color)
                                 @foreach($product->sizes as $size)
                                     <div class="supply-variant">
@@ -61,18 +61,77 @@
     </div>
 
     <script>
+        // Set all quantity inputs to 0 on page load
+        document.querySelectorAll('.variant-quantity').forEach(input => {
+            input.value = '0';
+        });
+
         document.querySelectorAll('.product-checkbox').forEach(checkbox => {
             checkbox.addEventListener('change', function() {
                 const productId = this.dataset.productId;
                 const variantsDiv = document.querySelector(`.product-variants[data-product-id="${productId}"]`);
                 const inputs = variantsDiv.querySelectorAll('.variant-quantity');
-                variantsDiv.style.display = this.checked ? 'block' : 'none';
                 inputs.forEach(input => {
                     input.disabled = !this.checked;
-                    input.required = this.checked;
-                    if (!this.checked) input.value = '';
+                    if (!this.checked) {
+                        input.value = '0';
+                    }
                 });
             });
+        });
+
+        document.querySelector('.supply-form').addEventListener('submit', function(event) {
+            let hasValidProduct = false;
+            const productsData = [];
+
+            document.querySelectorAll('.product-checkbox').forEach(checkbox => {
+                const productId = checkbox.dataset.productId;
+                const variantsDiv = document.querySelector(`.product-variants[data-product-id="${productId}"]`);
+                const quantityInputs = variantsDiv.querySelectorAll('.variant-quantity');
+                const allInputs = variantsDiv.querySelectorAll('input');
+
+                if (!checkbox.checked) {
+                    // Disable all inputs for unchecked products
+                    allInputs.forEach(input => {
+                        input.disabled = true;
+                        if (input.classList.contains('variant-quantity')) {
+                            input.value = '0';
+                        }
+                    });
+                } else {
+                    let hasValidQuantity = false;
+                    quantityInputs.forEach(input => {
+                        const quantity = parseInt(input.value);
+                        if (isNaN(quantity) || quantity <= 0) {
+                            input.disabled = true;
+                            input.value = '0';
+                            input.closest('.supply-variant').querySelectorAll('input').forEach(i => i.disabled = true);
+                        } else {
+                            hasValidQuantity = true;
+                        }
+                    });
+                    if (hasValidQuantity) {
+                        hasValidProduct = true;
+                        productsData.push(productId);
+                    } else {
+                        // Disable all inputs if no valid quantities
+                        allInputs.forEach(input => {
+                            input.disabled = true;
+                            if (input.classList.contains('variant-quantity')) {
+                                input.value = '0';
+                            }
+                        });
+                    }
+                }
+            });
+
+            // Prevent submission if no valid products
+            if (!hasValidProduct) {
+                event.preventDefault();
+                alert('Выберите хотя бы один товар с количеством больше 0.');
+            } else {
+                console.log('Submitting products:', productsData);
+            }
         });
     </script>
 @endsection
