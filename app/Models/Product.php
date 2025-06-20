@@ -20,7 +20,6 @@ class Product extends Model
         'image_3',
     ];
 
-    // Define relationships (assuming they exist based on your controller)
     public function brand()
     {
         return $this->belongsTo(Brand::class);
@@ -56,9 +55,9 @@ class Product extends Model
         return $this->hasMany(ProductColorSize::class);
     }
 
-    public function stores()
+    public function pickupPoints()
     {
-        return $this->belongsToMany(Store::class)->withPivot('quantity');
+        return $this->belongsToMany(PickupPoint::class, 'product_pickup_point', 'product_id', 'pickup_point_id')->withPivot('quantity');
     }
 
     public function favorites()

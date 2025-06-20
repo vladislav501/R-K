@@ -8,10 +8,10 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('product_store', function (Blueprint $table) {
+        Schema::create('product_pickup_point', function (Blueprint $table) {
             $table->id();
             $table->foreignId('product_id')->constrained()->onDelete('cascade');
-            $table->foreignId('store_id')->constrained()->onDelete('cascade');
+            $table->foreignId('pickup_point_id')->constrained()->onDelete('cascade');
             $table->integer('quantity')->default(0);
             $table->timestamps();
         });
@@ -19,7 +19,7 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::dropIfExists('product_store');
+        Schema::dropIfExists('product_pickup_point');
     }
 };
 

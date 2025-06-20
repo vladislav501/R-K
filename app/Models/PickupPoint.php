@@ -12,4 +12,9 @@ class PickupPoint extends Model
     {
         return $this->belongsTo(User::class, 'user_id');
     }
+
+    public function products()
+    {
+        return $this->belongsToMany(Product::class, 'product_pickup_point', 'pickup_point_id', 'product_id')->withPivot('quantity');
+    }
 }

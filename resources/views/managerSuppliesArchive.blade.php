@@ -12,7 +12,7 @@
             </ul>
         </div>
         <div class="supplies-archive-content">
-            <h1>Архив поставок для {{ $store->name }}</h1>
+            <h1>Архив поставок для {{ $pickupPoint->name }}</h1>
             @if($supplies->isEmpty())
                 <div class="supplies-archive-empty">Архив пуст.</div>
             @else
@@ -30,16 +30,19 @@
                             @foreach($supplies as $supply)
                                 <tr>
                                     <td>{{ $supply->id }}</td>
-                                    <td>{{ $supply->product->name }}</td>
-                                    <td>{{ $supply->quantity }}</td>
-                                    <td>{{ $supply->status }}</td>
+                                    <td>{{ $supply->items->first()->product->name ?? '—' }}</td>
+                                    <td>
+                                        Отправлено: {{ $supply->items->sum('quantity') }} шт.<br>
+                                        Получено: {{ $supply->items->sum('received_quantity') }} шт.
+                                    </td>
+                                    <td>{{ $supply->status_label }}</td>
                                 </tr>
                             @endforeach
                         </tbody>
                     </table>
                 </div>
             @endif
-            <a href="#" class="supplies-archive-back">Назад</a>
+            <a href="{{ route('manager.supplies.index') }}" class="supply-check-back">Вернуться к поставкам</a>
             <button class="supplies-archive-back-to-top">
                 <i class="fi fi-rr-arrow-small-up"></i>
             </button>

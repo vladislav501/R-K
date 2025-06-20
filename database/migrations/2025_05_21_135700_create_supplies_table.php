@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('supplies', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('store_id')->constrained()->onDelete('cascade');
+            $table->foreignId('pickup_point_id')->constrained('pickup_points')->onDelete('cascade');
             $table->string('status')->default('pending');
             $table->timestamps();
         });
@@ -21,5 +21,3 @@ return new class extends Migration
         Schema::dropIfExists('supplies');
     }
 };
-
-?>

@@ -13,7 +13,7 @@
             </ul>
         </div>
         <div class="supplies-manager-content">
-            <h1>Поставки для {{ $store->name }}</h1>
+            <h1>Поставки для {{ $pickupPoint->name }}</h1>
             @if(session('success'))
                 <div class="supplies-manager-success">{{ session('success') }}</div>
             @endif
@@ -39,7 +39,7 @@
                                             {{ $item->product->name }} ({{ $item->color ? $item->color->name : '-' }}, {{ $item->size ? $item->size->name : '-' }}, {{ $item->quantity }} шт.)<br>
                                         @endforeach
                                     </td>
-                                    <td>{{ $supply->status }}</td>
+                                    <td>{{ $supply->status_label }}</td>
                                     <td>
                                         <a href="{{ route('manager.supply.check', $supply) }}" class="supplies-manager-check">Проверить</a>
                                         <a href="{{ route('manager.supplies.download', $supply) }}" class="supplies-manager-download">Скачать список</a>

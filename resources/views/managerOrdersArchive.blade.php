@@ -13,7 +13,7 @@
             </ul>
         </div>
         <div class="orders-archive-content">
-            <h1>Архив заказов для {{ $store->name }}</h1>
+            <h1>Архив заказов для {{ $pickupPoint->name }}</h1>
             @if($orders->isEmpty())
                 <div class="orders-archive-empty">Архив пуст.</div>
             @else
@@ -34,7 +34,7 @@
                                     <td>{{ $order->id }}</td>
                                     <td>{{ $order->user->first_name }} {{ $order->user->last_name }}</td>
                                     <td>{{ $order->total }} BYN</td>
-                                    <td>{{ $order->status }}</td>
+                                    <td>{{ $order->status_label }}</td>
                                     <td>
                                         <a href="{{ route('manager.orders.show', $order) }}">Подробности</a>
                                     </td>

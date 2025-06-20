@@ -13,7 +13,7 @@
             </ul>
         </div>
         <div class="products-manager-content">
-            <h1>Товары в {{ $store->name }}</h1>
+            <h1>Товары в {{ $pickupPoint->name }}</h1>
             @if($products->isEmpty())
                 <div class="products-manager-empty">Нет товаров.</div>
             @else

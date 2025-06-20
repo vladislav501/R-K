@@ -15,8 +15,8 @@
             </ul>
         </div>
         <div class="main-content">
-            <h1>Панель менеджера: {{ $store->name }}</h1>
-            <p class="store-info"><strong>Адрес:</strong> {{ $store->address }}</p>
+            <h1>Панель менеджера: {{ $pickupPoint->name }}</h1>
+            <p class="store-info"><strong>Адрес:</strong> {{ $pickupPoint->address }}</p>
             <div class="stats-section">
                 <h2>Статистика</h2>
                 <div class="stats-grid">

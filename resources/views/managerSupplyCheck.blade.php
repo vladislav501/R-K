@@ -13,8 +13,8 @@
         </div>
         <div class="supply-check-content">
             <h1>Проверка поставки №{{ $supply->id }}</h1>
-            <p><strong>Пункт выдачи:</strong> {{ $supply->store->name }}</p>
-            <p><strong>Статус:</strong> {{ $supply->status }}</p>
+            <p><strong>Пункт выдачи:</strong> {{ $supply->pickupPoint->name }}</p>
+            <p><strong>Статус:</strong> {{ $supply->status_label }}</p>
             <form action="{{ route('manager.supplies.confirm', $supply) }}" method="POST">
                 @csrf
                 <div class="supply-check-table">
@@ -58,7 +58,7 @@
                 @enderror
                 <button type="submit" class="supply-check-confirm">Подтвердить</button>
             </form>
-            <a href="{{ route('manager.supplies') }}" class="supply-check-back">Вернуться к поставкам</a>
+            <a href="{{ route('manager.supplies.index') }}" class="supply-check-back">Вернуться к поставкам</a>
             <button class="supply-check-back-to-top">
                 <i class="fi fi-rr-arrow-small-up"></i>
             </button>

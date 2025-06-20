@@ -7,7 +7,7 @@
     @forelse($orders as $order)
         <div>
             <h2>Заказ #{{ $order->id }}</h2>
-            <p>Статус: {{ $order->status }}</p>
+            <p>Статус: {{ $order->status_label }}</p>
             <p>Способ получения: {{ $order->delivery_method }}</p>
             <p>Общая сумма: {{ $order->total }} BYN</p>
             <h3>Товары:</h3>

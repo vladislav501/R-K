@@ -35,7 +35,7 @@
             @forelse($supplies as $supply)
                 <div class="supplies-index-item">
                     <p><strong>Поставка №:</strong> {{ $supply->id }}</p>
-                    <p><strong>Пункт выдачи:</strong> {{ $supply->store->name }}</p>
+                    <p><strong>Пункт выдачи:</strong> {{ $supply->pickupPoint->name }}</p>
                     <p><strong>Статус:</strong> {{ $supply->status }}</p>
                     <div class="supplies-index-table">
                         <table>

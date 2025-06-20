@@ -194,7 +194,7 @@
                 </p>
             @else
                 <p>
-                    <strong>Пункт выдачи:</strong> {{ $order->store->name ?? 'Не указан' }}
+                    <strong>Пункт выдачи:</strong> {{ $order->pickupPoint->name ?? 'Не указан' }}
                 </p>
             @endif
         </div>

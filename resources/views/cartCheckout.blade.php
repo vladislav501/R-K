@@ -67,10 +67,10 @@
                             <input type="radio" name="delivery_method" value="pickup" class="checkout-radio-input" required {{ old('delivery_method') === 'pickup' ? 'checked' : '' }}>
                             Самовывоз
                         </label>
-                        <select name="store_id" class="checkout-input-field pickup-store" {{ old('delivery_method') !== 'pickup' ? 'disabled' : '' }}>
+                        <select name="pickup_point_id" class="checkout-input-field pickup-store" {{ old('delivery_method') !== 'pickup' ? 'disabled' : '' }}>
                             <option value="">Выберите пункт выдачи</option>
-                            @foreach($stores as $store)
-                                <option value="{{ $store->id }}" {{ old('store_id') == $store->id ? 'selected' : '' }}>{{ $store->name }}</option>
+                            @foreach($pickupPoints as $pickupPoint)
+                                <option value="{{ $pickupPoint->id }}" {{ old('pickup_point_id') == $pickupPoint->id ? 'selected' : '' }}>{{ $pickupPoint->name }}</option>
                             @endforeach
                         </select>
                     </div>

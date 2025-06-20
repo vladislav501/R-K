@@ -1898,7 +1898,7 @@ body {
             padding: 0.6rem;
         }
         .product {
-            height: 460px;
+            height: 500px;
         }
         .product-image {
             height: 70%;
@@ -8695,8 +8695,8 @@ main {
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
-    background-color: var(--dark-blue);
-    color: var(--white);
+    background-color: var(--white);
+    color: var(--dark-gray-);
     border: none;
     padding: 10px;
     cursor: pointer;
@@ -8704,12 +8704,13 @@ main {
     font-size: 24px;
     transition: background-color 0.3s;
     z-index: 2;
+    height: 55px;
     width: 55px;
 }
 
-.carousel-prev:hover, .carousel-next:hover {
+/* .carousel-prev:hover, .carousel-next:hover {
     background-color: var(--light-blue);
-}
+} */
 
 .carousel-prev {
     left: 10px;
@@ -9244,21 +9245,21 @@ main {
 .carousel-prev, .carousel-next {
     position: absolute;
     top: 50%;
-    transform: translateY(-50%);
-    background-color: var(--dark-blue);
-    color: var(--white);
+    /* transform: translateY(-50%); */
+    /* background-color: var(--dark-blue); */
+    color: var(--dark-blue);
     border: none;
     padding: 12px;
     cursor: pointer;
-    border-radius: 50%;
+    /* border-radius: 50%; */
     font-size: 24px;
     transition: background-color 0.3s;
     z-index: 2;
 }
 
-.carousel-prev:hover, .carousel-next:hover {
+/* .carousel-prev:hover, .carousel-next:hover {
     background-color: var(--light-blue);
-}
+} */
 
 .carousel-prev {
     left: 15px;
@@ -9538,7 +9539,7 @@ main {
 .item-cart-btn, .item-favorite-btn, .item-login-btn {
     display: inline-block;
     padding: 0.9rem 2rem;
-    background-color: var(--crimson);
+    background-color: var(--red);
     color: var(--pure-white);
     text-decoration: none;
     border: none;
@@ -9827,6 +9828,11 @@ main {
     font-size: 0.875rem;
     margin-top: 0.25rem;
     display: block;
+}
+
+.productsQuantity {
+    margin: 0% 5% 2% 0%;
+    color: #0fa3b1;
 }
 
 @keyframes fadeIn {

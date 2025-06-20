@@ -49,7 +49,7 @@ class PickupPointController extends Controller
             'name' => $validated['name'],
             'address' => $validated['address'],
             'hours' => $validated['hours'],
-            'manager_id' => $manager->id,
+            'user_id' => $manager->id,
         ]);
 
         return redirect()->route('admin.pickup_points.index')->with('success', 'Пункт выдачи успешно создан.');

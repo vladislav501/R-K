@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Order extends Model
 {
     protected $fillable = [
-        'user_id', 'total', 'status', 'delivery_method', 'delivery_address', 'store_id', 'order_date',
+        'user_id', 'total', 'status', 'delivery_method', 'delivery_address', 'pickup_point_id', 'order_date',
     ];
 
     protected $casts = [
@@ -24,8 +24,21 @@ class Order extends Model
         return $this->hasMany(OrderItem::class);
     }
 
-    public function store()
+    public function pickupPoint()
     {
-        return $this->belongsTo(Store::class);
+        return $this->belongsTo(PickupPoint::class, 'pickup_point_id');
+    }
+
+    public function getStatusLabelAttribute()
+    {
+        return match ($this->status) {
+            'assembling' => 'Сборка',
+            'assembled' => 'Собран',
+            'ready_for_pickup' => 'Готов к выдаче',
+            'handed_to_courier' => 'Передан курьеру',
+            'completed' => 'Завершён',
+            'cancelled' => 'Отменён',
+            default => 'Неизвестно',
+        };
     }
 }

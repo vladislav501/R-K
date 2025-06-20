@@ -99,7 +99,7 @@
                                         @endforeach
                                     </td>
                                     <td class="profile-table-cell">{{ $order->order_date ? $order->order_date->format('d.m.Y H:i') : 'Не указана' }}</td>
-                                    <td class="profile-table-cell">{{ $order->status }} (Raw: {{ $order->getRawOriginal('status') }})</td>
+                                    <td class="profile-table-cell">{{ $order->status_label }}</td>
                                     <td class="profile-table-cell">
                                         @if($order->status === 'ready_for_pickup')
                                             <form action="{{ route('orders.confirm', $order->id) }}" method="POST">

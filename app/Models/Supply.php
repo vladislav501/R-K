@@ -9,11 +9,11 @@ class Supply extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['store_id', 'status'];
+    protected $fillable = ['pickup_point_id', 'status'];
 
-    public function store()
+    public function pickupPoint()
     {
-        return $this->belongsTo(Store::class);
+        return $this->belongsTo(PickupPoint::class, 'pickup_point_id');
     }
 
     public function items()
@@ -24,5 +24,15 @@ class Supply extends Model
     public function isFullyReceived()
     {
         return $this->items->every(fn($item) => $item->is_fully_received);
+    }
+
+    public function getStatusLabelAttribute(): string
+    {
+        return match ($this->status) {
+            'sent_to_store' => 'Отправлена в магазин',
+            'received' => 'Получена полностью',
+            'partially_received' => 'Получена частично',
+            default => ucfirst($this->status),
+        };
     }
 }

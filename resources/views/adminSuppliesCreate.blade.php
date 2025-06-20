@@ -18,7 +18,7 @@
                 @error('pickup_point_id')
                     <span class="error">{{ $message }}</span>
                 @enderror
-                <input type="hidden" name="store_id" value="{{ old('pickup_point_id', request('pickup_point_id')) }}">
+                <input type="hidden" name="pickup_point_id" value="{{ old('pickup_point_id', request('pickup_point_id')) }}">
             </div>
             <div>
                 <label class="supply-label">Товары:</label>

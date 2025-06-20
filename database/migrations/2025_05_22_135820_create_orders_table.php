@@ -4,9 +4,9 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateOrdersTable extends Migration
+return new class extends Migration
 {
-    public function up()
+    public function up(): void
     {
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
@@ -15,14 +15,14 @@ class CreateOrdersTable extends Migration
             $table->string('status');
             $table->string('delivery_method');
             $table->string('delivery_address')->nullable();
-            $table->foreignId('store_id')->nullable()->constrained()->onDelete('set null');
+            $table->foreignId('pickup_point_id')->nullable()->constrained('pickup_points')->onDelete('set null');
             $table->timestamp('order_date');
             $table->timestamps();
         });
     }
 
-    public function down()
+    public function down(): void
     {
         Schema::dropIfExists('orders');
     }
-}
+};

@@ -10,8 +10,7 @@ class User extends Authenticatable
     use Notifiable;
 
     protected $fillable = [
-        'first_name', 'last_name', 'middle_name', 'email', 'password', 'delivery_address',
-        'role', // Если у вас есть роли (например, admin, manager)
+        'first_name', 'last_name', 'middle_name', 'email', 'password', 'delivery_address', 'role',
     ];
 
     protected $hidden = [
@@ -28,13 +27,13 @@ class User extends Authenticatable
         return $this->hasMany(Order::class);
     }
 
-    public function store()
-    {
-        return $this->hasOne(Store::class);
-    }
-
     public function favorites()
     {
         return $this->belongsToMany(Product::class, 'favorites', 'user_id', 'product_id')->withTimestamps();
+    }
+
+    public function pickupPoint()
+    {
+        return $this->hasOne(PickupPoint::class, 'user_id');
     }
 }

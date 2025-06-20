@@ -8,7 +8,7 @@ class Cart extends Model
 {
     protected $fillable = [
         'user_id', 'product_id', 'quantity', 'size_id', 'color_id', 'order_amount',
-        'order_id', 'delivery_method', 'delivery_address', 'store_id', 'status',
+        'order_id', 'delivery_method', 'delivery_address', 'pickup_point_id', 'status',
     ];
 
     public function user()
@@ -31,9 +31,9 @@ class Cart extends Model
         return $this->belongsTo(Color::class);
     }
 
-    public function store()
+    public function pickupPoint()
     {
-        return $this->belongsTo(Store::class);
+        return $this->belongsTo(PickupPoint::class, 'pickup_point_id');
     }
 
     public function order()

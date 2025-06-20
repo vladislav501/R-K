@@ -16,13 +16,13 @@
             <h1>Заказ №{{ $order->id }}</h1>
             <p><strong>Клиент:</strong> {{ $order->user->first_name }} {{ $order->user->last_name }}</p>
             <p><strong>Сумма:</strong> {{ $order->total }} BYN</p>
-            <p><strong>Статус:</strong> {{ $order->status }}</p>
+            <p><strong>Статус:</strong> {{ $order->status_label }}</p>
             <p><strong>Способ доставки:</strong> {{ $order->delivery_method == 'delivery' ? 'Доставка' : 'Самовывоз' }}</p>
             @if($order->delivery_address)
                 <p><strong>Адрес доставки:</strong> {{ $order->delivery_address }}</p>
             @endif
-            @if($order->store)
-                <p><strong>Пункт выдачи:</strong> {{ $order->store->name }} ({{ $order->store->address }})</p>
+            @if($order->pickupPoint)
+                <p><strong>Пункт выдачи:</strong> {{ $order->pickupPoint->name }} ({{ $order->pickupPoint->address }})</p>
             @endif
             <h2>Товары:</h2>
             <div class="order-details-table">

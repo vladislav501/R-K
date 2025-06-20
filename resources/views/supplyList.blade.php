@@ -13,7 +13,7 @@
 </head>
 <body>
     <h1>Список поставки №{{ $supply->id }}</h1>
-    <p><strong>Пункт выдачи:</strong> {{ $store->name }} ({{ $store->address }})</p>
+    <p><strong>Пункт выдачи:</strong> {{ $pickupPoint->name }} ({{ $pickupPoint->address }})</p>
     <p><strong>Дата:</strong> {{ now()->format('d.m.Y') }}</p>
     <table>
         <thead>

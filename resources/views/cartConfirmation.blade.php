@@ -28,7 +28,7 @@
                     @if($order->delivery_method === 'delivery')
                         <p><strong>Адрес доставки:</strong> {{ $order->delivery_address }}</p>
                     @else
-                        <p><strong>Пункт выдачи:</strong> {{ $order->store->name }}</p>
+                        <p><strong>Пункт выдачи:</strong> {{ $order->pickupPoint->name }}</p>
                     @endif
                     <p><strong>Дата заказа:</strong> {{ $order->order_date->format('d.m.Y H:i') }}</p>
                 </div>

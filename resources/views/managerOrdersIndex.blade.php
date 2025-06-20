@@ -13,7 +13,7 @@
             </ul>
         </div>
         <div class="orders-manager-content">
-            <h1>Заказы для {{ $store->name }}</h1>
+            <h1>Заказы для {{ $pickupPoint->name }}</h1>
             @if(session('success'))
                 <div class="orders-manager-success">{{ session('success') }}</div>
             @endif
@@ -37,7 +37,7 @@
                                     <td>{{ $order->id }}</td>
                                     <td>{{ $order->user->first_name }} {{ $order->user->last_name }}</td>
                                     <td>{{ $order->total }} BYN</td>
-                                    <td>{{ $order->status }}</td>
+                                    <td>{{ $order->status_label }}</td>
                                     <td>
                                         <a href="{{ route('manager.orders.show', $order) }}">Просмотр</a>
                                         @if($order->status == 'assembling')

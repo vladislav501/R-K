@@ -3,9 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Order;
+use App\Models\PickupPoint;
 use App\Models\Product;
 use App\Models\ProductColorSize;
-use App\Models\Store;
 use App\Models\Supply;
 use App\Models\SupplyItem;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -24,60 +24,60 @@ class ManagerController extends Controller
 
     public function dashboard()
     {
-        $store = Store::find(Auth::user()->store_id);
-        if (!$store) {
+        $pickupPoint = Auth::user()->pickupPoint;
+        if (!$pickupPoint) {
             abort(403, 'У вас нет назначенного пункта выдачи.');
         }
 
-        $activeOrders = Order::where('store_id', $store->id)
+        $activeOrders = Order::where('pickup_point_id', $pickupPoint->id)
             ->whereIn('status', ['assembling', 'assembled', 'ready_for_pickup', 'handed_to_courier'])
             ->count();
 
-        $completedOrders = Order::where('store_id', $store->id)
+        $completedOrders = Order::where('pickup_point_id', $pickupPoint->id)
             ->where('status', 'completed')
             ->count();
 
-        $pendingSupplies = Supply::where('store_id', $store->id)
+        $pendingSupplies = Supply::where('pickup_point_id', $pickupPoint->id)
             ->where('status', 'pending')
             ->count();
 
-        return view('managerDashboard', compact('store', 'activeOrders', 'completedOrders', 'pendingSupplies'));
+        return view('managerDashboard', compact('pickupPoint', 'activeOrders', 'completedOrders', 'pendingSupplies'));
     }
 
     public function index()
     {
-        $store = Store::find(Auth::user()->store_id);
-        if (!$store) {
+        $pickupPoint = Auth::user()->pickupPoint;
+        if (!$pickupPoint) {
             abort(403, 'У вас нет назначенного пункта выдачи.');
         }
 
-        $orders = Order::where('store_id', $store->id)
+        $orders = Order::where('pickup_point_id', $pickupPoint->id)
             ->whereIn('status', ['assembling', 'assembled', 'ready_for_pickup', 'handed_to_courier'])
             ->with('user')
             ->get();
 
-        return view('managerOrdersIndex', compact('orders', 'store'));
+        return view('managerOrdersIndex', compact('orders', 'pickupPoint'));
     }
 
     public function ordersArchive()
     {
-        $store = Store::find(Auth::user()->store_id);
-        if (!$store) {
+        $pickupPoint = Auth::user()->pickupPoint;
+        if (!$pickupPoint) {
             abort(403, 'У вас нет назначенного пункта выдачи.');
         }
 
-        $orders = Order::where('store_id', $store->id)
+        $orders = Order::where('pickup_point_id', $pickupPoint->id)
             ->where('status', 'completed')
             ->with('user')
             ->get();
 
-        return view('managerOrdersArchive', compact('orders', 'store'));
+        return view('managerOrdersArchive', compact('orders', 'pickupPoint'));
     }
 
     public function orderShow(Order $cart)
     {
-        $store = Store::find(Auth::user()->store_id);
-        if (!$store || $cart->store_id !== $store->id) {
+        $pickupPoint = Auth::user()->pickupPoint;
+        if (!$pickupPoint || $cart->pickup_point_id !== $pickupPoint->id) {
             abort(403, 'Доступ запрещён.');
         }
 
@@ -86,8 +86,8 @@ class ManagerController extends Controller
 
     public function updateOrderStatus(Request $request, Order $cart)
     {
-        $store = Store::find(Auth::user()->store_id);
-        if (!$store || $cart->store_id !== $store->id) {
+        $pickupPoint = Auth::user()->pickupPoint;
+        if (!$pickupPoint || $cart->pickup_point_id !== $pickupPoint->id) {
             abort(403, 'Доступ запрещён.');
         }
 
@@ -106,20 +106,20 @@ class ManagerController extends Controller
 
     public function productsIndex()
     {
-        $store = Store::find(Auth::user()->store_id);
-        if (!$store) {
+        $pickupPoint = Auth::user()->pickupPoint;
+        if (!$pickupPoint) {
             abort(403, 'У вас нет назначенного пункта выдачи.');
         }
 
-        $products = $store->products()->withPivot('quantity')->get();
+        $products = $pickupPoint->products()->withPivot('quantity')->get();
 
-        return view('managerProductsIndex', compact('products', 'store'));
+        return view('managerProductsIndex', compact('products', 'pickupPoint'));
     }
 
     public function updateProductAvailability(Request $request, Product $product)
     {
-        $store = Store::find(Auth::user()->store_id);
-        if (!$store || !$store->products()->where('product_id', $product->id)->exists()) {
+        $pickupPoint = Auth::user()->pickupPoint;
+        if (!$pickupPoint || !$pickupPoint->products()->where('product_id', $product->id)->exists()) {
             abort(403, 'Доступ запрещён.');
         }
 
@@ -128,7 +128,7 @@ class ManagerController extends Controller
             'is_available' => 'boolean',
         ]);
 
-        $store->products()->updateExistingPivot($product->id, [
+        $pickupPoint->products()->updateExistingPivot($product->id, [
             'quantity' => $validated['quantity'],
         ]);
 
@@ -139,38 +139,38 @@ class ManagerController extends Controller
 
     public function suppliesIndex()
     {
-        $store = Store::find(Auth::user()->store_id);
-        if (!$store) {
+        $pickupPoint = Auth::user()->pickupPoint;
+        if (!$pickupPoint) {
             abort(403, 'У вас нет назначенного пункта выдачи.');
         }
 
-        $supplies = Supply::where('store_id', $store->id)
+        $supplies = Supply::where('pickup_point_id', $pickupPoint->id)
             ->where('status', 'sent_to_store')
             ->with(['items.product', 'items.color', 'items.size'])
             ->get();
 
-        return view('managerSuppliesIndex', compact('supplies', 'store'));
+        return view('managerSuppliesIndex', compact('supplies', 'pickupPoint'));
     }
 
     public function suppliesArchive()
     {
-        $store = Store::find(Auth::user()->store_id);
-        if (!$store) {
+        $pickupPoint = Auth::user()->pickupPoint;
+        if (!$pickupPoint) {
             abort(403, 'У вас нет назначенного пункта выдачи.');
         }
 
-        $supplies = Supply::where('store_id', $store->id)
+        $supplies = Supply::where('pickup_point_id', $pickupPoint->id)
             ->whereIn('status', ['received', 'partially_received'])
             ->with(['items.product', 'items.color', 'items.size'])
             ->get();
 
-        return view('managerSuppliesArchive', compact('supplies', 'store'));
+        return view('managerSuppliesArchive', compact('supplies', 'pickupPoint'));
     }
 
     public function showSupplyCheck(Supply $supply)
     {
-        $store = Store::find(Auth::user()->store_id);
-        if (!$store || $supply->store_id !== $store->id) {
+        $pickupPoint = Auth::user()->pickupPoint;
+        if (!$pickupPoint || $supply->pickup_point_id !== $pickupPoint->id) {
             abort(403, 'Доступ запрещён.');
         }
 
@@ -179,8 +179,8 @@ class ManagerController extends Controller
 
     public function confirmSupply(Request $request, Supply $supply)
     {
-        $store = Store::find(Auth::user()->store_id);
-        if (!$store || $supply->store_id !== $store->id) {
+        $pickupPoint = Auth::user()->pickupPoint;
+        if (!$pickupPoint || $supply->pickup_point_id !== $pickupPoint->id) {
             abort(403, 'Доступ запрещён.');
         }
 
@@ -191,7 +191,7 @@ class ManagerController extends Controller
             'items.*.received_quantity' => 'required_if:items.*.is_fully_received,0|integer|min:0',
         ]);
 
-        return DB::transaction(function () use ($supply, $validated, $store) {
+        return DB::transaction(function () use ($supply, $validated, $pickupPoint) {
             foreach ($validated['items'] as $itemData) {
                 $supplyItem = SupplyItem::findOrFail($itemData['id']);
                 $supplyItem->update([
@@ -200,7 +200,7 @@ class ManagerController extends Controller
                 ]);
 
                 if ($itemData['is_fully_received']) {
-                    $store->products()->syncWithoutDetaching([
+                    $pickupPoint->products()->syncWithoutDetaching([
                         $supplyItem->product_id => [
                             'quantity' => DB::raw('quantity + ' . $supplyItem->quantity),
                         ],
@@ -216,22 +216,22 @@ class ManagerController extends Controller
             $status = $supply->isFullyReceived() ? 'received' : 'partially_received';
             $supply->update(['status' => $status]);
 
-        return redirect('/manager/supplies')->with('success', 'Поставка подтверждена.');        });
+            return redirect('/manager/supplies')->with('success', 'Поставка подтверждена.');
+        });
     }
 
     public function downloadSupplyList(Supply $supply)
     {
-        $store = Store::find(Auth::user()->store_id);
-        if (!$store || $supply->store_id !== $store->id) {
+        $pickupPoint = Auth::user()->pickupPoint;
+        if (!$pickupPoint || $supply->pickup_point_id !== $pickupPoint->id) {
             abort(403, 'Доступ запрещён.');
         }
 
         try {
-            $pdf = Pdf::loadView('supplyList', ['supply' => $supply->load('items.product', 'items.color', 'items.size'), 'store' => $store])
+            $pdf = Pdf::loadView('supplyList', ['supply' => $supply->load('items.product', 'items.color', 'items.size'), 'pickupPoint' => $pickupPoint])
                 ->setOptions(['defaultFont' => 'DejaVu Sans']);
             return $pdf->download('supply_' . $supply->id . '.pdf');
         } catch (\Exception $e) {
-            Log::error('Ошибка генерации PDF: ' . $e->getMessage());
             return redirect()->back()->with('error', 'Не удалось сгенерировать PDF.');
         }
     }

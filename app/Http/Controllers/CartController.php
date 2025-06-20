@@ -7,7 +7,7 @@ use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Product;
 use App\Models\ProductColorSize;
-use App\Models\Store;
+use App\Models\PickupPoint;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -43,7 +43,9 @@ class CartController extends Controller
         }
 
         return DB::transaction(function () use ($request, $product, $validated) {
-            $colorSize = ProductColorSize::where('product_id', $product->id)
+            $colorSize = ProductColorSize::where
+
+('product_id', $product->id)
                 ->where('color_id', $validated['color_id'])
                 ->where('size_id', $validated['size_id'])
                 ->first();
@@ -169,10 +171,10 @@ class CartController extends Controller
     {
         /** @var \App\Models\User $user */
         $user = Auth::user();
-        $stores = Store::all();
+        $pickupPoints = PickupPoint::all();
         $carts = $user->carts()->with(['product', 'size', 'color'])->whereNull('order_id')->get();
         $totalSum = $carts->sum('order_amount');
-        return view('cartCheckout', compact('user', 'stores', 'carts', 'totalSum'));
+        return view('cartCheckout', compact('user', 'pickupPoints', 'carts', 'totalSum'));
     }
 
     public function placeOrder(Request $request)
@@ -180,87 +182,79 @@ class CartController extends Controller
         Log::info('placeOrder method called', ['request' => $request->all()]);
 
         try {
-            $validated = $request->validate([
-                'delivery_method' => 'required|in:delivery,pickup',
-                'delivery_address' => 'required_if:delivery_method,delivery|string|nullable',
-                'store_id' => 'required_if:delivery_method,pickup|exists:stores,id',
+        $validated = $request->validate([
+            'delivery_method' => 'required|in:delivery,pickup',
+            'delivery_address' => 'required_if:delivery_method,delivery|string|nullable',
+            'pickup_point_id' => 'required_if:delivery_method,pickup|exists:pickup_points,id',
+        ]);
+
+        $user = Auth::user();
+        if (!$user instanceof \App\Models\User) {
+            return redirect()->route('cart.index')->with('error', 'Ошибка авторизации. Пожалуйста, войдите снова.');
+        }
+
+        if ($validated['delivery_method'] === 'delivery' && !$user->delivery_address) {
+            $user->update(['delivery_address' => $validated['delivery_address']]);
+        }
+
+        $carts = $user->carts()->with(['product', 'size', 'color'])->whereNull('order_id')->get();
+        if ($carts->isEmpty()) {
+            return redirect()->route('cart.index')->with('error', 'Корзина пуста.');
+        }
+
+        return DB::transaction(function () use ($validated, $user, $carts) {
+            $pickup_point_id = $validated['delivery_method'] === 'pickup'
+                ? $validated['pickup_point_id']
+                : PickupPoint::whereHas('products', function ($query) use ($carts) {
+                    $query->whereIn('products.id', $carts->pluck('product_id'));
+                })->first()->id ?? PickupPoint::first()->id;
+
+            if (!$pickup_point_id) {
+                throw new \Exception('Не удалось найти подходящий пункт выдачи для заказа.');
+            }
+
+            $total = $carts->sum('order_amount');
+            $order = Order::create([
+                'user_id' => $user->id,
+                'total' => $total,
+                'status' => 'assembling',
+                'delivery_method' => $validated['delivery_method'],
+                'delivery_address' => $validated['delivery_method'] === 'delivery' ? $validated['delivery_address'] : null,
+                'pickup_point_id' => $pickup_point_id,
+                'order_date' => now(),
             ]);
 
-            Log::info('Validation passed', ['validated' => $validated]);
-
-            $user = Auth::user();
-            if (!$user instanceof \App\Models\User) {
-                Log::warning('User authentication failed');
-                return redirect()->route('cart.index')->with('error', 'Ошибка авторизации. Пожалуйста, войдите снова.');
-            }
-
-            if ($validated['delivery_method'] === 'delivery' && !$user->delivery_address) {
-                $user->update(['delivery_address' => $validated['delivery_address']]);
-                Log::info('Delivery address updated for user', ['user_id' => $user->id]);
-            }
-
-            $carts = $user->carts()->with(['product', 'size', 'color'])->whereNull('order_id')->get();
-            if ($carts->isEmpty()) {
-                Log::warning('Cart is empty');
-                return redirect()->route('cart.index')->with('error', 'Корзина пуста.');
-            }
-
-            Log::info('Before transaction', ['cart_count' => $carts->count()]);
-
-            return DB::transaction(function () use ($validated, $user, $carts) {
-                $store_id = $validated['delivery_method'] === 'pickup'
-                    ? $validated['store_id']
-                    : Store::whereHas('products', function ($query) use ($carts) {
-                        $query->whereIn('products.id', $carts->pluck('product_id'));
-                    })->first()->id ?? Store::first()->id;
-
-                if (!$store_id) {
-                    Log::error('No suitable store found for order');
-                    throw new \Exception('Не удалось найти подходящий склад для заказа.');
-                }
-
-                $total = $carts->sum('order_amount');
-                $order = Order::create([
-                    'user_id' => $user->id,
-                    'total' => $total,
-                    'status' => 'assembling',
-                    'delivery_method' => $validated['delivery_method'],
-                    'delivery_address' => $validated['delivery_method'] === 'delivery' ? $validated['delivery_address'] : null,
-                    'store_id' => $store_id,
-                    'order_date' => now(),
+            foreach ($carts as $cart) {
+                OrderItem::create([
+                    'order_id' => $order->id,
+                    'product_id' => $cart->product_id,
+                    'quantity' => $cart->quantity,
+                    'price' => $cart->product->price,
+                    'size_id' => $cart->size_id,
+                    'color_id' => $cart->color_id,
                 ]);
-
-                foreach ($carts as $cart) {
-                    OrderItem::create([
-                        'order_id' => $order->id,
-                        'product_id' => $cart->product_id,
-                        'quantity' => $cart->quantity,
-                        'price' => $cart->product->price,
-                        'size_id' => $cart->size_id,
-                        'color_id' => $cart->color_id,
-                    ]);
-                    $cart->update(['order_id' => $order->id]);
-                    $cart->product->update(['is_in_cart' => false]);
-                }
+                $cart->update(['order_id' => $order->id]);
+                $cart->product->update(['is_in_cart' => false]);
+            }
 
                 Log::info('Order created', ['order_id' => $order->id, 'items_count' => $carts->count()]);
 
                 try {
-                    $pdf = Pdf::loadView('cartReceipt', ['order' => $order, 'user' => $user])
-                        ->setOptions(['defaultFont' => 'DejaVu Sans']);
-                    $pdfPath = storage_path('app/public/receipts/receipt_' . $order->id . '_' . now()->timestamp . '.pdf');
-                    $pdf->save($pdfPath);
+            $pdf = Pdf::loadView('cartReceipt', ['order' => $order, 'user' => $user])
+                ->setOptions(['defaultFont' => 'DejaVu Sans']);
+            $pdfPath = storage_path('app/public/receipts/receipt_' . $order->id . '_' . now()->timestamp . '.pdf');
+            $pdf->save($pdfPath);
 
                     Log::info('PDF generated successfully', ['pdf_path' => $pdfPath]);
 
-                    return redirect()->route('cart.confirmation', ['cartId' => $order->id])
-                        ->with('success', 'Заказ успешно оформлен. Чек доступен для скачивания.');
+            return redirect()->route('cart.confirmation', ['cartId' => $order->id])
+                ->with('success', 'Заказ успешно оформлен. Чек доступен для скачивания.');
                 } catch (\Exception $e) {
                     Log::error('PDF generation failed: ' . $e->getMessage(), ['stack' => $e->getTraceAsString()]);
                     return redirect()->route('cart.confirmation', ['cartId' => $order->id])
                         ->with('error', 'Заказ оформлен, но не удалось сгенерировать чек. Свяжитесь с поддержкой.');
                 }
-            });
+        });
         } catch (\Exception $e) {
             Log::error('Error in placeOrder: ' . $e->getMessage(), ['stack' => $e->getTraceAsString()]);
             return redirect()->route('cart.index')->with('error', 'Не удалось оформить заказ. Попробуйте снова.');
