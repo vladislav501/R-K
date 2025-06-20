@@ -33,4 +33,16 @@ class SupplyItem extends Model
     {
         return $this->belongsTo(Size::class);
     }
+
+    public static function getTotalAvailableQuantity($pickupPointId)
+    {
+        if (!$pickupPointId) {
+            return ProductColorSize::sum('quantity'); 
+        }
+
+        return self::whereHas('supply', function ($q) use ($pickupPointId) {
+            $q->where('pickup_point_id', $pickupPointId)
+              ->whereIn('status', ['received', 'partially_received']);
+        })->sum('received_quantity');
+    }
 }

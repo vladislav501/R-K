@@ -5,133 +5,152 @@
 @section('content')
     <div class="supply-page-container">
         <h1 class="supply-title">Создать поставку</h1>
-        <form method="POST" action="/admin/supplies" class="supply-form">
+
+        @if (session('error'))
+            <div class="alert alert-danger">{{ session('error') }}</div>
+        @endif
+
+        @if ($errors->any())
+            <div class="alert alert-danger">
+                <ul>
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+
+        <form action="{{ route('admin.supplies.store') }}" method="POST" class="supply-form">
             @csrf
-            <div>
+            <div class="supply-form-group">
                 <label for="pickup_point_id" class="supply-label">Пункт выдачи:</label>
                 <select name="pickup_point_id" id="pickup_point_id" class="header-store-select" required>
                     <option value="">Выберите пункт выдачи</option>
-                    @foreach(\App\Models\PickupPoint::all() as $pickupPoint)
-                        <option value="{{ $pickupPoint->id }}" {{ old('pickup_point_id', request('pickup_point_id')) == $pickupPoint->id ? 'selected' : '' }}>{{ $pickupPoint->name }}</option>
+                    @foreach($pickupPoints as $pickupPoint)
+                        <option value="{{ $pickupPoint->id }}" {{ old('pickup_point_id') == $pickupPoint->id ? 'selected' : '' }}>{{ $pickupPoint->name }} ({{ $pickupPoint->address }})</option>
                     @endforeach
                 </select>
                 @error('pickup_point_id')
                     <span class="error">{{ $message }}</span>
                 @enderror
-                <input type="hidden" name="pickup_point_id" value="{{ old('pickup_point_id', request('pickup_point_id')) }}">
             </div>
+
             <div>
                 <label class="supply-label">Товары:</label>
-                @foreach($products as $product)
-                    <div class="supply-product">
-                        <div class="supply-product-header">
-                            @if($product->image_1)
-                                <img src="{{ Storage::url($product->image_1) }}" alt="{{ $product->name }}" class="supply-product-image">
-                            @else
-                                Нет изображения
-                            @endif
-                            <label class="supply-product-label">
-                                <input type="checkbox" class="product-checkbox" data-product-id="{{ $product->id }}"> 
-                                <span class="supply-product-name">{{ $product->name }}</span>
-                            </label>
-                        </div>
-                        <div class="product-variants" data-product-id="{{ $product->id }}">
-                            @foreach($product->colors as $color)
-                                @foreach($product->sizes as $size)
+                @foreach($products as $index => $product)
+                    @php
+                        $colorSizes = \App\Models\ProductColorSize::where('product_id', $product->id)
+                            ->with(['color', 'size'])
+                            ->get();
+                    @endphp
+                    @if($colorSizes->isNotEmpty())
+                        <div class="supply-product">
+                            <div class="supply-product-header">
+                                @if($product->image_1)
+                                    <img src="{{ Storage::url($product->image_1) }}" alt="{{ $product->name }}" class="supply-product-image">
+                                @else
+                                    Нет изображения
+                                @endif
+                                <label class="supply-product-label">
+                                    <input type="checkbox" class="product-checkbox" data-product-index="{{ $index }}">
+                                    <span class="supply-product-name">{{ $product->name }}</span>
+                                </label>
+                            </div>
+                            <div class="product-variants" data-product-index="{{ $index }}">
+                                <input type="hidden" name="products[{{ $index }}][id]" value="{{ $product->id }}">
+                                @foreach($colorSizes as $colorSize)
                                     <div class="supply-variant">
                                         <label class="supply-variant-label">
-                                            <span class="supply-variant-info">{{ $color->name }} / {{ $size->name }}</span>
-                                            <input type="number" name="products[{{ $product->id }}][items][{{ $loop->parent->index }}_{{ $loop->index }}][quantity]" min="0" class="variant-quantity supply-input" disabled>
-                                            <input type="hidden" name="products[{{ $product->id }}][items][{{ $loop->parent->index }}_{{ $loop->index }}][color_id]" value="{{ $color->id }}">
-                                            <input type="hidden" name="products[{{ $product->id }}][items][{{ $loop->parent->index }}_{{ $loop->index }}][size_id]" value="{{ $size->id }}">
-                                            <input type="hidden" name="products[{{ $product->id }}][id]" value="{{ $product->id }}">
+                                            <span class="supply-variant-info">{{ $colorSize->color->name }} / {{ $colorSize->size->name }}</span>
+                                            <input type="hidden" name="products[{{ $index }}][items][{{ $colorSize->color_id }}_{{ $colorSize->size_id }}][color_id]" value="{{ $colorSize->color_id }}">
+                                            <input type="hidden" name="products[{{ $index }}][items][{{ $colorSize->color_id }}_{{ $colorSize->size_id }}][size_id]" value="{{ $colorSize->size_id }}">
+                                            <input type="number" name="products[{{ $index }}][items][{{ $colorSize->color_id }}_{{ $colorSize->size_id }}][quantity]" class="variant-quantity supply-input" min="0" value="0" disabled>
                                         </label>
                                     </div>
                                 @endforeach
-                            @endforeach
+                            </div>
                         </div>
-                    </div>
+                    @endif
                 @endforeach
                 @error('products')
                     <span class="error">{{ $message }}</span>
                 @enderror
             </div>
+
             <button type="submit" class="supply-submit">Создать поставку</button>
         </form>
     </div>
+@endsection
 
-    <script>
-        // Set all quantity inputs to 0 on page load
-        document.querySelectorAll('.variant-quantity').forEach(input => {
-            input.value = '0';
-        });
+{{-- @section('styles')
+<style>
+    .supply-page-container { max-width: 900px; margin: 0 auto; }
+    .supply-title { font-size: 28px; margin-bottom: 20px; }
+    .supply-label { font-weight: bold; display: block; margin-bottom: 8px; }
+    .supply-form-group { margin-bottom: 20px; }
+    .supply-product { border: 1px solid #ddd; padding: 15px; margin-bottom: 15px; }
+    .supply-product-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+    .supply-product-image { width: 60px; height: 60px; object-fit: cover; border-radius: 6px; }
+    .supply-product-name { font-size: 16px; margin-left: 8px; }
+    .supply-variant { margin-bottom: 10px; }
+    .supply-variant-info { display: inline-block; width: 150px; }
+    .supply-input { width: 100px; padding: 6px; }
+    .supply-submit { margin-top: 20px; padding: 10px 20px; font-size: 16px; background-color: #007bff; color: #fff; border: none; border-radius: 6px; cursor: pointer; }
+    .supply-submit:hover { background-color: #0056b3; }
+    .error { color: red; font-size: 13px; }
+</style>
+@endsection --}}
 
-        document.querySelectorAll('.product-checkbox').forEach(checkbox => {
-            checkbox.addEventListener('change', function() {
-                const productId = this.dataset.productId;
-                const variantsDiv = document.querySelector(`.product-variants[data-product-id="${productId}"]`);
-                const inputs = variantsDiv.querySelectorAll('.variant-quantity');
-                inputs.forEach(input => {
-                    input.disabled = !this.checked;
-                    if (!this.checked) {
-                        input.value = '0';
-                    }
-                });
+@section('scripts')
+<script>
+    document.querySelectorAll('.variant-quantity').forEach(input => {
+        input.value = '0';
+    });
+
+    document.querySelectorAll('.product-checkbox').forEach(checkbox => {
+        checkbox.addEventListener('change', function() {
+            const index = this.dataset.productIndex;
+            const variantsDiv = document.querySelector(`.product-variants[data-product-index="${index}"]`);
+            const inputs = variantsDiv.querySelectorAll('.variant-quantity');
+            inputs.forEach(input => {
+                input.disabled = !this.checked;
+                if (!this.checked) {
+                    input.value = '0';
+                }
             });
         });
+    });
 
-        document.querySelector('.supply-form').addEventListener('submit', function(event) {
-            let hasValidProduct = false;
-            const productsData = [];
+    document.querySelector('.supply-form').addEventListener('submit', function(event) {
+        let hasValidProduct = false;
 
-            document.querySelectorAll('.product-checkbox').forEach(checkbox => {
-                const productId = checkbox.dataset.productId;
-                const variantsDiv = document.querySelector(`.product-variants[data-product-id="${productId}"]`);
-                const quantityInputs = variantsDiv.querySelectorAll('.variant-quantity');
-                const allInputs = variantsDiv.querySelectorAll('input');
+        document.querySelectorAll('.product-checkbox').forEach(checkbox => {
+            const index = checkbox.dataset.productIndex;
+            const variantsDiv = document.querySelector(`.product-variants[data-product-index="${index}"]`);
+            const quantityInputs = variantsDiv.querySelectorAll('.variant-quantity');
+            let hasValidQuantity = false;
 
-                if (!checkbox.checked) {
-                    // Disable all inputs for unchecked products
-                    allInputs.forEach(input => {
-                        input.disabled = true;
-                        if (input.classList.contains('variant-quantity')) {
-                            input.value = '0';
-                        }
-                    });
-                } else {
-                    let hasValidQuantity = false;
-                    quantityInputs.forEach(input => {
-                        const quantity = parseInt(input.value);
-                        if (isNaN(quantity) || quantity <= 0) {
-                            input.disabled = true;
-                            input.value = '0';
-                            input.closest('.supply-variant').querySelectorAll('input').forEach(i => i.disabled = true);
-                        } else {
-                            hasValidQuantity = true;
-                        }
-                    });
-                    if (hasValidQuantity) {
-                        hasValidProduct = true;
-                        productsData.push(productId);
-                    } else {
-                        // Disable all inputs if no valid quantities
-                        allInputs.forEach(input => {
-                            input.disabled = true;
-                            if (input.classList.contains('variant-quantity')) {
-                                input.value = '0';
-                            }
-                        });
-                    }
+            quantityInputs.forEach(input => {
+                const quantity = parseInt(input.value);
+                if (!isNaN(quantity) && quantity > 0) {
+                    hasValidQuantity = true;
                 }
             });
 
-            // Prevent submission if no valid products
-            if (!hasValidProduct) {
-                event.preventDefault();
-                alert('Выберите хотя бы один товар с количеством больше 0.');
+            if (!hasValidQuantity) {
+                quantityInputs.forEach(input => {
+                    input.disabled = true;
+                    input.value = '0';
+                });
             } else {
-                console.log('Submitting products:', productsData);
+                hasValidProduct = true;
             }
         });
-    </script>
+
+        if (!hasValidProduct) {
+            event.preventDefault();
+            alert('Выберите хотя бы один товар с количеством больше 0.');
+        }
+    });
+</script>
 @endsection

@@ -36,7 +36,7 @@
                 <div class="supplies-index-item">
                     <p><strong>Поставка №:</strong> {{ $supply->id }}</p>
                     <p><strong>Пункт выдачи:</strong> {{ $supply->pickupPoint->name }}</p>
-                    <p><strong>Статус:</strong> {{ $supply->status }}</p>
+                    <p><strong>Статус:</strong> {{ $supply->status_label }}</p>
                     <div class="supplies-index-table">
                         <table>
                             <thead>

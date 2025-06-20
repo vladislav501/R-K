@@ -4,7 +4,14 @@
 
 @section('content')
     <div class="catalog-content">
-        <h1 class="catalog-title">Каталог товаров</h1>
+        <h1 class="catalog-title">Каталог товаров</h1><br>
+        <div class="productsQuantity">
+            @if ($totalQuantity !== null)
+                <div class="mb-4 text-sm text-gray-700">
+                    Всего доступно товаров {{ session('pickup_point_id') ? 'в ПВЗ' : 'в общем каталоге' }}: {{ $totalQuantity }}
+                </div>
+            @endif
+        </div>
         <div class="catalog-container">
             <form method="GET" action="{{ route('products.index') }}" class="catalog-filters">
                 <div class="catalog-filter-group">
@@ -53,6 +60,7 @@
                     </select>
                 </div>
                 <input type="hidden" name="query" value="{{ request('query') }}">
+                <input type="hidden" name="pickup_point_id" value="{{ session('pickup_point_id') }}">
                 <button type="submit" class="catalog-filter-button">Фильтровать</button>
             </form>
 
@@ -82,6 +90,7 @@
                                         <p><strong>Коллекция:</strong> {{ $product->collection->name }}</p>
                                     @endif
                                     <p><strong>Тип одежды:</strong> {{ $product->clothingType->name }}</p>
+                                    <p><strong>В наличии:</strong> {{ $product->available_quantity }}</p>
                                 </div>
                             </a>
                             <form action="{{ route('cart.add', $product) }}" method="POST" class="product-form hidden" id="cart-form-{{ $product->id }}">
@@ -99,7 +108,8 @@
                                             <option value="{{ $color->id }}">{{ $color->name }}</option>
                                         @endforeach
                                     </select>
-                                    <input type="number" name="quantity" value="1" min="1" class="product-input" placeholder="Выберите количество">
+                                    <input type="number" name="quantity" value="1" min="1" max="{{ $product->available_quantity }}" class="product-input" placeholder="Выберите количество">
+                                    <input type="hidden" name="pickup_point_id" value="{{ session('pickup_point_id') }}">
                                 </div>
                                 <button type="submit" class="product-button">
                                     Добавить в корзину
@@ -107,8 +117,8 @@
                             </form>
                             <div class="product-actions">
                                 @auth
-                                    <button class="toggle-cart-button" data-product-id="{{ $product->id }}" {{ $product->is_in_cart ? 'disabled' : '' }}>
-                                        {{ $product->is_in_cart ? 'В корзине' : 'В корзину' }}
+                                    <button class="toggle-cart-button" data-product-id="{{ $product->id }}" {{ $product->is_in_cart || $product->available_quantity == 0 ? 'disabled' : '' }}>
+                                        {{ $product->is_in_cart ? 'В корзине' : ($product->available_quantity == 0 ? 'Нет в наличии' : 'В корзину') }}
                                     </button>
                                     <form action="{{ route('favorites.add', $product) }}" method="POST" class="product-form" id="favorite-form-{{ $product->id }}">
                                         @csrf

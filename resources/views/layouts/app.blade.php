@@ -25,17 +25,18 @@
             </button>
             <div class="header-collapsible">
                 <select class="header-store-select" onchange="window.location.href=this.value">
-                    <option value="{{ route('products.index') }}">Общий каталог</option>
+                    <option value="{{ route('products.index') }}" {{ !session('pickup_point_id') ? 'selected' : '' }}>Общий каталог</option>
                     @foreach(\App\Models\PickupPoint::all() as $pickupPoint)
-                        <option value="{{ route('products.index', ['pickup_point_id' => $pickupPoint->id]) }}" {{ request('pickup_point_id') == $pickupPoint->id ? 'selected' : '' }}>{{ $pickupPoint->name }}</option>
+                        <option value="{{ route('products.index', ['pickup_point_id' => $pickupPoint->id]) }}" {{ session('pickup_point_id') == $pickupPoint->id ? 'selected' : '' }}>{{ $pickupPoint->name }}</option>
                     @endforeach
                 </select>
                 <form action="{{ route('products.search') }}" method="GET" class="header-search-form">
                     <input type="text" name="query" placeholder="Поиск товаров..." class="header-search-input" value="{{ request('query') }}" required>
+                    <input type="hidden" name="pickup_point_id" value="{{ session('pickup_point_id') }}">
                     <button type="submit" class="header-search-button">Поиск</button>
                 </form>
                 <nav class="header-nav">
-                    <a href="{{ route('products.index') }}" class="header-nav-link">Каталог</a>
+                    <a href="{{ route('products.index', ['pickup_point_id' => session('pickup_point_id')]) }}" class="header-nav-link">Каталог</a>
                     @auth
                         <a href="{{ route('favorites.index') }}" class="header-nav-link">
                             Избранное
@@ -86,11 +87,11 @@
         <div class="categories-wrapper">
             <ul class="categories-list">
                 <li class="categories-item">
-                    <a href="{{ route('products.index') }}" class="categories-link {{ !request('category_id') && !Route::is('products.category') ? 'active' : '' }}">Все категории</a>
+                    <a href="{{ route('products.index', ['pickup_point_id' => session('pickup_point_id')]) }}" class="categories-link {{ !request('category_id') && !Route::is('products.category') ? 'active' : '' }}">Все категории</a>
                 </li>
                 @foreach(\App\Models\Category::all() as $category)
                     <li class="categories-item">
-                        <a href="{{ route('products.category', $category) }}" class="categories-link {{ Route::is('products.category') && request()->route('category')->id == $category->id ? 'active' : '' }}">{{ $category->name }}</a>
+                        <a href="{{ route('products.category', [$category, 'pickup_point_id' => session('pickup_point_id')]) }}" class="categories-link {{ Route::is('products.category') && request()->route('category')->id == $category->id ? 'active' : '' }}">{{ $category->name }}</a>
                     </li>
                 @endforeach
             </ul>
@@ -105,7 +106,7 @@
                 <h3>Категории</h3>
                 <ul>
                     @foreach(\App\Models\Category::all() as $category)
-                        <li><a href="{{ route('products.category', $category) }}">{{ $category->name }}</a></li>
+                        <li><a href="{{ route('products.category', [$category, 'pickup_point_id' => session('pickup_point_id')]) }}">{{ $category->name }}</a></li>
                     @endforeach
                 </ul>
             </div>
