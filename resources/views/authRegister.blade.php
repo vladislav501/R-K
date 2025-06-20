@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="auth-register-container">
+<div class="auth-register-container" style="background-image: url('{{ asset('images/bannerVip.webp') }}')">
     <div class="auth-card">
         <h1 class="auth-title">Регистрация</h1>
         <form action="{{ route('register') }}" method="POST" class="auth-form">
