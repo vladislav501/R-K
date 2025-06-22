@@ -54,13 +54,13 @@
                     <div class="item-options">
                         <select name="size_id" required class="item-select">
                             <option value="">Выберите размер</option>
-                            @foreach($product->sizes as $size)
+                            @foreach($product->sizes->unique('id') as $size)
                                 <option value="{{ $size->id }}">{{ $size->name }}</option>
                             @endforeach
                         </select>
                         <select name="color_id" required class="item-select">
                             <option value="">Выберите цвет</option>
-                            @foreach($product->colors as $color)
+                            @foreach($product->colors->unique('id') as $color)
                                 <option value="{{ $color->id }}">{{ $color->name }}</option>
                             @endforeach
                         </select>
