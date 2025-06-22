@@ -33,7 +33,7 @@
                 <p><strong>Тип одежды:</strong> {{ $product->clothingType->name }}</p>
                 <p><strong>Цвета:</strong> {{ $product->colors->pluck('name')->join(', ') }}</p>
                 <p><strong>Размеры:</strong> {{ $product->sizes->pluck('name')->join(', ') }}</p>
-                <p><strong>В наличии:</strong> {{ $product->is_available ? 'Да' : 'Нет' }}</p>
+                <p><strong>В наличии:</strong> {{ $product->available_quantity > 0 ? 'Да' : 'Нет' }} ({{ $product->available_quantity }})</p>
             </div>
             @if(auth()->check())
                 <form action="{{ route('cart.add', $product) }}" method="POST" class="item-add-to-cart-form">

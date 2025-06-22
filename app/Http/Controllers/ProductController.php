@@ -7,6 +7,7 @@ use App\Models\Category;
 use App\Models\ClothingType;
 use App\Models\Collection;
 use App\Models\Color;
+use App\Models\PickupPoint;
 use App\Models\Product;
 use App\Models\ProductColorSize;
 use App\Models\Size;
@@ -47,22 +48,27 @@ public function index(Request $request)
     if ($request->filled('category_id')) {
         $query->where('category_id', $request->category_id);
     }
+
     if ($request->filled('brand_id')) {
         $query->where('brand_id', $request->brand_id);
     }
+
     if ($request->filled('collection_id')) {
         $query->where('collection_id', $request->collection_id);
     }
+
     if ($request->filled('color_id')) {
         $query->whereHas('colors', function ($q) use ($request) {
             $q->where('colors.id', $request->color_id);
         });
     }
+
     if ($request->filled('size_id')) {
         $query->whereHas('sizes', function ($q) use ($request) {
             $q->where('sizes.id', $request->size_id);
         });
     }
+
     if ($request->filled('query')) {
         $query->where('name', 'like', '%' . $request->query('query') . '%');
     }
@@ -70,7 +76,7 @@ public function index(Request $request)
     if ($request->is('admin/*')) {
         $products = $query->get();
     } else {
-        $products = $query->paginate(9)->appends($request->query());
+    $products = $query->paginate(9)->appends($request->query());
     }
 
     $products->transform(function ($product) use ($pickupPointId) {
@@ -85,6 +91,7 @@ public function index(Request $request)
         } else {
             $product->available_quantity = $product->colorSizes()->sum('quantity');
         }
+
         return $product;
     });
 
@@ -229,7 +236,6 @@ public function index(Request $request)
                 }
             }
 
-            // Вычисляем наличие товара по количеству
             $totalQuantity = collect($validated['color_size_quantities'])
                 ->flatten()
                 ->sum();
@@ -276,17 +282,44 @@ public function index(Request $request)
     }
 }
 
-    public function edit(Product $product)
-    {
-        $brands = Brand::all();
-        $categories = Category::where('is_active', true)->get();
-        $collections = Collection::all();
-        $clothingTypes = ClothingType::all();
-        $colors = Color::all();
-        $sizes = Size::all();
-        $colorSizes = $product->colorSizes()->get()->groupBy(['color_id', 'size_id']);
-        return view('adminProductsEdit', compact('product', 'brands', 'categories', 'collections', 'clothingTypes', 'colors', 'sizes', 'colorSizes'));
+public function edit($id)
+{
+    $product = Product::with('pickupPoints')->findOrFail($id);
+    $colors = Color::all();
+    $sizes = Size::all();
+    $stores = PickupPoint::all();
+    $brands = Brand::all();
+    $categories = Category::all();
+    $collections = Collection::all();
+    $clothingTypes = ClothingType::all();
+    $clothingTypeOptions = $clothingTypes ? $clothingTypes->pluck('name', 'id') : collect();
+
+    $colorSizes = [];
+
+    foreach ($colors as $color) {
+        foreach ($sizes as $size) {
+            $quantity = $product->colorSizes()
+                ->where('color_id', $color->id)
+                ->where('size_id', $size->id)
+                ->first()
+                ->quantity ?? 0;
+
+            $colorSizes[$color->id][$size->id] = (object)['quantity' => $quantity];
+        }
     }
+
+    return view('adminProductsEdit', [
+        'product' => $product,
+        'colors' => $colors,
+        'sizes' => $sizes,
+        'colorSizes' => $colorSizes,
+        'stores' => $stores,
+        'brands' => $brands,
+        'categories' => $categories,
+        'collections' => $collections,
+        'clothingTypes' => $clothingTypes,
+    ]);
+}
 
     public function update(Request $request, Product $product)
     {

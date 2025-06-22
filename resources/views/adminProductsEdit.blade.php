@@ -126,7 +126,8 @@
                         @foreach($sizes as $size)
                             <div class="products-quantity-item">
                                 <label>{{ $size->name }}:</label>
-                                <input type="number" name="color_size_quantities[{{ $color->id }}][{{ $size->id }}]" min="0" value="{{ old("color_size_quantities.{$color->id}.{$size->id}", $colorSizes[$color->id][$size->id]->quantity ?? 0) }}">
+                                <input type="number" name="color_size_quantities[{{ $color->id }}][{{ $size->id }}]" min="0"
+                                    value="{{ old("color_size_quantities.{$color->id}.{$size->id}", $colorSizes[$color->id . '-' . $size->id]->quantity ?? 0) }}">
                             </div>
                         @endforeach
                     </div>
@@ -138,8 +139,14 @@
                 <div class="products-checkbox-group">
                     @foreach($stores as $store)
                         <label>
-                            <input type="checkbox" name="stores[]" value="{{ $store->id }}" class="store-checkbox" {{ in_array($store->id, old('stores', $product->stores->pluck('id')->toArray())) ? 'checked' : '' }}> {{ $store->name }}
-                            <input type="number" name="store_quantities[{{ $store->id }}]" class="store-quantity" min="0" value="{{ old("store_quantities.{$store->id}", $product->stores->firstWhere('id', $store->id)->pivot->quantity ?? '') }}">
+                            <input type="checkbox" name="stores[]" value="{{ $store->id }}" class="store-checkbox"
+                                {{ in_array($store->id, old('stores', $product->pickupPoints->pluck('id')->toArray())) ? 'checked' : '' }}>
+                            {{ $store->name }}
+                            @php
+                                $storeModel = $product->pickupPoints->firstWhere('id', $store->id);
+                                $quantity = old("store_quantities.{$store->id}", $storeModel && $storeModel->pivot ? $storeModel->pivot->quantity : '');
+                            @endphp
+                            <input type="number" name="store_quantities[{{ $store->id }}]" class="store-quantity" min="0" value="{{ $quantity }}">
                         </label>
                     @endforeach
                 </div>
