@@ -31,8 +31,21 @@
                 <p><strong>Категория:</strong> {{ $product->category->name }}</p>
                 <p><strong>Коллекция:</strong> {{ $product->collection->name ?? 'Нет' }}</p>
                 <p><strong>Тип одежды:</strong> {{ $product->clothingType->name }}</p>
-                <p><strong>Цвета:</strong> {{ $product->colors->pluck('name')->join(', ') }}</p>
-                <p><strong>Размеры:</strong> {{ $product->sizes->pluck('name')->join(', ') }}</p>
+                @php
+                    $colors = $product->colors->pluck('name')->unique();
+                    $sizes = $product->sizes->pluck('name')->unique();
+                @endphp
+
+                @if($colors->count() === 1 && $sizes->count() > 1)
+                    <p><strong>Цвет:</strong> {{ $colors->first() }}</p>
+                    <p><strong>Размеры:</strong> {{ $sizes->join(', ') }}</p>
+                @elseif($sizes->count() === 1 && $colors->count() > 1)
+                    <p><strong>Размер:</strong> {{ $sizes->first() }}</p>
+                    <p><strong>Цвета:</strong> {{ $colors->join(', ') }}</p>
+                @else
+                    <p><strong>Цвета:</strong> {{ $colors->join(', ') }}</p>
+                    <p><strong>Размеры:</strong> {{ $sizes->join(', ') }}</p>
+                @endif
                 <p><strong>В наличии:</strong> {{ $product->available_quantity > 0 ? 'Да' : 'Нет' }} ({{ $product->available_quantity }})</p>
             </div>
             @if(auth()->check())
