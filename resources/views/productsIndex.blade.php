@@ -107,7 +107,6 @@
                                 @endauth
                             </div>
                         </div>
-                        <!-- Modal for each product -->
                         <div class="modal" id="cart-modal-{{ $product->id }}">
                             <div class="modal-content">
                                 <h2>Добавить в корзину: {{ $product->name }}</h2>
