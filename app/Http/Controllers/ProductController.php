@@ -23,79 +23,88 @@ class ProductController extends Controller
         $this->middleware('auth')->only(['create', 'store', 'edit', 'update', 'destroy']);
     }
 
-    public function index(Request $request)
-    {
-        if ($request->has('pickup_point_id') && $request->pickup_point_id) {
-            session(['pickup_point_id' => $request->pickup_point_id]);
-        } elseif (!$request->has('pickup_point_id') && $request->pickup_point_id === null) {
-            session()->forget('pickup_point_id');
-        }
-        $pickupPointId = session('pickup_point_id');
-
-        $query = Product::query()->with(['brand', 'category', 'collection', 'clothingType', 'colors', 'sizes']);
-
-        if ($pickupPointId) {
-            $query->whereHas('pickupPoints', function ($q) use ($pickupPointId) {
-                $q->where('pickup_points.id', $pickupPointId)
-                  ->where('product_pickup_point.quantity', '>', 0);
-            });
-        }
-
-        if ($request->filled('category_id')) {
-            $query->where('category_id', $request->category_id);
-        }
-        if ($request->filled('brand_id')) {
-            $query->where('brand_id', $request->brand_id);
-        }
-        if ($request->filled('collection_id')) {
-            $query->where('collection_id', $request->collection_id);
-        }
-        if ($request->filled('color_id')) {
-            $query->whereHas('colors', function ($q) use ($request) {
-                $q->where('colors.id', $request->color_id);
-            });
-        }
-        if ($request->filled('size_id')) {
-            $query->whereHas('sizes', function ($q) use ($request) {
-                $q->where('sizes.id', $request->size_id);
-            });
-        }
-        if ($request->filled('query')) {
-            $query->where('name', 'like', '%' . $request->query('query') . '%');
-        }
-
-        $products = $query->paginate(9)->appends($request->query());
-        $products->getCollection()->transform(function ($product) use ($pickupPointId) {
-            $product->is_in_cart = $product->isInCart();
-            $product->is_favorite = auth()->check() && $product->favorites()->where('user_id', auth()->id())->exists();
-            if ($pickupPointId) {
-                $product->available_quantity = $product->pickupPoints()
-                    ->where('pickup_point_id', $pickupPointId)
-                    ->first()
-                    ->pivot
-                    ->quantity ?? 0;
-            } else {
-                $product->available_quantity = $product->colorSizes()->sum('quantity');
-            }
-            return $product;
-        });
-
-        $categories = Category::where('is_active', true)->get();
-        $brands = Brand::all();
-        $collections = Collection::all();
-        $colors = Color::all();
-        $sizes = Size::all();
-        $totalQuantity = \App\Models\SupplyItem::getTotalAvailableQuantity($pickupPointId);
-
-        if ($request->is('admin/*')) {
-            return view('adminProductsIndex', compact('products', 'categories', 'brands', 'collections', 'colors', 'sizes'));
-        }
-
-        return view('productsIndex', array_merge(
-            compact('products', 'categories', 'brands', 'collections', 'colors', 'sizes'),
-            ['totalQuantity' => $totalQuantity]
-        ));
+public function index(Request $request)
+{
+    if ($request->has('pickup_point_id') && $request->pickup_point_id) {
+        session(['pickup_point_id' => $request->pickup_point_id]);
+    } elseif (!$request->has('pickup_point_id') && $request->pickup_point_id === null) {
+        session()->forget('pickup_point_id');
     }
+
+    $pickupPointId = session('pickup_point_id');
+
+    $query = Product::query()->with([
+        'brand', 'category', 'collection', 'clothingType', 'colors', 'sizes', 'colorSizes', 'pickupPoints'
+    ]);
+
+    if ($pickupPointId) {
+        $query->whereHas('pickupPoints', function ($q) use ($pickupPointId) {
+            $q->where('pickup_points.id', $pickupPointId)
+              ->where('product_pickup_point.quantity', '>', 0);
+        });
+    }
+
+    if ($request->filled('category_id')) {
+        $query->where('category_id', $request->category_id);
+    }
+    if ($request->filled('brand_id')) {
+        $query->where('brand_id', $request->brand_id);
+    }
+    if ($request->filled('collection_id')) {
+        $query->where('collection_id', $request->collection_id);
+    }
+    if ($request->filled('color_id')) {
+        $query->whereHas('colors', function ($q) use ($request) {
+            $q->where('colors.id', $request->color_id);
+        });
+    }
+    if ($request->filled('size_id')) {
+        $query->whereHas('sizes', function ($q) use ($request) {
+            $q->where('sizes.id', $request->size_id);
+        });
+    }
+    if ($request->filled('query')) {
+        $query->where('name', 'like', '%' . $request->query('query') . '%');
+    }
+
+    if ($request->is('admin/*')) {
+        $products = $query->get();
+    } else {
+        $products = $query->paginate(9)->appends($request->query());
+    }
+
+    $products->transform(function ($product) use ($pickupPointId) {
+        $product->is_in_cart = $product->isInCart();
+        $product->is_favorite = auth()->check() && $product->favorites()->where('user_id', auth()->id())->exists();
+        if ($pickupPointId) {
+            $product->available_quantity = $product->pickupPoints()
+                ->where('pickup_point_id', $pickupPointId)
+                ->first()
+                ->pivot
+                ->quantity ?? 0;
+        } else {
+            $product->available_quantity = $product->colorSizes()->sum('quantity');
+        }
+        return $product;
+    });
+
+    $categories = Category::where('is_active', true)->get();
+    $brands = Brand::all();
+    $collections = Collection::all();
+    $colors = Color::all();
+    $sizes = Size::all();
+    $totalQuantity = \App\Models\SupplyItem::getTotalAvailableQuantity($pickupPointId);
+
+    if ($request->is('admin/*')) {
+        return view('adminProductsIndex', compact('products', 'categories', 'brands', 'collections', 'colors', 'sizes'));
+    }
+
+    return view('productsIndex', array_merge(
+        compact('products', 'categories', 'brands', 'collections', 'colors', 'sizes'),
+        ['totalQuantity' => $totalQuantity]
+    ));
+}
+
 
     public function category(Request $request, Category $category)
     {
@@ -266,7 +275,6 @@ class ProductController extends Controller
         return redirect()->back()->with('error', 'Ошибка при создании товара: ' . $e->getMessage())->withInput();
     }
 }
-
 
     public function edit(Product $product)
     {

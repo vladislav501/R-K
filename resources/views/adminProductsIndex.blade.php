@@ -57,7 +57,15 @@
                             <td>BYN {{ number_format($product->price, 2) }}</td>
                             <td>{{ $product->brand->name }}</td>
                             <td>{{ $product->category->name }}</td>
-                            <td>{{ $product->is_available ? 'Да' : 'Нет' }}</td>
+                            <td>
+                                @php
+                                    $pickupPointId = session('pickup_point_id');
+                                    $quantity = $pickupPointId
+                                        ? $product->pickupPoints->where('id', $pickupPointId)->first()?->pivot->quantity ?? 0
+                                        : $product->colorSizes->sum('quantity');
+                                @endphp
+                                {{ $quantity > 0 ? 'Да' : 'Нет' }} ({{ $quantity }})
+                            </td>
                             <td>
                                 <a href="{{ route('admin.products.edit', $product) }}" class="products-edit-button">Редактировать</a>
                                 <form action="{{ route('admin.products.destroy', $product) }}" method="POST" class="products-delete-form" style="display:inline;">
