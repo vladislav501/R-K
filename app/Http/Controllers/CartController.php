@@ -177,11 +177,11 @@ class CartController extends Controller
         return view('cartCheckout', compact('user', 'pickupPoints', 'carts', 'totalSum'));
     }
 
-    public function placeOrder(Request $request)
-    {
-        Log::info('placeOrder method called', ['request' => $request->all()]);
+public function placeOrder(Request $request)
+{
+    Log::info('placeOrder method called', ['request' => $request->all()]);
 
-        try {
+    try {
         $validated = $request->validate([
             'delivery_method' => 'required|in:delivery,pickup',
             'delivery_address' => 'required_if:delivery_method,delivery|string|nullable',
@@ -234,32 +234,43 @@ class CartController extends Controller
                     'color_id' => $cart->color_id,
                 ]);
                 $cart->update(['order_id' => $order->id]);
-                $cart->product->update(['is_in_cart' => false]);
             }
 
-                Log::info('Order created', ['order_id' => $order->id, 'items_count' => $carts->count()]);
+            // 👇 Фикс — обновление is_in_cart
+            $uniqueProductIds = $carts->pluck('product_id')->unique();
+            foreach ($uniqueProductIds as $productId) {
+                $stillInCart = Cart::where('product_id', $productId)
+                    ->whereNull('order_id')
+                    ->exists();
 
-                try {
-            $pdf = Pdf::loadView('cartReceipt', ['order' => $order, 'user' => $user])
-                ->setOptions(['defaultFont' => 'DejaVu Sans']);
-            $pdfPath = storage_path('app/public/receipts/receipt_' . $order->id . '_' . now()->timestamp . '.pdf');
-            $pdf->save($pdfPath);
-
-                    Log::info('PDF generated successfully', ['pdf_path' => $pdfPath]);
-
-            return redirect()->route('cart.confirmation', ['cartId' => $order->id])
-                ->with('success', 'Заказ успешно оформлен. Чек доступен для скачивания.');
-                } catch (\Exception $e) {
-                    Log::error('PDF generation failed: ' . $e->getMessage(), ['stack' => $e->getTraceAsString()]);
-                    return redirect()->route('cart.confirmation', ['cartId' => $order->id])
-                        ->with('error', 'Заказ оформлен, но не удалось сгенерировать чек. Свяжитесь с поддержкой.');
+                if (!$stillInCart) {
+                    Product::where('id', $productId)->update(['is_in_cart' => false]);
                 }
+            }
+
+            Log::info('Order created', ['order_id' => $order->id, 'items_count' => $carts->count()]);
+
+            try {
+                $pdf = Pdf::loadView('cartReceipt', ['order' => $order, 'user' => $user])
+                    ->setOptions(['defaultFont' => 'DejaVu Sans']);
+                $pdfPath = storage_path('app/public/receipts/receipt_' . $order->id . '_' . now()->timestamp . '.pdf');
+                $pdf->save($pdfPath);
+
+                Log::info('PDF generated successfully', ['pdf_path' => $pdfPath]);
+
+                return redirect()->route('cart.confirmation', ['cartId' => $order->id])
+                    ->with('success', 'Заказ успешно оформлен. Чек доступен для скачивания.');
+            } catch (\Exception $e) {
+                Log::error('PDF generation failed: ' . $e->getMessage(), ['stack' => $e->getTraceAsString()]);
+                return redirect()->route('cart.confirmation', ['cartId' => $order->id])
+                    ->with('error', 'Заказ оформлен, но не удалось сгенерировать чек. Свяжитесь с поддержкой.');
+            }
         });
-        } catch (\Exception $e) {
-            Log::error('Error in placeOrder: ' . $e->getMessage(), ['stack' => $e->getTraceAsString()]);
-            return redirect()->route('cart.index')->with('error', 'Не удалось оформить заказ. Попробуйте снова.');
-        }
+    } catch (\Exception $e) {
+        Log::error('Error in placeOrder: ' . $e->getMessage(), ['stack' => $e->getTraceAsString()]);
+        return redirect()->route('cart.index')->with('error', 'Не удалось оформить заказ. Попробуйте снова.');
     }
+}
 
     public function confirmation($orderId)
     {

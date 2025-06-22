@@ -93,8 +93,14 @@
                             </a>
                             <div class="product-actions">
                                 @auth
-                                    <button class="toggle-cart-button" data-product-id="{{ $product->id }}" {{ $product->is_in_cart || $product->available_quantity == 0 ? 'disabled' : '' }}>
-                                        {{ $product->is_in_cart ? 'В корзине' : ($product->available_quantity == 0 ? 'Нет в наличии' : 'В корзину') }}
+                                    @php
+                                        $inCart = session('cart', collect())->contains(function ($item) use ($product) {
+                                            return $item['product_id'] == $product->id &&
+                                                $item['pickup_point_id'] == session('pickup_point_id');
+                                        });
+                                    @endphp
+                                    <button class="toggle-cart-button" data-product-id="{{ $product->id }}" {{ $inCart || $product->available_quantity == 0 ? 'disabled' : '' }}>
+                                        {{ $inCart ? 'В корзине' : ($product->available_quantity == 0 ? 'Нет в наличии' : 'В корзину') }}
                                     </button>
                                     <form action="{{ route('favorites.add', $product) }}" method="POST" class="product-form" id="favorite-form-{{ $product->id }}">
                                         @csrf
