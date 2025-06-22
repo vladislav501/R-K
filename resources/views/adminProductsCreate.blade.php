@@ -20,23 +20,29 @@
             <li><a href="{{ route('admin.orders.index') }}">Управление заказами</a></li>
         </ul>
     </div>
+
     <div class="products-main-content">
         <h1>Создать товар</h1>
+
         @if(session('error'))
             <div class="products-error-notice">{{ session('error') }}</div>
         @endif
+
         <form method="POST" action="{{ route('admin.products.store') }}" class="products-create-form" enctype="multipart/form-data">
             @csrf
+
             <div class="products-form-group">
                 <label for="name">Название:</label>
                 <input type="text" name="name" id="name" value="{{ old('name') }}" required>
                 @error('name') <span class="products-error-text">{{ $message }}</span> @enderror
             </div>
+
             <div class="products-form-group">
                 <label for="price">Цена:</label>
                 <input type="number" name="price" id="price" step="0.01" value="{{ old('price') }}" required>
                 @error('price') <span class="products-error-text">{{ $message }}</span> @enderror
             </div>
+
             <div class="products-form-group">
                 <label for="brand_id">Бренд:</label>
                 <select name="brand_id" id="brand_id" required>
@@ -47,6 +53,7 @@
                 </select>
                 @error('brand_id') <span class="products-error-text">{{ $message }}</span> @enderror
             </div>
+
             <div class="products-form-group">
                 <label for="category_id">Категория:</label>
                 <select name="category_id" id="category_id" required>
@@ -57,6 +64,7 @@
                 </select>
                 @error('category_id') <span class="products-error-text">{{ $message }}</span> @enderror
             </div>
+
             <div class="products-form-group">
                 <label for="collection_id">Коллекция:</label>
                 <select name="collection_id" id="collection_id">
@@ -67,6 +75,7 @@
                 </select>
                 @error('collection_id') <span class="products-error-text">{{ $message }}</span> @enderror
             </div>
+
             <div class="products-form-group">
                 <label for="clothing_type_id">Тип одежды:</label>
                 <select name="clothing_type_id" id="clothing_type_id" required>
@@ -77,26 +86,20 @@
                 </select>
                 @error('clothing_type_id') <span class="products-error-text">{{ $message }}</span> @enderror
             </div>
+
             <div class="products-form-group">
                 <label>Изображения (до 3):</label>
                 <div class="products-image-upload">
-                    <div>
-                        <label for="image_1">Изображение 1:</label>
-                        <input type="file" name="image_1" id="image_1" accept="image/jpeg,image/png,image/jpg">
-                        @error('image_1') <span class="products-error-text">{{ $message }}</span> @enderror
-                    </div>
-                    <div>
-                        <label for="image_2">Изображение 2:</label>
-                        <input type="file" name="image_2" id="image_2" accept="image/jpeg,image/png,image/jpg">
-                        @error('image_2') <span class="products-error-text">{{ $message }}</span> @enderror
-                    </div>
-                    <div>
-                        <label for="image_3">Изображение 3:</label>
-                        <input type="file" name="image_3" id="image_3" accept="image/jpeg,image/png,image/jpg">
-                        @error('image_3') <span class="products-error-text">{{ $message }}</span> @enderror
-                    </div>
+                    @foreach (range(1,3) as $i)
+                        <div>
+                            <label for="image_{{ $i }}">Изображение {{ $i }}:</label>
+                            <input type="file" name="image_{{ $i }}" id="image_{{ $i }}" accept="image/jpeg,image/png,image/jpg">
+                            @error("image_{$i}") <span class="products-error-text">{{ $message }}</span> @enderror
+                        </div>
+                    @endforeach
                 </div>
             </div>
+
             <div class="products-form-group">
                 <label>Цвета:</label>
                 <div class="products-checkbox-group">
@@ -108,6 +111,7 @@
                 </div>
                 @error('colors') <span class="products-error-text">{{ $message }}</span> @enderror
             </div>
+
             <div class="products-form-group">
                 <label>Размеры:</label>
                 <div class="products-checkbox-group">
@@ -119,21 +123,7 @@
                 </div>
                 @error('sizes') <span class="products-error-text">{{ $message }}</span> @enderror
             </div>
-            <div class="products-form-group">
-                <label>Количество по цветам и размерам:</label>
-                @foreach($colors as $color)
-                    <h3>{{ $color->name }}</h3>
-                    <div class="products-quantity-grid">
-                        @foreach($sizes as $size)
-                            <div class="products-quantity-item">
-                                <label>{{ $size->name }}:</label>
-                                <input type="number" name="color_size_quantities[{{ $color->id }}][{{ $size->id }}]" min="0" value="{{ old("color_size_quantities.{$color->id}.{$size->id}", 0) }}">
-                            </div>
-                        @endforeach
-                    </div>
-                @endforeach
-                @error('color_size_quantities') <span class="products-error-text">{{ $message }}</span> @enderror
-            </div>
+
             <div class="products-form-group">
                 <label>
                     <input type="checkbox" name="is_available" value="1" {{ old('is_available', 1) ? 'checked' : '' }}> В наличии
@@ -141,25 +131,11 @@
                 </label>
                 @error('is_available') <span class="products-error-text">{{ $message }}</span> @enderror
             </div>
+
             <button type="submit" class="products-submit-button">Создать</button>
         </form>
+
         <a href="{{ route('admin.products.index') }}" class="products-back-link">Назад</a>
     </div>
 </div>
-
-<script>
-    document.querySelector('.products-create-form').addEventListener('submit', function(e) {
-        const quantities = document.querySelectorAll('input[name^="color_size_quantities"]');
-        let hasQuantity = false;
-        quantities.forEach(input => {
-            if (input.value && parseInt(input.value) > 0) {
-                hasQuantity = true;
-            }
-        });
-        if (!hasQuantity) {
-            e.preventDefault();
-            alert('Укажите хотя бы одно количество для комбинации цвет/размер.');
-        }
-    });
-</script>
 @endsection

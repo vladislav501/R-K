@@ -207,80 +207,57 @@ public function index(Request $request)
 
     public function store(Request $request)
 {
-    Log::info('Attempting to store product', ['request_data' => $request->all()]);
+    $validated = $request->validate([
+        'name'=>'required|string|max:255',
+        'price'=>'required|numeric|min:0',
+        'brand_id'=>'required|exists:brands,id',
+        'category_id'=>'required|exists:categories,id',
+        'collection_id'=>'nullable|exists:collections,id',
+        'clothing_type_id'=>'required|exists:clothing_types,id',
+        'colors'=>'required|array|min:1',
+        'colors.*'=>'exists:colors,id',
+        'sizes'=>'required|array|min:1',
+        'sizes.*'=>'exists:sizes,id',
+        'image_1'=>'nullable|image|mimes:jpeg,png,jpg|max:2048',
+        'image_2'=>'nullable|image|mimes:jpeg,png,jpg|max:2048',
+        'image_3'=>'nullable|image|mimes:jpeg,png,jpg|max:2048',
+        'is_available'=>'boolean',
+    ]);
 
-    try {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'price' => 'required|numeric|min:0',
-            'brand_id' => 'required|exists:brands,id',
-            'category_id' => 'required|exists:categories,id',
-            'collection_id' => 'nullable|exists:collections,id',
-            'clothing_type_id' => 'required|exists:clothing_types,id',
-            'colors' => 'required|array|min:1',
-            'colors.*' => 'exists:colors,id',
-            'sizes' => 'required|array|min:1',
-            'sizes.*' => 'exists:sizes,id',
-            'color_size_quantities' => 'required|array',
-            'color_size_quantities.*.*' => 'nullable|integer|min:0',
-            'image_1' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
-            'image_2' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
-            'image_3' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
-        ]);
-
-        return DB::transaction(function () use ($validated, $request) {
-            $imagePaths = [];
-            foreach (['image_1', 'image_2', 'image_3'] as $imageField) {
-                if ($request->hasFile($imageField)) {
-                    $imagePaths[$imageField] = $request->file($imageField)->store('product_images', 'public');
-                }
+    DB::transaction(function () use ($validated, $request) {
+        $imgs = [];
+        foreach (['image_1','image_2','image_3'] as $f) {
+            if ($request->hasFile($f)) {
+                $imgs[$f] = $request->file($f)->store('product_images','public');
             }
+        }
 
-            $totalQuantity = collect($validated['color_size_quantities'])
-                ->flatten()
-                ->sum();
+        $product = Product::create(array_merge([
+            'name'=>$validated['name'],
+            'price'=>$validated['price'],
+            'brand_id'=>$validated['brand_id'],
+            'category_id'=>$validated['category_id'],
+            'collection_id'=>$validated['collection_id'],
+            'clothing_type_id'=>$validated['clothing_type_id'],
+            'is_available'=>$request->boolean('is_available'),
+        ], $imgs));
 
-            $product = Product::create(array_merge([
-                'name' => $validated['name'],
-                'price' => $validated['price'],
-                'brand_id' => $validated['brand_id'],
-                'category_id' => $validated['category_id'],
-                'collection_id' => $validated['collection_id'],
-                'clothing_type_id' => $validated['clothing_type_id'],
-                'is_available' => $totalQuantity > 0,
-            ], $imagePaths));
-
-            foreach ($validated['colors'] as $color_id) {
-                foreach ($validated['sizes'] as $size_id) {
-                    $quantity = $validated['color_size_quantities'][$color_id][$size_id] ?? 0;
-                    if ($quantity > 0) {
-                        ProductColorSize::create([
-                            'product_id' => $product->id,
-                            'color_id' => $color_id,
-                            'size_id' => $size_id,
-                            'quantity' => $quantity,
-                        ]);
-                    }
-                }
+        // создаем ProductColorSize с quantity = 0
+        foreach ($validated['colors'] as $col) {
+            foreach ($validated['sizes'] as $sz) {
+                ProductColorSize::create([
+                    'product_id'=>$product->id,
+                    'color_id'=>$col,
+                    'size_id'=>$sz,
+                    'quantity'=>0,
+                ]);
             }
+        }
+    });
 
-            Log::info('Product created successfully', ['product_id' => $product->id]);
-            return redirect()->route('admin.products.index')->with('success', 'Товар создан.');
-        });
-    } catch (ValidationException $e) {
-        Log::error('Validation failed while storing product', [
-            'errors' => $e->errors(),
-            'request_data' => $request->all(),
-        ]);
-        return redirect()->back()->withErrors($e->errors())->withInput();
-    } catch (\Exception $e) {
-        Log::error('Failed to store product', [
-            'error' => $e->getMessage(),
-            'request_data' => $request->all(),
-        ]);
-        return redirect()->back()->with('error', 'Ошибка при создании товара: ' . $e->getMessage())->withInput();
-    }
+    return redirect()->route('admin.products.index')->with('success','Товар создан');
 }
+
 
 public function edit($id)
 {

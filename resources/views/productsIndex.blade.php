@@ -6,9 +6,9 @@
     <div class="catalog-content">
         <h1 class="catalog-title">Каталог товаров</h1><br>
         <div class="productsQuantity">
-            @if ($totalQuantity !== null)
+            @if (session('pickup_point_id') && $totalQuantity !== null)
                 <div class="mb-4 text-sm text-gray-700">
-                    Всего доступно товаров {{ session('pickup_point_id') ? 'в ПВЗ' : 'в общем каталоге' }}: {{ $totalQuantity }}
+                    Всего доступно товаров в ПВЗ: {{ $totalQuantity }}
                 </div>
             @endif
         </div>
