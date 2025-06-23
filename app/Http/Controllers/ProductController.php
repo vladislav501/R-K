@@ -26,10 +26,13 @@ class ProductController extends Controller
 
 public function index(Request $request)
 {
-    if ($request->has('pickup_point_id') && $request->pickup_point_id) {
-        session(['pickup_point_id' => $request->pickup_point_id]);
-    } elseif (!$request->has('pickup_point_id') && $request->pickup_point_id === null) {
-        session()->forget('pickup_point_id');
+    if ($request->has('pickup_point_id')) {
+        $ppId = $request->input('pickup_point_id');
+        if ($ppId === null || $ppId === 'null' || $ppId === '') {
+            session()->forget('pickup_point_id');
+        } else {
+            session(['pickup_point_id' => $ppId]);
+        }
     }
 
     $pickupPointId = session('pickup_point_id');
@@ -83,15 +86,13 @@ public function index(Request $request)
         $product->is_in_cart = $product->isInCart();
         $product->is_favorite = auth()->check() && $product->favorites()->where('user_id', auth()->id())->exists();
         if ($pickupPointId) {
-            $product->available_quantity = $product->pickupPoints()
-                ->where('pickup_point_id', $pickupPointId)
-                ->first()
-                ->pivot
-                ->quantity ?? 0;
+            $pivot = $product->pickupPoints()->where('pickup_point_id', $pickupPointId)->first()?->pivot;
+            $product->available_quantity = $pivot?->quantity ?? 0;
+            $product->available_status = $product->available_quantity > 0 ? 'В наличии' : 'Нет в наличии';
         } else {
-            $product->available_quantity = $product->colorSizes()->sum('quantity');
+            $product->available_quantity = null; 
+            $product->available_status = 'В наличии';
         }
-
         return $product;
     });
 

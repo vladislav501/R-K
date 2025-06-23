@@ -34,12 +34,54 @@
                     <p><strong>Размеры:</strong> {{ $product->sizes->unique('id')->pluck('name')->join(', ') }}</p>
                 </div>
             </a>
+
+            <div class="product-actions">
+                @php
+                    $inCart = session('cart', collect())->contains(function ($item) use ($product) {
+                        return $item['product_id'] == $product->id &&
+                            $item['pickup_point_id'] == session('pickup_point_id');
+                    });
+                @endphp
+                <button class="toggle-cart-button favorites-cart-button"
+                        data-product-id="{{ $product->id }}"
+                        {{ $inCart || $product->available_quantity == 0 ? 'disabled' : '' }}>
+                    {{ $inCart ? 'В корзине' : ($product->available_quantity == 0 ? 'Нет в наличии' : 'В корзину') }}
+                </button>
+            </div>
             <form action="{{ route('favorites.destroy', $product->id) }}" method="POST" class="favorites-delete-form">
                 @csrf
                 @method('DELETE')
                 <button type="submit" class="favorites-delete-button" onclick="return confirm('Удалить из избранного?')">Удалить</button>
             </form>
         </div>
+        <div class="modal" id="cart-modal-{{ $product->id }}">
+                <div class="modal-content">
+                    <h2>Добавить в корзину: {{ $product->name }}</h2>
+                    <form action="{{ route('cart.add', $product) }}" method="POST" class="product-form" id="cart-form-{{ $product->id }}">
+                        @csrf
+                        <div class="product-cart-form">
+                            <select name="size_id" required class="product-select">
+                                <option value="">Размер</option>
+                                @foreach($product->sizes->unique('id') as $size)
+                                    <option value="{{ $size->id }}">{{ $size->name }}</option>
+                                @endforeach
+                            </select>
+                            <select name="color_id" required class="item-select">
+                                <option value="">Выберите цвет</option>
+                                @foreach($product->colors->unique('id') as $color)
+                                    <option value="{{ $color->id }}">{{ $color->name }}</option>
+                                @endforeach
+                            </select>
+                            <input type="number" name="quantity" value="1" min="1" max="{{ $product->available_quantity }}" class="product-input" placeholder="Выберите количество">
+                            <input type="hidden" name="pickup_point_id" value="{{ session('pickup_point_id') }}">
+                        </div>
+                        <div class="modal-actions">
+                            <button type="button" class="modal-button cancel" data-modal-id="cart-modal-{{ $product->id }}">Отмена</button>
+                            <button type="submit" class="modal-button submit">Добавить в корзину</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
     @endforeach
 </div>
     @endif

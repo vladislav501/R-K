@@ -13,13 +13,29 @@ class FavoriteController extends Controller
         $this->middleware('auth');
     }
 
-    public function index()
-    {
-        /** @var \App\Models\User $user */
-        $user = Auth::user();
-        $favorites = Auth::user()->favorites()->with(['brand', 'category', 'colors', 'sizes'])->get();
-        return view('favoritesIndex', compact('favorites'));
-    }
+public function index()
+{
+    $pickupPointId = session('pickup_point_id');
+
+    $favorites = auth()->user()->favorites()
+        ->with(['brand', 'category', 'colors', 'sizes', 'pickupPoints'])
+        ->get();
+
+    $favorites->transform(function ($product) use ($pickupPointId) {
+        if ($pickupPointId) {
+            $pivot = $product->pickupPoints()->where('pickup_point_id', $pickupPointId)->first()?->pivot;
+            $product->available_quantity = $pivot?->quantity ?? 0;
+            $product->available_status = $product->available_quantity > 0 ? 'В наличии' : 'Нет в наличии';
+        } else {
+            $product->available_quantity = null;
+            $product->available_status = 'В наличии';
+        }
+        return $product;
+    });
+
+    return view('favoritesIndex', compact('favorites'));
+}
+
 
     public function add(Request $request, Product $product)
     {
