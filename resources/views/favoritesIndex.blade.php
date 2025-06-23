@@ -30,8 +30,8 @@
                     <p><strong>Цена:</strong> BYN {{ number_format($product->price, 2) }}</p>
                     <p><strong>Бренд:</strong> {{ $product->brand->name }}</p>
                     <p><strong>Категория:</strong> {{ $product->category->name }}</p>
-                    <p><strong>Цвета:</strong> {{ $product->colors->pluck('name')->join(', ') }}</p>
-                    <p><strong>Размеры:</strong> {{ $product->sizes->pluck('name')->join(', ') }}</p>
+                    <p><strong>Цвета:</strong> {{ $product->colors->unique('id')->pluck('name')->join(', ') }}</p>
+                    <p><strong>Размеры:</strong> {{ $product->sizes->unique('id')->pluck('name')->join(', ') }}</p>
                 </div>
             </a>
             <form action="{{ route('favorites.destroy', $product->id) }}" method="POST" class="favorites-delete-form">
