@@ -100,7 +100,7 @@
                                         });
                                     @endphp
                                     <button class="toggle-cart-button" data-product-id="{{ $product->id }}" {{ $inCart || $product->available_quantity == 0 ? 'disabled' : '' }}>
-                                        {{ $inCart ? 'В корзине' : ($product->available_quantity == 0 ? 'Нет в наличии' : 'В корзину') }}
+                                        {{ $inCart ? 'В корзине' : ($product->available_quantity == 0 ? 'В наличии' : 'В корзину') }}
                                     </button>
                                     <form action="{{ route('favorites.add', $product) }}" method="POST" class="product-form" id="favorite-form-{{ $product->id }}">
                                         @csrf
