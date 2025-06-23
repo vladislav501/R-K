@@ -29,6 +29,11 @@ Route::get('/about', [StaticPageController::class, 'about'])->name('about');
 Route::get('/stores', [StaticPageController::class, 'stores'])->name('stores');
 Route::get('/contact', [StaticPageController::class, 'contact'])->name('contact');
 Route::get('/privacy', [StaticPageController::class, 'privacy'])->name('privacy');
+Route::get('/catalog', function () {
+    session()->forget('pickup_point_id'); 
+    return redirect()->route('products.index'); 
+})->name('products.general');
+
 
 Route::middleware('guest')->group(function () {
     Route::get('/register', [UserController::class, 'register'])->name('register');

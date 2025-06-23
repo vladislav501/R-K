@@ -23,7 +23,7 @@
             </button>
             <div class="header-collapsible">
                 <select class="header-store-select" onchange="window.location.href=this.value">
-                    <option value="{{ route('products.index') }}" {{ !session('pickup_point_id') ? 'selected' : '' }}>Общий каталог</option>
+                    <option value="{{ route('products.general') }}" {{ !session('pickup_point_id') ? 'selected' : '' }}>Общий каталог</option>
                     @foreach(\App\Models\PickupPoint::all() as $pickupPoint)
                         <option value="{{ route('products.index', ['pickup_point_id' => $pickupPoint->id]) }}" {{ session('pickup_point_id') == $pickupPoint->id ? 'selected' : '' }}>{{ $pickupPoint->name }}</option>
                     @endforeach
