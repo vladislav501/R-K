@@ -1705,7 +1705,6 @@ body {
     }
     .product-image {
         height: 100%;
-        background-color: #b5e2fa;
         border-top-left-radius: 12px;
         border-top-right-radius: 12px;
         cursor: pointer;

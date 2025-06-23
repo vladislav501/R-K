@@ -10,8 +10,6 @@
     </style>
     <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/3.0.0/uicons-regular-rounded/css/uicons-regular-rounded.css'>
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
-    <link href="{{ asset('css/categories.css') }}" rel="stylesheet">
-    <link href="{{ asset('css/products.css') }}" rel="stylesheet">
     @yield('styles')
 </head>
 <body>
