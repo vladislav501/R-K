@@ -85,13 +85,35 @@
         <div class="categories-wrapper">
             <ul class="categories-list">
                 <li class="categories-item">
-                    <a href="{{ route('products.index', ['pickup_point_id' => session('pickup_point_id')]) }}" class="categories-link {{ !request('category_id') && !Route::is('products.category') ? 'active' : '' }}">Все категории</a>
+                    <a href="" class="categories-link">
+                        <img src="{{ asset('images/свага верохняя одежда.svg') }}" class="svg-icon">
+                        <span>Верхняя одежда</span>
+                    </a>
                 </li>
-                @foreach(\App\Models\Category::all() as $category)
-                    <li class="categories-item">
-                        <a href="{{ route('products.category', [$category, 'pickup_point_id' => session('pickup_point_id')]) }}" class="categories-link {{ Route::is('products.category') && request()->route('category')->id == $category->id ? 'active' : '' }}">{{ $category->name }}</a>
-                    </li>
-                @endforeach
+                <li class="categories-item">
+                    <a href="" class="categories-link">
+                        <img src="{{ asset('images/свага нижняя одежда.svg') }}" class="svg-icon">
+                        <span>Нижняя одежда</span>
+                    </a>
+                </li>
+                <li class="categories-item">
+                    <a href="" class="categories-link">
+                        <img src="{{ asset('images/свага нижнее белье.svg') }}" class="svg-icon">
+                        <span>Нижнее бельё</span>
+                    </a>
+                </li>
+                <li class="categories-item">
+                    <a href="" class="categories-link">
+                        <img src="{{ asset('images/свага аксессуары.svg') }}" class="svg-icon">
+                        <span>Аксессуары</span>
+                    </a>
+                </li>
+                <li class="categories-item">
+                    <a href="" class="categories-link">
+                        <img src="{{ asset('images/свага обувь.svg') }}" class="svg-icon">
+                        <span>Обувь</span>
+                    </a>
+                </li>
             </ul>
         </div>
     </nav>

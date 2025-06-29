@@ -8376,7 +8376,10 @@ main {
 }
 
 .categories-link {
-    display: block;
+    display: flex;
+    justify-content: center;
+    flex-direction: row;
+    align-items: center;
     padding: 0.5rem 1rem;
     font-size: 0.95rem;
     font-weight: 500;
@@ -8505,6 +8508,13 @@ main {
     height: 100%;
     object-fit: cover;
     opacity: 0.6;
+}
+
+.svg-icon {
+    width: 10%;
+    height: 10%;
+    margin-right: 10%;
+    object-fit: cover;
 }
 
 .home-hero-content {
